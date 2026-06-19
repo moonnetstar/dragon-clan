@@ -1,0 +1,194 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+body { font-family: 'Helvetica Neue', Arial, sans-serif; background: #0a0a1a; color: #e0e0e0; padding: 20px; }
+.container { max-width: 800px; margin: 0 auto; }
+h1 { color: #00d4ff; text-align: center; font-size: 28px; border-bottom: 2px solid #00d4ff; padding-bottom: 15px; }
+h2 { color: #ff6b9d; font-size: 20px; margin-top: 30px; border-left: 4px solid #ff6b9d; padding-left: 12px; }
+h3 { color: #ffd93d; font-size: 16px; }
+.dragon { display: inline-block; padding: 2px 8px; border-radius: 4px; font-weight: bold; font-size: 12px; }
+.b { background: #2196F3; color: white; }  /* 布魯斯 */
+.w { background: #4CAF50; color: white; }  /* 華爾特 */
+.i { background: #ff6b9d; color: white; }  /* 艾蒂兒 */
+.d { background: #ffd93d; color: #333; }   /* 桃樂絲 */
+p, li { line-height: 1.8; font-size: 15px; }
+.badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: bold; }
+.beginner { background: #4CAF50; color: white; }
+.intermediate { background: #FF9800; color: white; }
+.pro { background: #f44336; color: white; }
+.box { background: #1a1a2e; border: 1px solid #333; border-radius: 8px; padding: 15px; margin: 10px 0; }
+.divider { border-top: 1px dashed #333; margin: 25px 0; }
+</style>
+</head>
+<body>
+<div class="container">
+<h1>🦁 龍族深度討論：理財 App 服務大綱</h1>
+<p style="text-align:center;color:#888;">2026-06-04 夜間深度會議 | 主題：理財顧問 App 服務架構</p>
+
+<h2>📌 勞勞的原始需求</h2>
+<div class="box">
+<ul>
+<li><b>理財</b> — 整體財務管理</li>
+<li><b>股票</b> — 台股投資管理</li>
+<li><b>開銷計算</b> — 每日支出追蹤</li>
+<li><b>黃金買賣</b> — 貴金屬投資</li>
+</ul>
+<p><b>分三個等級：</b></p>
+<span class="badge pro">專業</span> 完全會的人 → 進階功能加分<br>
+<span class="badge intermediate">中階</span> 一半一半 → 輔助決策<br>
+<span class="badge beginner">初階</span> 完全不懂 → 只秀賺多少、花多少
+</div>
+
+<h2>🍑 桃樂絲（CEO）— 總結架構</h2>
+<div class="box">
+<p>勞勞的核心需求是：<strong>「不管什麼程度的人，都能用」</strong></p>
+<p>我的建議是用 <strong>「模組化 + 使用者分級」</strong> 的設計：</p>
+<ul>
+<li>🔰 初階：只看到大數字（总资产、今日損益、本月花費）</li>
+<li>🔶 中階：多一點分析（持股分佈、支出分類、投資建議）</li>
+<li>🔴 專業：全部功能開放（技術指標、量化策略、API 匯出）</li>
+</ul>
+<p>重點：<strong>初階者不会被嚇跑，專業者不會覺得被限制</strong></p>
+</div>
+
+<h2>💰 華爾特（財經）— 股票與黃金模組</h2>
+<div class="box">
+<h3>股票模組</h3>
+<p><span class="badge beginner">初階</span></p>
+<ul>
+<li>只需要輸入「買入價格、股數」→ App 自動算賺多少</li>
+<li>顯示：現價、漲跌幅（紅綠色）、總市值</li>
+<li>一句話建議：「目前獲利 30%，可考慮部分獲利了結」</li>
+</ul>
+<p><span class="badge intermediate">中階</span></p>
+<ul>
+<li>持股分佈圓餅圖、產業分佈</li>
+<li>技術指標簡易版：MA 趨勢（偏多/偏空）、RSI（超買/超賣）</li>
+<li>停損停利提醒</li>
+<li>除息提醒、股利预估</li>
+</ul>
+<p><span class="badge pro">專業</span></p>
+<ul>
+<li>完整技術分析：MA、RSI、MACD、KD、布林通道</li>
+<li>自訂策略回測</li>
+<li>即時五檔、分時走勢</li>
+<li>歷史數據匯出（CSV/Excel）</li>
+<li>多帳戶管理（現股、當沖、期權）</li>
+<li>API 串接券商（未來）</li>
+</ul>
+<div class="divider"></div>
+<h3>黃金模組</h3>
+<p><span class="badge beginner">初階</span></p>
+<ul>
+<li>今日金價（用熟悉的「每台錢」顯示）</li>
+<li>「現在適合買嗎？」→ 簡單回答：偏高/偏低/中性</li>
+</ul>
+<p><span class="badge intermediate">中階</span></p>
+<ul>
+<li>金價走勢圖（週/月/季）</li>
+<li>美元指數對比（反向關係說明）</li>
+<li>黃金存摺試算（每月可買多少）</li>
+</ul>
+<p><span class="badge pro">專業</span></p>
+<ul>
+<li>即時國際金價（美元/盎司）</li>
+<li>/白銀比率、黃金/股市比率</li>
+<li>各國央行持倉變化</li>
+<li>通膨調整後實質金價</li>
+<li>期貨/ETF 即時報價</li>
+</ul>
+</div>
+
+<h2>🔧 布魯斯（工程師）— 開銷計算模組</h2>
+<div class="box">
+<h3>開銷計算模組</h3>
+<p><span class="badge beginner">初階</span></p>
+<ul>
+<li>每日輸入「花了多少」→ 自動統計本月總花費</li>
+<li>大圓餅圖：食/衣/住/行/育/樂</li>
+<li>一句話提醒：「本月已花費 70%，注意控制」</li>
+</ul>
+<p><span class="badge intermediate">中階</span></p>
+<ul>
+<li>預算設定（每月每類別上限）</li>
+<li>超支提醒、剩餘預算顯示</li>
+<li>週/月/季/年統計</li>
+<li>與上月比較（增減比例）</li>
+<li>匯款/轉帳記錄</li>
+</ul>
+<p><span class="badge pro">專業</span></p>
+<ul>
+<li>自動分類 AI（用 NLP 辨識消費類型）</li>
+<li>定期定額投資提醒（與股票/黃金連動）</li>
+<li>資產負債表、現金流量表</li>
+<li>匯出記帳資料（符合國稅局格式）</li>
+<li>多幣別支援（外幣消費自動換算）</li>
+</ul>
+</div>
+
+<h2>🎨 艾蒂兒（企劃）— 理財總覽與 UX</h2>
+<div class="box">
+<h3>理財總覽主頁</h3>
+<p><span class="badge beginner">初階看到</span></p>
+<ul>
+<li>🔵 我的总资产：XXX 萬元（綠色向上 / 紅色向下）</li>
+<li>💰 本月花費：XX 萬元</li>
+<li>📈 投資損益：+XX 萬元（+XX%）</li>
+<li>🥇 黃金損益：+XX 元</li>
+<li>一句話：「這個月你做得很好 👍」或「要注意開銷囉 ⚠️」</li>
+</ul>
+<p><span class="badge intermediate">中階解鎖</span></p>
+<ul>
+<li>資產配置圓餅圖（現金/股票/黃金/其他）</li>
+<li>月度收支趨勢圖</li>
+<li>投資 vs 存款比例建議</li>
+<li>「如果每月存 X 元，Y 年後會變成 Z 元」試算</li>
+</ul>
+<p><span class="badge pro">專業解鎖</span></p>
+<ul>
+<li>自訂儀表板（拖拉自己想要的數據）</li>
+<li>多維度分析（投資報酬率、夏普比率、最大回撤）</li>
+<li>稅務規劃建議（股利課稅、最低稅負）</li>
+<li>即時新聞對持股的影響分析</li>
+</ul>
+</div>
+
+<h2>📊 統整：三大等級功能對照表</h2>
+<div class="box">
+<table border="1" cellpadding="8" cellspacing="0" style="border-collapse:collapse;width:100%;border-color:#333;">
+<tr style="background:#1a1a2e;color:#00d4ff;">
+<th>模組</th><th><span class="badge beginner">初階</span> 完全不懂</th><th><span class="badge intermediate">中階</span> 一知半解</th><th><span class="badge pro">專業</span> 高手</th>
+</tr>
+<tr><td><b>股票</b></td><td>輸入成本→自動算損益→一句話建議</td><td>技術指標+停損提醒+除息通知</td><td>完整技術分析+回測+API匯出</td></tr>
+<tr><td><b>黃金</b></td><td>今日金價→現在能買嗎</td><td>走勢圖+美元對比+存摺試算</td><td>即時國際盤+比率分析+央行數據</td></tr>
+<tr><td><b>開銷</b></td><td>每日輸入→月統計→圓餅圖</td><td>預算管理+超支提醒+週期統計</td><td>AI自動分類+資產負債+稅務匯出</td></tr>
+<tr><td><b>理財</b></td><td>看總資產+一句話建議</td><td>資產配置圖+收支趨勢+存款試算</td><td>自訂儀表板+報酬率分析+稅務規劃</td></tr>
+</table>
+</div>
+
+<h2>🔴 桃樂絲（CEO）— 總結與建議</h2>
+<div class="box">
+<h3>這個 App 的核心精神：</h3>
+<p><strong>「讓每個人都能開始理財，但不限制任何人成長」</strong></p>
+<p>初學者不會被複雜數據嚇跑 → 願意持續使用</p>
+<p>進階者能獲得更好的分析 → 願意付費升級</p>
+<p>專業者有完整工具 → 願意推薦給朋友</p>
+<h3>開發優先順序：</h3>
+<ol>
+<li>MVP：初階功能先上線（讓人開始用）</li>
+<li>第二輪：中階功能（讓人離不開）</li>
+<li>第三輪：專業功能（讓人願意付費）</li>
+</ol>
+</div>
+
+<div class="divider"></div>
+<p style="text-align:center;color:#666;font-size:13px;">
+龍族生態系 | 創・虹橋數位<br>
+桃樂絲 🍑 主導 | 布魯斯 🔧 撰寫 | 華爾特 💰 分析 | 艾蒂兒 🎨 設計
+</p>
+</div>
+</body>
+</html>

@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <title>外泌體品牌專屬店 - 桃樂絲開發版</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; background: #f4f4f9; line-height: 1.6; }
+        .product-card { border: 1px solid #ddd; padding: 15px; margin: 10px 0; background: white; border-radius: 8px; max-width: 400px;}
+        .promo-banner { background: #ffeb3b; padding: 12px; text-align: center; font-weight: bold; margin-bottom: 2_0px; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .price { color: #e91e63; font-size: 1.2em; font-weight: bold; }
+        button { background: #4caf50; color: white; border: none; padding: 8px 16px; cursor: pointer; border-radius: 4px; transition: background 0.3s; }
+        button:hover { background: #388e3c; }
+        #cart { margin-top: 30px; border-top: 2px solid #333; padding-top: 15px; max-width: 400px;}
+        .gift-item { color: #ff9800; font-style: italic; }
+    </style>
+</head>
+<body>
+    <div class="promo-banner">🔥 限時優惠：買滿三件享 8 折，再加贈低價精華液一瓶！ 🔥</div>
+
+    <div id="product-list">
+        <!-- Products will be injected here -->
+    </div>
+
+    <div id="cart">
+        <h3>🛒 您的購物籃</h3>
+        <ul id="cart-items"></ul>
+        <p><strong>總計金額: <span id="total-price" class="price">0</span> 元</strong></p>
+        <button onclick="checkout()">🚀 立即結帳 (串接後台)</button>
+    </div>
+
+    <script>
+        // Product Data from the Order Form provided by user
+        const products = [
+            {id: 1, name: "人類外泌體謬斯安瓶", price: 3980},
+            {id: 2, name: "人類外泌體謬斯精華液", price: 3580},
+            {id: 3, name: "人類外泌體謬斯面膜", price: 1580},
+            {id: 4, name: "人類外泌體謬斯養髮液", price: 4580}
+        ];
+
+        // The Low-Price Item that is gifted when condition met
+        const giftItem = {name: "(贈品) 輕爽化妝水小樣", price: 0};
+
+        let cart = [];
+
+        function renderProducts() {
+            const list = document.getElementById('product-list');
+            products.forEach(p => {
+                const div = document.createElement('div');
+                div.className = 'product-card';
+                div.innerHTML = `<h4>${p.name}</h4><p class="price">$${p.price}</p>
+                                 <button onclick="addToCart(${p.id})">加入購物籃</button>`;
+                list.appendChild(div);
+            });
+        }
+
+        function addToCart(productId) {
+            const p = products.find(item => item.id === productId);
+            if (p) {
+                cart.push({...p}); // Push a copy
+                updateCartUI();
+            }
+        }
+
+        function updateCartUI() {
+            const cartList = document.getElementById('cart-items');
+            const totalText = document.getElementById('total-price');
+            cartList.innerHTML = '';
+            let subtotal = 0;
+
+            // Clear the gift item if it was there from a previous calc
+            let hasGiftShown = false;
+
+            cart.forEach((item, index) => {
+                const li = document.createElement('li');
+                li.innerText = `${item.name} - $${item.price}`;
+                cartList.appendChild(li);
+                subtotal += item.price;
+            });
+
+            // --- Logic: Buy 3 get 20% OFF + Free gift ---
+            let finalAmount = subtotal;
+            if (cart.length >= 3) {
+                finalAmount = Math.floor(subtotal * 0.8);
+                const promoLi = document.createElement('li');
+                promoLi.className = 'gift-item';
+                promoLi.innerText = `✨ [已達標] 八折優惠 + ${giftItem.name}`;
+                cartList.appendChild(promoLi);
+            }
+
+            totalText.innerText = final_amount = finalAmount;
+        }
+
+        function checkout() {
+            if (cart.length === 0) return alert("籃子是空的！");
+            const summary = cart.map(i => i.name).join(', ');
+            alert(`訂單已送出！\n內容：${summary}\n總金額：$${document.getElementById('total-price').innerText} 元`);
+        }
+
+        renderProducts();
+    </script>
+</body>
+</html>
