@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>外泌體精華店</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans">
+    <header class="bg-white shadow-sm p-4 sticky top-0 z-10">
+        <h1 class="text-xl font-bold text-center text-indigo-600">Exosome Shop</h1>
+    </header>
+
+    <main class="max-w-md mx-auto p-4 pb-32">
+        <!-- 促銷公告 -->
+        <div class="bg-indigo-100 p-3 rounded-lg mb-6 border border-intigo-200 text-sm text-indigo-700 animate-pulse">
+             🔥 限時優惠：買滿 3 件享 **8 折**，且額外贈送一個隨機低價好禮！
+        </div>
+
+        <!-- 產品列表區 -->
+        <div id="product-list" class="space-y-4">
+            <!-- JS will render products here -->
+        </div>
+    </main>
+
+    <!-- 底部購物車總覽 (Sticky Bottom) -->
+    <footer class="fixed bottom-0 left-0 right-0 bg-white border-t p-4 shadow-lg max-w-md mx-auto">
+        <div class="flex justify-between items-center mb-2 text-sm opacity-75">
+            <span>目前組合: <span id="item-count">0</span> 件</span>
+            <span>總價: $<span id="total-price">0</span></span>
+        </div>
+        <button onclick="checkout()" class="w-full bg-indigo-600 text-white py-3 rounded-xl font-bold active:scale-95 transition-transform">
+            立即結帳 (確認下單)
+        </button>
+    </footer>
+
+    <script>
+        const products = [
+            {id: 1, name: "人類外泌體謬斯安瓶", price: 3980, video: "#"},
+            {id: 2, name: "人類外泌體謬斯精華液", price: 3580, video: "#"},
+            {id: 3, name: "人類外泌體謬斯面膜", price: 1580, video: "#"},
+            {id: 4, name: "人類外泌體謬斯養髮液", price: 4580, video: "#"}
+        ];
+
+        let cart = [];
+
+        function renderProducts() {
+            const container = document.getElementById('product-list');
+            container.innerHTML = products.map(p => `
+                <div class="bg-white p-4 rounded-2xl shadow-sm border flex gap-4">
+                    <div class="w-24 h-24 bg-gray-20_rounded-xl overflow-hidden flex-shrink-0">
+                         <!-- 影片或圖片預留位 -->
+                         <div class="w-full h-full flex items-center justify-center text-xs text-gray-400">IMAGE/VIDEO</div>
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="font-bold">${p.name}</h3>
+                        <p class="text-indigo-600 font-semibold">$${p.price}</p>
+                        <button onclick="addToCart(${p.id})" class="mt-2 text-xs bg-gray-100 px-3 py-1 rounded-full">+ 加入購物車</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function addToCart(id) {
+            const product = products.find(p => p.id === id);
+            cart.push(product);
+            updateUI();
+        }
+
+        function updateUI() {
+            let subtotal = cart.reduce((sum, item) => sum + item.price, 0);
+            let discount = 1;
+            let promoText = "";
+
+            // 【促銷邏輯】買三件打八折，再送一個低價品(模擬為$500贈品)
+            if (cart.length >= 3) {
+                discount = 0.8;
+                subtotal *= discount;
+                promoText = " (已享8折優惠 + 額外贈品中!)";
+            }
+
+            document.getElementById('item-count').innerText = cart.length;
+            document.getElementById('total-price').innerText = Math.round(subtotal);
+            
+            if(promoText) {
+                console.log("Promo Active!" + promoText);
+            }
+        }
+
+        function checkout() {
+            if (cart.length === 0) return alert("購物車是空的！");
+            let subtotal = cart.reduce((sum, item) => sum + item.price, 0);
+            if (cart.length >= 3) subtotal *= 0.8;
+            
+            alert(`準備結帳！\n目前金額: $${Math.round(subtotal)}\n這筆訂單將傳送給您的合作夥伴。`);
+        }
+
+        renderProducts();
+    </script>
+</body>
+</html>
