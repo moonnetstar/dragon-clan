@@ -1,4 +1,4 @@
-// ExoMuse 合作夥伴後台 — 主要邏輯
+// ExoMuse 合作夥伴後台 — 本地測試版本
 
 // ── 全域變數 ──
 let currentUser = null;
@@ -24,7 +24,6 @@ function showSection(name) {
     document.querySelectorAll('.sidebar-link').forEach(el => {
         el.classList.toggle('active', el.dataset.section === name);
     });
-    // Close mobile sidebar
     document.getElementById('sidebar').classList.add('hidden');
 }
 
@@ -43,12 +42,30 @@ async function handleLogin(e) {
     e.preventDefault();
     const email = document.getElementById('loginEmail').value;
     const password = document.getElementById('loginPassword').value;
-    try {
-        await ExomeDB.loginPartner(email, password);
-        showToast('登入成功！');
-    } catch (err) {
-        showToast('登入失敗：' + err.message, 'error');
+    
+    // 本地驗證
+    const partner = LocalDB.partners.getByEmail(email);
+    if (!partner || partner.password !== password) {
+        showToast('登入失敗：帳號或密碼錯誤', 'error');
+        return;
     }
+    
+    currentUser = { uid: partner.id };
+    partnerData = partner;
+    lineToken = partner.lineToken || '';
+    
+    document.getElementById('loginScreen').classList.add('hidden');
+    document.getElementById('dashboard').classList.remove('hidden');
+    document.getElementById('partnerName').textContent = partner.name;
+    document.getElementById('partnerInitial').textContent = partner.name.charAt(0);
+    document.getElementById('currentSplit').textContent = Math.round(partner.split * 100) + '%';
+    if (lineToken) document.getElementById('lineTokenInput').value = lineToken;
+    
+    loadProducts();
+    loadOrders();
+    loadPromotions();
+    loadMedia();
+    showToast('登入成功！');
 }
 
 async function handleRegister(e) {
@@ -60,72 +77,63 @@ async function handleRegister(e) {
     const split = parseFloat(document.getElementById('regSplit').value);
     const token = document.getElementById('regLineToken').value;
     
-    try {
-        const uid = await ExomeDB.registerPartner(email, password, {
-            name, phone, split, lineToken: token
-        });
-        showToast('註冊成功！請登入。');
-        showLogin();
-    } catch (err) {
-        showToast('註冊失敗：' + err.message, 'error');
+    // 檢查是否已存在
+    if (LocalDB.partners.getByEmail(email)) {
+        showToast('此電子郵件已註冊', 'error');
+        return;
     }
+    
+    LocalDB.partners.add({ name, email, phone, password, split, lineToken: token });
+    showToast('註冊成功！請登入。');
+    showLogin();
 }
 
 async function handleLogout() {
-    await ExomeDB.logout();
+    currentUser = null;
+    partnerData = null;
     location.reload();
 }
 
 // ── 初始化 ──
-ExomeDB.onAuthChange(async (user) => {
-    if (!user) {
-        document.getElementById('loginScreen').classList.remove('hidden');
-        document.getElementById('dashboard').classList.add('hidden');
-        return;
+// 檢查是否已登入（localStorage）
+const savedPartnerId = localStorage.getItem('exomuse_currentPartner');
+if (savedPartnerId) {
+    const partner = LocalDB.partners.getById(savedPartnerId);
+    if (partner) {
+        currentUser = { uid: partner.id };
+        partnerData = partner;
+        lineToken = partner.lineToken || '';
+        
+        document.getElementById('loginScreen').classList.add('hidden');
+        document.getElementById('dashboard').classList.remove('hidden');
+        document.getElementById('partnerName').textContent = partner.name;
+        document.getElementById('partnerInitial').textContent = partner.name.charAt(0);
+        document.getElementById('currentSplit').textContent = Math.round(partner.split * 100) + '%';
+        if (lineToken) document.getElementById('lineTokenInput').value = lineToken;
+        
+        loadProducts();
+        loadOrders();
+        loadPromotions();
+        loadMedia();
     }
-    
-    currentUser = user;
-    partnerData = await ExomeDB.getPartner(user.uid);
-    
-    if (!partnerData) {
-        showToast('找不到合作夥伴資料', 'error');
-        return;
+}
+
+// 登入時記住
+const originalHandleLogin = handleLogin;
+handleLogin = async function(e) {
+    await originalHandleLogin(e);
+    if (currentUser) {
+        localStorage.setItem('exomuse_currentPartner', currentUser.uid);
     }
-    
-    document.getElementById('loginScreen').classList.add('hidden');
-    document.getElementById('registerScreen').classList.add('hidden');
-    document.getElementById('dashboard').classList.remove('hidden');
-    document.getElementById('partnerName').textContent = partnerData.name;
-    document.getElementById('partnerInitial').textContent = partnerData.name.charAt(0);
-    document.getElementById('currentSplit').textContent = Math.round(partnerData.split * 100) + '%';
-    
-    lineToken = partnerData.lineToken || '';
-    if (lineToken) document.getElementById('lineTokenInput').value = lineToken;
-    
-    loadProducts();
-    loadOrders();
-    loadPromotions();
-    loadMedia();
-    
-    // 監聽新訂單
-    ExomeDB.onNewOrders(user.uid, (newOrders) => {
-        const badge = document.getElementById('pendingOrdersBadge');
-        badge.textContent = newOrders.length;
-        badge.classList.toggle('hidden', newOrders.length === 0);
-        document.getElementById('notifBadge').textContent = newOrders.length;
-        document.getElementById('notifBadge').classList.toggle('hidden', newOrders.length === 0);
-    });
-});
+};
 
 // ═══════════════════════════════════════
 // 商品管理
 // ═══════════════════════════════════════
 
 function loadProducts() {
-    ExomeDB.onProductsChange((data) => {
-        products = data;
-        renderProducts();
-    });
+    products = LocalDB.products.getActive();
+    renderProducts();
 }
 
 function renderProducts() {
@@ -191,9 +199,12 @@ function closeProductModal() {
 function previewProductImage(e) {
     const file = e.target.files[0];
     if (file) {
-        const url = URL.createObjectURL(file);
-        document.getElementById('prodImagePreview').classList.remove('hidden');
-        document.getElementById('prodImagePreview img').src = url;
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            document.getElementById('prodImagePreview').classList.remove('hidden');
+            document.getElementById('prodImagePreview img').src = event.target.result;
+        };
+        reader.readAsDataURL(file);
     }
 }
 
@@ -201,7 +212,6 @@ async function saveProduct(e) {
     e.preventDefault();
     const id = document.getElementById('editProductId').value;
     const imageFile = document.getElementById('prodImageInput').files[0];
-    const videoFile = document.getElementById('prodVideoInput').files[0];
     
     const data = {
         name: document.getElementById('prodName').value,
@@ -211,32 +221,36 @@ async function saveProduct(e) {
         description: document.getElementById('prodDesc').value,
         sortOrder: parseInt(document.getElementById('prodSort').value) || 0,
         active: document.getElementById('prodActive').checked,
-        partnerId: currentUser.uid
+        partnerId: currentUser?.uid || 'local'
     };
     
     try {
-        // 上傳圖片
         if (imageFile) {
-            const result = await ExomeDB.uploadImage(imageFile, `products/${currentUser.uid}`);
-            data.imageUrl = result.url;
-            data.imagePath = result.path;
-        }
-        
-        // 上傳影片
-        if (videoFile) {
-            const result = await ExomeDB.uploadVideo(videoFile, `videos/${currentUser.uid}`);
-            data.videoUrl = result.url;
-            data.videoPath = result.path;
-        }
-        
-        if (id) {
-            await ExomeDB.updateProduct(id, data);
-            showToast('商品已更新');
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                data.imageUrl = event.target.result;
+                if (id) {
+                    LocalDB.products.update(id, data);
+                    showToast('商品已更新');
+                } else {
+                    LocalDB.products.add(data);
+                    showToast('商品已新增');
+                }
+                closeProductModal();
+                loadProducts();
+            };
+            reader.readAsDataURL(imageFile);
         } else {
-            await ExomeDB.addProduct(data);
-            showToast('商品已新增');
+            if (id) {
+                LocalDB.products.update(id, data);
+                showToast('商品已更新');
+            } else {
+                LocalDB.products.add(data);
+                showToast('商品已新增');
+            }
+            closeProductModal();
+            loadProducts();
         }
-        closeProductModal();
     } catch (err) {
         showToast('儲存失敗：' + err.message, 'error');
     }
@@ -248,12 +262,9 @@ function editProduct(id) {
 
 async function deleteProduct(id) {
     if (!confirm('確定要刪除這個商品嗎？')) return;
-    try {
-        await ExomeDB.deleteProduct(id);
-        showToast('商品已刪除');
-    } catch (err) {
-        showToast('刪除失敗：' + err.message, 'error');
-    }
+    LocalDB.products.delete(id);
+    showToast('商品已刪除');
+    loadProducts();
 }
 
 // ═══════════════════════════════════════
@@ -261,10 +272,8 @@ async function deleteProduct(id) {
 // ═══════════════════════════════════════
 
 function loadOrders() {
-    ExomeDB.getPartnerOrders(currentUser.uid).then(data => {
-        orders = data;
-        renderOrders();
-    });
+    orders = LocalDB.orders.getAll();
+    renderOrders();
 }
 
 function renderOrders(filter = 'all') {
@@ -281,7 +290,7 @@ function renderOrders(filter = 'all') {
             <div class="flex items-center justify-between mb-3">
                 <div>
                     <span class="text-xs text-warm-gray">訂單編號</span>
-                    <p class="font-mono text-sm font-medium">${o.id.slice(0, 12)}...</p>
+                    <p class="font-mono text-sm font-medium">${o.id.slice(0, 12)}</p>
                 </div>
                 <span class="px-3 py-1 rounded-full text-xs font-medium status-${o.status}">
                     ${getStatusText(o.status)}
@@ -325,9 +334,9 @@ function viewOrder(id) {
             <hr>
             <div>
                 <p class="text-xs text-warm-gray mb-1">客戶資料</p>
-                <p class="text-sm"><strong>${order.customer?.name}</strong></p>
-                <p class="text-sm text-warm-gray">${order.customer?.phone}</p>
-                <p class="text-sm text-warm-gray">${order.customer?.address}</p>
+                <p class="text-sm"><strong>${order.customer?.name || '未知'}</strong></p>
+                <p class="text-sm text-warm-gray">${order.customer?.phone || ''}</p>
+                <p class="text-sm text-warm-gray">${order.customer?.address || ''}</p>
             </div>
             <hr>
             <div>
@@ -342,7 +351,7 @@ function viewOrder(id) {
             <hr>
             <div class="flex justify-between">
                 <span class="text-sm">總金額</span>
-                <span class="font-serif text-lg font-bold text-gold">NT$ ${order.finalTotal?.toLocaleString()}</span>
+                <span class="font-serif text-lg font-bold text-gold">NT$ ${order.finalTotal?.toLocaleString() || 0}</span>
             </div>
             <hr>
             <div class="flex gap-2">
@@ -366,14 +375,10 @@ function closeOrderModal() {
 }
 
 async function updateOrderStatus(orderId, status) {
-    try {
-        await ExomeDB.updateOrderStatus(orderId, status);
-        showToast('訂單狀態已更新');
-        closeOrderModal();
-        loadOrders();
-    } catch (err) {
-        showToast('更新失敗：' + err.message, 'error');
-    }
+    LocalDB.orders.updateStatus(orderId, status);
+    showToast('訂單狀態已更新');
+    closeOrderModal();
+    loadOrders();
 }
 
 // ═══════════════════════════════════════
@@ -381,10 +386,8 @@ async function updateOrderStatus(orderId, status) {
 // ═══════════════════════════════════════
 
 function loadPromotions() {
-    ExomeDB.getActivePromotions().then(data => {
-        promotions = data;
-        renderPromotions();
-    });
+    promotions = LocalDB.promotions.getActive();
+    renderPromotions();
 }
 
 function renderPromotions() {
@@ -420,8 +423,9 @@ function getPromoTypeText(type) {
 
 function formatDate(date) {
     if (!date) return '';
-    const d = date.toDate ? date.toDate() : new Date(date);
-    return d.toLocaleDateString('zh-TW');
+    try {
+        return new Date(date).toLocaleDateString('zh-TW');
+    } catch { return date; }
 }
 
 function openPromoModal() {
@@ -440,43 +444,30 @@ async function savePromo(e) {
         type: document.getElementById('promoType').value,
         value: parseFloat(document.getElementById('promoValue').value),
         minSpend: parseInt(document.getElementById('promoMinSpend').value) || 0,
-        startDate: new Date(document.getElementById('promoStart').value),
-        endDate: new Date(document.getElementById('promoEnd').value),
+        startDate: document.getElementById('promoStart').value,
+        endDate: document.getElementById('promoEnd').value,
         code: document.getElementById('promoCode').value || null
     };
     
-    try {
-        await ExomeDB.addPromotion(data);
-        showToast('促銷活動已新增');
-        closePromoModal();
-        loadPromotions();
-    } catch (err) {
-        showToast('新增失敗：' + err.message, 'error');
-    }
+    LocalDB.promotions.add(data);
+    showToast('促銷活動已新增');
+    closePromoModal();
+    loadPromotions();
 }
 
 async function deletePromotion(id) {
     if (!confirm('確定要刪除這個促銷活動嗎？')) return;
-    try {
-        await ExomeDB.deletePromotion(id);
-        showToast('促銷活動已刪除');
-        loadPromotions();
-    } catch (err) {
-        showToast('刪除失敗：' + err.message, 'error');
-    }
+    LocalDB.promotions.delete(id);
+    showToast('促銷活動已刪除');
+    loadPromotions();
 }
 
 // ═══════════════════════════════════════
 // 媒體素材
 // ═══════════════════════════════════════
 
-async function loadMedia() {
-    try {
-        const files = await ExomeDB.listFiles(`media/${currentUser.uid}`);
-        renderMedia(files);
-    } catch (err) {
-        // 資料夾可能不存在，忽略
-    }
+function loadMedia() {
+    renderMedia(LocalDB.media.getAll());
 }
 
 function renderMedia(files) {
@@ -488,13 +479,13 @@ function renderMedia(files) {
     
     container.innerHTML = files.map(f => `
         <div class="relative group rounded-xl overflow-hidden bg-gray-100 aspect-square">
-            ${f.name.match(/\.(mp4|mov|avi)$/i) 
-                ? `<div class="w-full h-full flex items-center justify-center text-4xl">🎬</div>`
-                : `<img src="${f.url}" class="w-full h-full object-cover">`
+            ${f.type && f.type.startsWith('video/') 
+                ? '<div class="w-full h-full flex items-center justify-center text-4xl">🎬</div>'
+                : `<img src="${f.dataUrl}" class="w-full h-full object-cover">`
             }
             <div class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-                <button onclick="copyMediaUrl('${f.url}')" class="px-3 py-1.5 rounded-lg bg-white text-xs">複製連結</button>
-                <button onclick="deleteMedia('${f.path}')" class="px-3 py-1.5 rounded-lg bg-red-500 text-white text-xs">刪除</button>
+                <button onclick="copyMediaUrl('${f.dataUrl}')" class="px-3 py-1.5 rounded-lg bg-white text-xs">複製連結</button>
+                <button onclick="deleteMedia('${f.id}')" class="px-3 py-1.5 rounded-lg bg-red-500 text-white text-xs">刪除</button>
             </div>
         </div>
     `).join('');
@@ -503,17 +494,14 @@ function renderMedia(files) {
 async function handleMediaUpload(e) {
     const files = Array.from(e.target.files);
     for (const file of files) {
-        try {
-            const isVideo = file.type.startsWith('video/');
-            const result = isVideo 
-                ? await ExomeDB.uploadVideo(file, `media/${currentUser.uid}`)
-                : await ExomeDB.uploadImage(file, `media/${currentUser.uid}`);
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            LocalDB.media.add({ name: file.name, type: file.type, size: file.size, dataUrl: event.target.result });
             showToast(`${file.name} 上傳成功`);
-        } catch (err) {
-            showToast(`${file.name} 上傳失敗`, 'error');
-        }
+            loadMedia();
+        };
+        reader.readAsDataURL(file);
     }
-    loadMedia();
 }
 
 function copyMediaUrl(url) {
@@ -521,15 +509,11 @@ function copyMediaUrl(url) {
     showToast('連結已複製');
 }
 
-async function deleteMedia(path) {
+async function deleteMedia(id) {
     if (!confirm('確定要刪除這個檔案嗎？')) return;
-    try {
-        await ExomeDB.deleteFile(path);
-        showToast('檔案已刪除');
-        loadMedia();
-    } catch (err) {
-        showToast('刪除失敗', 'error');
-    }
+    LocalDB.media.delete(id);
+    showToast('檔案已刪除');
+    loadMedia();
 }
 
 // ═══════════════════════════════════════
@@ -542,13 +526,9 @@ async function saveLineToken() {
         showToast('請輸入 Token', 'error');
         return;
     }
-    try {
-        await ExomeDB.updatePartner(currentUser.uid, { lineToken: token });
-        lineToken = token;
-        showToast('LINE Token 已儲存');
-    } catch (err) {
-        showToast('儲存失敗', 'error');
-    }
+    LocalDB.settings.update({ lineToken: token });
+    lineToken = token;
+    showToast('LINE Token 已儲存');
 }
 
 async function testLineNotify() {
@@ -567,4 +547,18 @@ function toggleSidebar() {
 
 function toggleNotif() {
     showSection('orders');
+}
+
+// ── 初始化 ──
+// 如果沒有合作夥伴，建立一個預設的
+if (LocalDB.partners.getAll().length === 0) {
+    LocalDB.partners.add({
+        name: '測試合作夥伴',
+        email: 'test@exomuse.com',
+        password: '123456',
+        phone: '0912345678',
+        split: 0.3,
+        lineToken: ''
+    });
+    showToast('已建立測試帳號：test@exomuse.com / 123456');
 }
