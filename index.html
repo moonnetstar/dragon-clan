@@ -313,15 +313,13 @@
                 <h2 class="font-serif text-4xl lg:text-5xl font-bold mt-6">產品系列</h2>
                 <p class="text-warm-gray mt-4 max-w-md mx-auto text-sm">專為專業醫美機構打造，每一瓶都是科學與奢華的完美結合</p>
             </div>
-
-            <div id="productList" class="grid sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-6">
-                <!-- 動態渲染商品 -->
-            </div>
+            <div id="productList" class="grid sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-6"></div>
         </div>
     </section>
 
     <!-- ============================================================
          INGREDIENTS
+    ============================================================ -->
     ============================================================ -->
     <section id="ingredients" class="py-28 lg:py-36 bg-luxury-dark text-white">
         <div class="max-w-6xl mx-auto px-6 lg:px-10">
@@ -415,53 +413,10 @@
                             </div>
                         </div>
                     </div>
-                    <a href="#creator" class="btn-gold inline-block text-white px-8 py-3.5 rounded-full text-sm tracking-widest uppercase">進入素材中心</a>
+                    <a href="admin/index.html" class="btn-gold inline-block text-white px-8 py-3.5 rounded-full text-sm tracking-widest uppercase">進入合作夥伴後台</a>
                 </div>
 
                 <!-- Split calculator -->
-                <div class="fade-up" style="transition-delay:.2s;">
-                    <div class="bg-ivory rounded-3xl p-8 lg:p-10">
-                        <h3 class="font-serif text-xl font-bold mb-6 text-center">分潤計算器</h3>
-                        <div class="space-y-5">
-                            <div>
-                                <label class="text-xs text-warm-gray tracking-wide uppercase mb-2 block">產品</label>
-                                <select id="calcProduct" class="w-full px-4 py-3 rounded-xl border border-black/[.08] text-sm bg-white" onchange="updateCalc()">
-                                    <option value="1580">人類外泌體面膜 — NT$ 1,580</option>
-                                    <option value="3580">人類外泌體精華液 — NT$ 3,580</option>
-                                    <option value="3980">人類外泌體安瓶 — NT$ 3,980</option>
-                                    <option value="4580">人類外泌體養髮液 — NT$ 4,580</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="text-xs text-warm-gray tracking-wide uppercase mb-2 block">數量</label>
-                                <input id="calcQty" type="number" value="1" min="1" max="10" class="w-full px-4 py-3 rounded-xl border border-black/[.08] text-sm bg-white" oninput="updateCalc()">
-                            </div>
-                            <div>
-                                <label class="text-xs text-warm-gray tracking-wide uppercase mb-2 block">您的分潤比例</label>
-                                <select id="calcSplit" class="w-full px-4 py-3 rounded-xl border border-black/[.08] text-sm bg-white" onchange="updateCalc()">
-                                    <option value="0.3">30% — 標準夥伴</option>
-                                    <option value="0.4">40% — 進階夥伴</option>
-                                    <option value="0.5">50% — VIP夥伴</option>
-                                </select>
-                            </div>
-                            <div class="divider-elegant mt-4"></div>
-                            <div class="pt-2 space-y-2">
-                                <div class="flex justify-between text-sm">
-                                    <span class="text-warm-gray">訂單總額</span>
-                                    <span id="calcTotal" class="font-medium">NT$ 1,580</span>
-                                </div>
-                                <div class="flex justify-between text-sm" id="calcDiscountRow">
-                                    <span class="text-warm-gray">3件以上折扣</span>
-                                    <span id="calcDiscount" class="font-medium text-gold">—</span>
-                                </div>
-                                <div class="flex justify-between text-sm pt-2 border-t border-black/[.06]">
-                                    <span class="font-medium">預估分潤</span>
-                                    <span id="calcProfit" class="font-serif text-xl font-bold text-gold">NT$ 474</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
     </section>
@@ -469,211 +424,6 @@
     <!-- ============================================================
          CREATOR CENTER (素材中心)
     ============================================================ -->
-    <section id="creator" class="py-28 lg:py-36 bg-ivory">
-        <div class="max-w-6xl mx-auto px-6 lg:px-10">
-            <div class="text-center mb-16 fade-up">
-                <span class="tag mb-6">Creator Center</span>
-                <h2 class="font-serif text-4xl lg:text-5xl font-bold mt-6">素材中心</h2>
-                <p class="text-warm-gray mt-4 max-w-lg mx-auto text-sm">上傳您的素材，自動生成 FB / IG 廣告文案，一鍵下載投放</p>
-            </div>
-
-            <div class="grid lg:grid-cols-2 gap-10">
-                <!-- Upload zone -->
-                <div class="fade-up" style="transition-delay:.1s;">
-                    <div class="bg-white rounded-3xl p-8 h-full">
-                        <h3 class="font-serif text-lg font-bold mb-6">上傳素材</h3>
-
-                        <!-- Image upload -->
-                        <div id="uploadZone" class="upload-zone rounded-2xl p-10 text-center mb-6 cursor-pointer" onclick="document.getElementById('fileInput').click()">
-                            <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-gold/5 flex items-center justify-center">
-                                <svg class="w-7 h-7 text-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14"/>
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M14 4h6m0 0v6m0-6L16 16M4 20h16a2 2 0 002-2V6a2 2 0 00-2-2H8"/>
-                                </svg>
-                            </div>
-                            <p class="text-sm text-warm-gray mb-1">點擊或拖曳上傳圖片 / 影片</p>
-                            <p class="text-xs text-warm-gray/50">支援 JPG、PNG、MP4，最大 50MB</p>
-                            <input type="file" id="fileInput" class="hidden" accept="image/*,video/*" multiple onchange="handleFileUpload(event)">
-                        </div>
-
-                        <!-- Uploaded files list -->
-                        <div id="uploadedFiles" class="space-y-3 mb-6"></div>
-
-                        <!-- FB preview -->
-                        <h3 class="font-serif text-lg font-bold mb-4">Facebook 廣告預覽</h3>
-                        <div class="fb-preview max-w-sm mx-auto mb-6">
-                            <div class="fb-preview-header">
-                                <div class="fb-avatar">E</div>
-                                <div>
-                                    <p class="text-sm font-semibold">ExoMuse 外泌體精華</p>
-                                    <p class="text-xs text-gray-500">贊助 · 剛剛</p>
-                                </div>
-                            </div>
-                            <div class="p-3">
-                                <p id="fbCaption" class="text-sm text-gray-800 mb-3 leading-relaxed">
-                                    你知道什麼是「外泌體」嗎？<br><br>
-                                    ExoMuse 採用臺灣唯一合法人類臍帶間質幹細胞外泌體，深入肌底修護，重啟年輕光采。<br><br>
-                                    🔥 限時 8 折，買3件再送好禮
-                                </p>
-                                <div class="aspect-square rounded-lg overflow-hidden bg-gray-100">
-                                    <img id="fbPreviewImg" src="images/brand.jpg" alt="" class="w-full h-full object-cover">
-                                </div>
-                            </div>
-                            <div class="px-4 py-3 border-t flex justify-between items-center">
-                                <button class="btn-gold text-white text-xs px-6 py-2 rounded-full">立即購買</button>
-                                <span id="fbReach" class="text-xs text-gray-400">預估觸及 5,000+</span>
-                            </div>
-                        </div>
-
-                        <!-- IG preview -->
-                        <h3 class="font-serif text-lg font-bold mb-4 mt-8">Instagram 廣告預覽</h3>
-                        <div class="max-w-sm mx-auto mb-6">
-                            <!-- IG Feed Post Preview -->
-                            <div class="bg-white rounded-xl border border-gray-200 overflow-hidden mb-4">
-                                <div class="flex items-center gap-3 px-4 py-3">
-                                    <div class="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 via-pink-500 to-orange-400 flex items-center justify-center">
-                                        <span class="text-white text-xs font-bold">E</span>
-                                    </div>
-                                    <div class="flex-1">
-                                        <p class="text-xs font-semibold">exomuse_official</p>
-                                        <p class="text-[10px] text-gray-400">贊助</p>
-                                    </div>
-                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="12" cy="19" r="1.5"/></svg>
-                                </div>
-                                <div class="aspect-square bg-gray-100">
-                                    <img id="igPreviewImg" src="images/brand.jpg" alt="" class="w-full h-full object-cover">
-                                </div>
-                                <div class="px-4 py-3">
-                                    <div class="flex items-center gap-4 mb-2">
-                                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
-                                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
-                                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/></svg>
-                                        <svg class="w-6 h-6 ml-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/></svg>
-                                    </div>
-                                    <p class="text-xs font-semibold mb-1"><span id="igLikes">1,284</span> 個讚</p>
-                                    <p id="igCaption" class="text-xs text-gray-800 leading-relaxed">
-                                        <span class="font-semibold">exomuse_official</span>
-                                        你知道什麼是「外泌體」嗎？🔬<br><br>
-                                        ExoMuse 採用臺灣唯一合法人類臍帶間質幹細胞外泌體，深入肌底修護，重啟年輕光采。<br><br>
-                                        🔥 限時 8 折，買3件再送好禮<br>
-                                        👉 點擊主頁連結了解更多
-                                    </p>
-                                    <p class="text-[10px] text-gray-400 mt-2">查看所有 56 則留言</p>
-                                    <p class="text-[10px] text-gray-400">2 小時前</p>
-                                </div>
-                            </div>
-
-                            <!-- IG Story Preview -->
-                            <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
-                                <div class="flex items-center gap-2 px-3 py-2 border-b border-gray-100">
-                                    <div class="w-6 h-6 rounded-full bg-gradient-to-br from-purple-500 via-pink-500 to-orange-400 flex items-center justify-center">
-                                        <span class="text-white text-[8px] font-bold">E</span>
-                                    </div>
-                                    <p class="text-[10px] font-semibold">exomuse_official</p>
-                                    <p class="text-[9px] text-gray-400">2小時前</p>
-                                </div>
-                                <div class="aspect-[9/16] bg-gradient-to-b from-charcoal to-black relative overflow-hidden">
-                                    <img id="igStoryPreviewImg" src="images/brand.jpg" alt="" class="w-full h-full object-cover opacity-60">
-                                    <div class="absolute inset-0 flex flex-col items-center justify-center p-6 text-center">
-                                        <p class="text-white font-serif text-lg font-bold mb-2">ExoMuse</p>
-                                        <p class="text-white/80 text-xs mb-4">第一也是唯一合法人類來源外泌體</p>
-                                        <div class="w-32 h-px bg-white/30 mb-4"></div>
-                                        <p class="text-gold text-sm font-bold">🔥 限時 8 折</p>
-                                        <p class="text-white/60 text-[10px] mt-1">買3件再送好禮</p>
-                                        <div class="mt-6 px-6 py-2 rounded-full bg-white/20 backdrop-blur-sm">
-                                            <p class="text-white text-[10px]">👆 向上滑動購買</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <button onclick="downloadKit()" class="w-full btn-outline py-3 rounded-full text-sm tracking-wider uppercase">
-                            📦 下載完整素材包
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Ad copy generator -->
-                <div class="fade-up" style="transition-delay:.2s;">
-                    <div class="bg-white rounded-3xl p-8 h-full">
-                        <h3 class="font-serif text-lg font-bold mb-6">廣告文案產生器</h3>
-
-                        <!-- Platform tabs -->
-                        <div class="flex gap-2 mb-6">
-                            <button onclick="setPlatform('fb')" class="platform-btn active flex-1 py-2.5 rounded-xl text-xs font-medium border border-gold/30 bg-gold/5 text-gold" data-platform="fb">
-                                📘 Facebook
-                            </button>
-                            <button onclick="setPlatform('ig')" class="platform-btn flex-1 py-2.5 rounded-xl text-xs font-medium border border-black/[.08] text-warm-gray" data-platform="ig">
-                                📷 Instagram
-                            </button>
-                        </div>
-
-                        <div class="space-y-4 mb-6">
-                            <div>
-                                <label class="text-xs text-warm-gray tracking-wide uppercase mb-2 block">選擇產品</label>
-                                <select id="adProduct" class="w-full px-4 py-3 rounded-xl border border-black/[.08] text-sm bg-white" onchange="generateAdCopy()">
-                                    <option value="mask">人類外泌體面膜</option>
-                                    <option value="essence">人類外泌體精華液</option>
-                                    <option value="ampoule">人類外泌體安瓶</option>
-                                    <option value="hair">人類外泌體養髮液</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="text-xs text-warm-gray tracking-wide uppercase mb-2 block">文案風格</label>
-                                <div class="grid grid-cols-3 gap-2">
-                                    <button onclick="setAdStyle('luxury')" class="ad-style-btn active px-3 py-2.5 rounded-xl text-xs border border-gold/30 bg-gold/5 text-gold" data-style="luxury">奢華</button>
-                                    <button onclick="setAdStyle('urgency')" class="ad-style-btn px-3 py-2.5 rounded-xl text-xs border border-black/[.08] text-warm-gray" data-style="urgency">限時</button>
-                                    <button onclick="setAdStyle('educate')" class="ad-style-btn px-3 py-2.5 rounded-xl text-xs border border-black/[.08] text-warm-gray" data-style="educate">知識</button>
-                                </div>
-                            </div>
-                            <div>
-                                <label class="text-xs text-warm-gray tracking-wide uppercase mb-2 block">目標受眾</label>
-                                <select id="adAudience" class="w-full px-4 py-3 rounded-xl border border-black/[.08] text-sm bg-white" onchange="generateAdCopy()">
-                                    <option value="25-45女性">25-45歲女性</option>
-                                    <option value="35-55女性">35-55歲女性</option>
-                                    <option value="医美族群">醫美保養族群</option>
-                                    <option value="新手媽媽">新手媽媽</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="space-y-4">
-                            <!-- Generated copy -->
-                            <div class="bg-ivory rounded-2xl p-5">
-                                <div class="flex items-center justify-between mb-2">
-                                    <span class="text-[.65rem] text-warm-gray uppercase tracking-widest">主文案</span>
-                                    <button onclick="copyText('adCopy')" class="text-xs text-gold hover:text-gold-dark">複製</button>
-                                </div>
-                                <p id="adCopy" class="text-sm leading-relaxed">[點擊選擇產品後自動生成]</p>
-                            </div>
-
-                            <div class="bg-ivory rounded-2xl p-5">
-                                <div class="flex items-center justify-between mb-2">
-                                    <span class="text-[.65rem] text-warm-gray uppercase tracking-widest">標題</span>
-                                    <button onclick="copyText('adTitle')" class="text-xs text-gold hover:text-gold-dark">複製</button>
-                                </div>
-                                <p id="adTitle" class="text-sm font-semibold"></p>
-                            </div>
-
-                            <div class="bg-ivory rounded-2xl p-5">
-                                <div class="flex items-center justify-between mb-2">
-                                    <span class="text-[.65rem] text-warm-gray uppercase tracking-widst">CTA 按鈕文字建議</span>
-                                </div>
-                                <p id="adCTA" class="text-sm text-gold font-medium"></p>
-                            </div>
-
-                            <div class="bg-ivory rounded-2xl p-5">
-                                <span class="text-[.65rem] text-warm-gray uppercase tracking-widest mb-2 block">建議 HASHTAG</span>
-                                <p id="adHashtags" class="text-sm text-warm-gray"></p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
     <!-- ============================================================
          FOOTER
     ============================================================ -->
