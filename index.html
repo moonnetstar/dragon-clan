@@ -1157,8 +1157,10 @@ window.LineNotifier = LineNotifier;
     }
 
     // ── Init ──
-    renderProducts();
-    generateAdCopy();
+    window.addEventListener('load', function() {
+        renderProducts();
+        generateAdCopy();
+    });
     </script>
 </body>
 </html>
