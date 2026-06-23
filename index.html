@@ -816,27 +816,58 @@
     </div>
 
     <!-- ============================================================
-         JAVASCRIPT
+         JAVASCRIPT — 本地測試版本
     ============================================================ -->
+    <script src="localdb.js"></script>
     <script>
-    // ── Products ──
-    const products = {
-        mask:     { name: '人類外泌體面膜',   price: 1580, img: 'images/mask.jpg' },
-        essence:  { name: '人類外泌體精華液', price: 3580, img: 'images/essence.jpg' },
-        ampoule:  { name: '人類外泌體安瓶',   price: 3980, img: 'images/ampoule.jpg' },
-        hair:     { name: '人類外泌體養髮液', price: 4580, img: 'images.hair.jpg' }
-    };
-
+    // ── 全域變數 ──
     let cart = [];
     let adStyle = 'luxury';
     let adPlatform = 'fb';
 
+    // 初始化
+    LocalDB.initDefaultData();
+
+    // ── 動態渲染商品 ──
+    function renderProducts() {
+        const products = LocalDB.products.getActive();
+        const container = document.getElementById('productList');
+        
+        if (!products.length) {
+            container.innerHTML = '<div class="text-center py-16 text-warm-gray col-span-full">尚無商品</div>';
+            return;
+        }
+        
+        container.innerHTML = products.map((p, i) => `
+            <div class="fade-up hover-lift bg-white rounded-2xl overflow-hidden border border-black/[.04]" style="transition-delay:${i * 0.1}s;">
+                <div class="product-img-wrap aspect-[3/4]">
+                    ${p.imageUrl ? `<img src="${p.imageUrl}" alt="${p.name}" loading="lazy">` : '<div class="w-full h-full flex items-center justify-center text-gray-300">無圖片</div>'}
+                    ${p.type === 'video' ? '<div class="absolute top-4 left-4 px-3 py-1 rounded-full bg-purple-600 text-white text-[.65rem]">影片</div>' : ''}
+                    ${p.type === 'promo' ? '<div class="absolute top-4 left-4 px-3 py-1 rounded-full bg-orange-500 text-white text-[.65rem]">促銷</div>' : ''}
+                </div>
+                <div class="p-6">
+                    <p class="text-[.65rem] text-gold tracking-[.2em] uppercase mb-1">${p.type === 'video' ? 'Video' : p.type === 'promo' ? 'Promo' : 'Product'}</p>
+                    <h3 class="font-serif text-lg font-bold mb-1">${p.name}</h3>
+                    <p class="text-xs text-warm-gray mb-4 leading-relaxed">${p.description || ''}</p>
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <span class="font-serif text-lg font-bold text-gold">NT$ ${p.price?.toLocaleString() || 0}</span>
+                            ${p.originalPrice ? `<span class="text-xs text-warm-gray line-through ml-2">NT$ ${p.originalPrice.toLocaleString()}</span>` : ''}
+                        </div>
+                        <button onclick="addToCart('${p.id}')" class="btn-gold text-white text-xs px-5 py-2.5 rounded-full tracking-wider uppercase">加入</button>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+    }
+
     // ── Cart ──
     function addToCart(id) {
-        const p = products[id];
+        const p = LocalDB.products.getById(id);
         if (!p) return;
-        cart.push({ id, ...p });
+        cart.push({ id: p.id, name: p.name, price: p.price, imageUrl: p.imageUrl, qty: 1 });
         updateCartUI();
+        showToast(`${p.name} 已加入購物車`);
     }
 
     function removeFromCart(idx) {
@@ -860,14 +891,14 @@
         }
 
         footer.classList.remove('hidden');
-        let subtotal = cart.reduce((s, i) => s + i.price, 0);
+        const subtotal = cart.reduce((s, i) => s + i.price * i.qty, 0);
         const discount = count >= 3 ? 0.8 : 1;
         const finalTotal = Math.round(subtotal * discount);
 
         container.innerHTML = cart.map((item, idx) => `
             <div class="flex items-center gap-4 p-3 rounded-xl bg-ivory">
-                <div class="w-14 h-14 rounded-lg overflow-hidden flex-shrink-0">
-                    <img src="${item.img}" alt="${item.name}" class="w-full h-full object-cover">
+                <div class="w-14 h-14 rounded-lg overflow-hidden flex-shrink-0 bg-gray-100">
+                    ${item.imageUrl ? `<img src="${item.imageUrl}" class="w-full h-full object-cover">` : '<div class="w-full h-full flex items-center justify-center text-gray-300 text-xs">無圖</div>'}
                 </div>
                 <div class="flex-1 min-w-0">
                     <p class="font-medium text-sm truncate">${item.name}</p>
@@ -892,20 +923,65 @@
         const drawer = document.getElementById('cartDrawer');
         const overlay = document.getElementById('cartOverlay');
         const isOpen = drawer.classList.contains('open');
-        if (isOpen) {
-            drawer.classList.remove('open');
-            overlay.classList.add('hidden');
-        } else {
-                    drawer.classList.add('open');
-            overlay.classList.remove('hidden');
-        }
+        if (isOpen) { drawer.classList.remove('open'); overlay.classList.add('hidden'); }
+        else { drawer.classList.add('open'); overlay.classList.remove('hidden'); }
     }
 
+    // ── 結帳 ──
     function checkout() {
         if (!cart.length) return;
-        let subtotal = cart.reduce((s, i) => s + i.price, 0);
-        if (cart.length >= 3) subtotal = Math.round(subtotal * 0.8);
-        alert(`準備結帳！\n共 ${cart.length} 件商品\n總金額: NT$ ${subtotal.toLocaleString()}\n\n此為展示頁面，實際金流將串接 LINE Pay / Stripe。`);
+        
+        // 顯示結帳表單
+        document.getElementById('checkoutModal').classList.remove('hidden');
+    }
+
+    function closeCheckout() {
+        document.getElementById('checkoutModal').classList.add('hidden');
+    }
+
+    async function submitOrder(e) {
+        e.preventDefault();
+        
+        const subtotal = cart.reduce((s, i) => s + i.price * i.qty, 0);
+        const discount = cart.length >= 3 ? Math.round(subtotal * 0.2) : 0;
+        const finalTotal = subtotal - discount;
+        
+        const order = {
+            items: cart.map(item => ({ id: item.id, name: item.name, price: item.price, qty: item.qty })),
+            customer: {
+                name: document.getElementById('custName').value,
+                phone: document.getElementById('custPhone').value,
+                address: document.getElementById('custAddress').value,
+                note: document.getElementById('custNote').value
+            },
+            subtotal,
+            discount,
+            finalTotal,
+            total: finalTotal
+        };
+        
+        // 儲存訂單
+        const orderId = LocalDB.orders.add(order);
+        
+        // 發送 LINE 通知
+        order.id = orderId;
+        await LineNotifier.newOrderNotify(order);
+        
+        // 清空購物車
+        cart = [];
+        updateCartUI();
+        closeCheckout();
+        
+        showToast(`訂單已成立！訂單編號：${orderId}`);
+    }
+
+    // ── Toast 通知 ──
+    function showToast(message, type = 'success') {
+        const toast = document.createElement('div');
+        toast.className = `toast toast-${type}`;
+        toast.textContent = message;
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 3000);
     }
 
     // ── Mobile menu ──
@@ -933,13 +1009,13 @@
 
     // ── Calculator ──
     function updateCalc() {
-        const price = +document.getElementById('calcProduct').value;
+        const price = +document.getElementById('calcProduct').value || 0;
         const qty = Math.max(1, +document.getElementById('calcQty').value || 1);
-        const split = +document.getElementById('calcSplit').value;
+        const split = +document.getElementById('calcSplit').value || 0.3;
         const total = price * qty;
+        let finalTotal = total;
         const discountRow = document.getElementById('calcDiscountRow');
         const discountEl = document.getElementById('calcDiscount');
-        let finalTotal = total;
         if (qty >= 3) {
             finalTotal = Math.round(total * 0.8);
             discountRow.style.display = 'flex';
@@ -958,67 +1034,51 @@
     function handleFileUpload(e) {
         const files = Array.from(e.target.files);
         files.forEach(f => {
-            uploadedFiles.push(f);
-            const url = URL.createObjectURL(f);
-            const isImg = f.type.startsWith('image/');
-            const div = document.createElement('div');
-            div.className = 'flex items-center gap-3 p-3 rounded-xl bg-ivory';
-            div.innerHTML = `
-                <div class="w-12 h-12 rounded-lg overflow-hidden flex-shrink-0 bg-gray-100">
-                    ${isImg ? `<img src="${url}" class="w-full h-full object-cover">` : '<div class="w-full h-full flex items-center justify-center text-lg">🎬</div>'}
-                </div>
-                <div class="flex-1 min-w-0">
-                    <p class="text-sm truncate">${f.name}</p>
-                    <p class="text-xs text-warm-gray">${(f.size/1024).toFixed(0)} KB</p>
-                </div>
-                <span class="text-xs text-gold">✓ 已上傳</span>
-            `;
-            document.getElementById('uploadedFiles').appendChild(div);
-
-            // Update FB/IG preview if image
-            if (isImg) {
-                document.getElementById('fbPreviewImg').src = url;
-                document.getElementById('igPreviewImg').src = url;
-                document.getElementById('igStoryPreviewImg').src = url;
-            }
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                const dataUrl = event.target.result;
+                LocalDB.media.add({ name: f.name, type: f.type, size: f.size, dataUrl });
+                uploadedFiles.push({ name: f.name, dataUrl });
+                const isImg = f.type.startsWith('image/');
+                const div = document.createElement('div');
+                div.className = 'flex items-center gap-3 p-3 rounded-xl bg-ivory';
+                div.innerHTML = `
+                    <div class="w-12 h-12 rounded-lg overflow-hidden flex-shrink-0 bg-gray-100">
+                        ${isImg ? `<img src="${dataUrl}" class="w-full h-full object-cover">` : '<div class="w-full h-full flex items-center justify-center text-lg">🎬</div>'}
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-sm truncate">${f.name}</p>
+                        <p class="text-xs text-warm-gray">${(f.size/1024).toFixed(0)} KB</p>
+                    </div>
+                    <span class="text-xs text-gold">✓ 已上傳</span>
+                `;
+                document.getElementById('uploadedFiles').appendChild(div);
+                if (isImg) {
+                    document.getElementById('fbPreviewImg').src = dataUrl;
+                    document.getElementById('igPreviewImg').src = dataUrl;
+                    document.getElementById('igStoryPreviewImg').src = dataUrl;
+                }
+                generateAdCopy();
+            };
+            reader.readAsDataURL(f);
         });
-        generateAdCopy();
     }
 
-    // Drag & drop
     const uploadZone = document.getElementById('uploadZone');
-    uploadZone.addEventListener('dragover', e => { e.preventDefault(); uploadZone.classList.add('drag-over'); });
-    uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('drag-over'));
-    uploadZone.addEventListener('drop', e => { e.preventDefault(); uploadZone.classList.remove('drag-over'); handleFileUpload({ target: { files: e.dataTransfer.files } }); });
+    if (uploadZone) {
+        uploadZone.addEventListener('dragover', e => { e.preventDefault(); uploadZone.classList.add('drag-over'); });
+        uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('drag-over'));
+        uploadZone.addEventListener('drop', e => { e.preventDefault(); uploadZone.classList.remove('drag-over'); handleFileUpload({ target: { files: e.dataTransfer.files } }); });
+    }
 
     // ── Ad copy generator ──
     const adTemplates = {
         fb: {
             luxury: {
-                mask: [
-                    '真正的奢華，來自肌底的自信。',
-                    'ExoMuse 人類外泌體面膜 — 15分鐘，讓肌膚綻放繆斯般光采。',
-                    '採用臺灣唯一合法人類臍帶間質幹細胞外泌體，深入肌底修護，重現水潤透亮。',
-                    '🔥 限時優惠：買3件享8折，再送好禮'
-                ],
-                essence: [
-                    '一瓶，重啟青春修復力。',
-                    'ExoMuse 人類外泌體精華液 — 多重玻尿酸層層補水，富勒烯強效抗氧化。',
-                    '不含酒精香精，敏弱肌也能安心享受頂級呵護。',
-                    '🔥 限時優惠：買3件享8折，再送好禮'
-                ],
-                ampoule: [
-                    '瞬效修護，重新定義年輕。',
-                    'ExoMuse 人類外泌體安瓶 — 多重胜肽煥活，撫平歲月紋理。',
-                    '海茴香、藍藻、紅藻精華，為肌膚注入海洋修護能量。',
-                    '🔥 限時優惠：買3件享8折，再送好禮'
-                ],
-                hair: [
-                    '美髮新境界，從髮根開始。',
-                    'ExoMuse 人類外泌體養髮液 — 臍帶間質幹細胞外泌體，深入滋養髮根。',
-                    '強化髮絲結構，從根源激活秀髮生命力。',
-                    '🔥 限時優惠：買3件享8折，再送好禮'
-                ]
+                mask: ['真正的奢華，來自肌底的自信。','ExoMuse 人類外泌體面膜 — 15分鐘，讓肌膚綻放繆斯般光采。','採用臺灣唯一合法人類臍帶間質幹細胞外泌體，深入肌底修護，重現水潤透亮。','🔥 限時優惠：買3件享8折，再送好禮'],
+                essence: ['一瓶，重啟青春修復力。','ExoMuse 人類外泌體精華液 — 多重玻尿酸層層補水，富勒烯強效抗氧化。','不含酒精香精，敏弱肌也能安心享受頂級呵護。','🔥 限時優惠：買3件享8折，再送好禮'],
+                ampoule: ['瞬效修護，重新定義年輕。','ExoMuse 人類外泌體安瓶 — 多重胜肽煥活，撫平歲月紋理。','海茴香、藍藻、紅藻精華，為肌膚注入海洋修護能量。','🔥 限時優惠：買3件享8折，再送好禮'],
+                hair: ['美髮新境界，從髮根開始。','ExoMuse 人類外泌體養髮液 — 臍帶間質幹細胞外泌體，深入滋養髮根。','強化髮絲結構，從根源激活秀髮生命力。','🔥 限時優惠：買3件享8折，再送好禮']
             },
             urgency: {
                 mask: ['⚡ 限時倒數！錯過不再！','ExoMuse 外泌體面膜 — 15分鐘縮時保養，立即感受水潤透亮！','買3件直接8折，再送隨機好禮！數量有限，先搶先贏！','👉 立即下單，開啟你的保養新紀元'],
@@ -1035,66 +1095,10 @@
         },
         ig: {
             luxury: {
-                mask: [
-                    '真正的奢華，來自肌底的自信。✨',
-                    '',
-                    'ExoMuse 人類外泌體面膜',
-                    '15分鐘，讓肌膚綻放繆斯般光采',
-                    '',
-                    '🔬 臺灣唯一合法人類臍帶間質幹細胞外泌體',
-                    '💧 四胜肽 + 富勒烯 + 水膜磁',
-                    '🌟 15分鐘縮時保養，打造無瑕水潤透亮肌',
-                    '',
-                    '🔥 限時優惠：買3件享8折，再送好禮',
-                    '👉 點擊主頁連結了解更多',
-                    '',
-                    '#ExoMuse #外泌體 #人類外泌體 #保養品 #醫美保養 #ISEV認證 #台灣製造 #艾萬霖 #奢華保養 #肌膚修復'
-                ],
-                essence: [
-                    '一瓶，重啟青春修復力。💫',
-                    '',
-                    'ExoMuse 人類外泌體精華液',
-                    '多重玻尿酸層層補水，富勒烯強效抗氧化',
-                    '',
-                    '🔬 臍帶間質幹細胞外泌體，直達肌底修護',
-                    '💧 水膜磁 + 海茴香 + 維他命B5',
-                    '🌸 不含酒精香精，敏弱肌也能安心使用',
-                    '',
-                    '🔥 限時優惠：買3件享8折，再送好禮',
-                    '👉 點擊主頁連結了解更多',
-                    '',
-                    '#ExoMuse #外泌體 #精華液 #青春修復 #醫美保養 #ISEV認證 #台灣製造 #艾萬霖 #敏感肌適用'
-                ],
-                ampoule: [
-                    '瞬效修護，重新定義年輕。⚡',
-                    '',
-                    'ExoMuse 人類外泌體安瓶',
-                    '多重胜肽煥活，撫平歲月紋理',
-                    '',
-                    '🔬 人類臍帶幹細胞外泌體',
-                    '🌊 海茴香 + 藍藻 + 紅藻精華',
-                    '✨ 為肌膚注入海洋修護能量',
-                    '',
-                    '🔥 限時優惠：買3件享8折，再送好禮',
-                    '👉 點擊主頁連結了解更多',
-                    '',
-                    '#ExoMuse #外泌體 #安瓶 #胜肽 #醫美保養 #ISEV認證 #台灣製造 #艾萬霖 #抗老 #修護'
-                ],
-                hair: [
-                    '美髮新境界，從髮根開始。🌿',
-                    '',
-                    'ExoMuse 人類外泌體養髮液',
-                    '重拾健康秀髮，散發自信光采',
-                    '',
-                    '🔬 臍帶間質幹細胞外泌體，深入滋養髮根',
-                    '💪 強化髮絲結構，從根源激活秀髮生命力',
-                    '✨ 每次使用，讓頭髮散發青春光澤',
-                    '',
-                    '🔥 限時優惠：買3件享8折，再送好禮',
-                    '👉 點擊主頁連結了解更多',
-                    '',
-                    '#ExoMuse #外泌體 #養髮液 #頭皮保養 #醫美保養 #ISEV認證 #台灣製造 #艾萬霖 #秀髮 #髮根滋養'
-                ]
+                mask: ['真正的奢華，來自肌底的自信。✨','','ExoMuse 人類外泌體面膜','15分鐘，讓肌膚綻放繆斯般光采','','🔬 臺灣唯一合法人類臍帶間質幹細胞外泌體','💧 四胜肽 + 富勒烯 + 水膜磁','🌟 15分鐘縮時保養，打造無瑕水潤透亮肌','','🔥 限時優惠：買3件享8折，再送好禮','👉 點擊主頁連結了解更多','','#ExoMuse #外泌體 #人類外泌體 #保養品 #醫美保養 #ISEV認證 #台灣製造 #艾萬霖 #奢華保養 #肌膚修復'],
+                essence: ['一瓶，重啟青春修復力。💫','','ExoMuse 人類外泌體精華液','多重玻尿酸層層補水，富勒烯強效抗氧化','','🔬 臍帶間質幹細胞外泌體，直達肌底修護','💧 水膜磁 + 海茴香 + 維他命B5','🌸 不含酒精香精，敏弱肌也能安心使用','','🔥 限時優惠：買3件享8折，再送好禮','👉 點擊主頁連結了解更多','','#ExoMuse #外泌體 #精華液 #青春修復 #醫美保養 #ISEV認證 #台灣製造 #艾萬霖 #敏感肌適用'],
+                ampoule: ['瞬效修護，重新定義年輕。⚡','','ExoMuse 人類外泌體安瓶','多重胜肽煥活，撫平歲月紋理','','🔬 人類臍帶幹細胞外泌體','🌊 海茴香 + 藍藻 + 紅藻精華','✨ 為肌膚注入海洋修護能量','','🔥 限時優惠：買3件享8折，再送好禮','👉 點擊主頁連結了解更多','','#ExoMuse #外泌體 #安瓶 #胜肽 #醫美保養 #ISEV認證 #台灣製造 #艾萬霖 #抗老 #修護'],
+                hair: ['美髮新境界，從髮根開始。🌿','','ExoMuse 人類外泌體養髮液','重拾健康秀髮，散發自信光采','','🔬 臍帶間質幹細胞外泌體，深入滋養髮根','💪 強化髮絲結構，從根源激活秀髮生命力','✨ 每次使用，讓頭髮散發青春光澤','','🔥 限時優惠：買3件享8折，再送好禮','👉 點擊主頁連結了解更多','','#ExoMuse #外泌體 #養髮液 #頭皮保養 #醫美保養 #ISEV認證 #台灣製造 #艾萬霖 #秀髮 #髮根滋養']
             },
             urgency: {
                 mask: ['⚡ 限時倒數！錯過不再！','','ExoMuse 外泌體面膜','15分鐘縮時保養，立即感受水潤透亮！','','買3件直接8折，再送隨機好禮！','數量有限，先搶先贏！','','👉 點擊主頁連結，立即下單','','#ExoMuse #外泌體 #限時優惠 #醫美保養 #台灣製造 #艾萬霖'],
@@ -1110,10 +1114,94 @@
             }
         }
     };
-            ampoule: [
-                '⚡ 限時倒數！錯過不再！',
-                'ExoMuse 外泌體安瓶 — 瞬效修護，重新定義年輕！',
-                '買3件直接8折，再送隨機好禮！數量有限，先搶先贏！',
+
+    const adTitles = {
+        mask: ['15分鐘打造水潤透亮肌', '外泌體面膜｜肌膚的奢華體驗'],
+        essence: ['一瓶重啟青春修復力', '外泌體精華｜層層補水直達肌底'],
+        ampoule: ['瞬效修護，重新定義年輕', '外泌體安瓶｜多重胜肽煥活'],
+        hair: ['美髮新境界，從髮根開始', '外泌體養髮液｜重拾健康秀髮']
+    };
+    const adCTAs = ['立即購買', '了解更多', '預約諮詢'];
+    const fbHashtags = '#ExoMuse #外泌體 #人類外泌體 #保養品 #醫美保養 #ISEV認證 #台灣製造 #艾萬霖';
+    const igHashtags = '#ExoMuse #外泌體 #人類外泌體 #保養品 #醫美保養 #ISEV認證 #台灣製造 #艾萬霖 #保養日常 #肌膚修復 #抗老 #美妝推薦 #保養分享 #質感生活';
+
+    function setAdStyle(style) {
+        adStyle = style;
+        document.querySelectorAll('.ad-style-btn').forEach(btn => {
+            if (btn.dataset.style === style) {
+                btn.classList.add('border-gold/30', 'bg-gold/5', 'text-gold');
+                btn.classList.remove('border-black/[.08]', 'text-warm-gray');
+            } else {
+                btn.classList.remove('border-gold/30', 'bg-gold/5', 'text-gold');
+                btn.classList.add('border-black/[.08]', 'text-warm-gray');
+            }
+        });
+        generateAdCopy();
+    }
+
+    function setPlatform(p) {
+        adPlatform = p;
+        document.querySelectorAll('.platform-btn').forEach(btn => {
+            if (btn.dataset.platform === p) {
+                btn.classList.add('border-gold/30', 'bg-gold/5', 'text-gold');
+                btn.classList.remove('border-black/[.08]', 'text-warm-gray');
+            } else {
+                btn.classList.remove('border-gold/30', 'bg-gold/5', 'text-gold');
+                btn.classList.add('border-black/[.08]', 'text-warm-gray');
+            }
+        });
+        generateAdCopy();
+    }
+
+    function generateAdCopy() {
+        const productId = document.getElementById('adProduct').value;
+        const product = LocalDB.products.getById(productId);
+        const productName = product ? product.name : 'mask';
+        const templates = adTemplates[adPlatform][adStyle][productName] || adTemplates[adPlatform][adStyle]['mask'];
+        if (!templates) return;
+
+        const copyText = templates.join('\n\n');
+        document.getElementById('adCopy').textContent = copyText;
+
+        if (adPlatform === 'fb') {
+            document.getElementById('fbCaption').innerHTML = templates.join('<br><br>');
+        } else {
+            document.getElementById('igCaption').innerHTML = '<span class="font-semibold">exomuse_official</span> ' + templates.join('<br>');
+        }
+
+        const titles = adTitles[productName] || adTitles['mask'];
+        document.getElementById('adTitle').textContent = titles[Math.floor(Math.random() * titles.length)];
+        document.getElementById('adCTA').textContent = adCTAs[Math.floor(Math.random() * adCTAs.length)];
+        document.getElementById('adHashtags').textContent = adPlatform === 'ig' ? igHashtags : fbHashtags;
+    }
+
+    function copyText(id) {
+        const el = document.getElementById(id);
+        navigator.clipboard.writeText(el.textContent).then(() => {
+            const orig = el.textContent;
+            el.textContent = '✓ 已複製！';
+            setTimeout(() => el.textContent = orig, 1500);
+        });
+    }
+
+    function downloadKit() {
+        const platform = adPlatform === 'ig' ? 'Instagram' : 'Facebook';
+        showToast(`${platform} 素材包下載功能（展示用）`);
+    }
+
+    // ── Init ──
+    renderProducts();
+    generateAdCopy();
+    </script>
+</body>
+</html>
+
+    // ── Init ──
+    renderProducts();
+    generateAdCopy();
+    </script>
+</body>
+</html>
                 '👉 立即下單，開啟你的保養新紀元'
             ],
             hair: [
