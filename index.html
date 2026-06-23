@@ -313,7 +313,60 @@
                 <h2 class="font-serif text-4xl lg:text-5xl font-bold mt-6">產品系列</h2>
                 <p class="text-warm-gray mt-4 max-w-md mx-auto text-sm">專為專業醫美機構打造，每一瓶都是科學與奢華的完美結合</p>
             </div>
-            <div id="productList" class="grid sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-6"></div>
+            <div id="productList" class="grid sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-6">
+                <!-- P1 -->
+                <div class="hover-lift bg-white rounded-2xl overflow-hidden border border-black/[.04]">
+                    <div class="product-img-wrap aspect-[3/4]"><img src="images/mask.jpg" alt="人類外泌體面膜" loading="lazy"></div>
+                    <div class="p-6">
+                        <p class="text-[.65rem] text-gold tracking-[.2em] uppercase mb-1">Exosome Mask</p>
+                        <h3 class="font-serif text-lg font-bold mb-1">人類外泌體面膜</h3>
+                        <p class="text-xs text-warm-gray mb-4">15分鐘縮時保養，打造無瑕水潤透亮肌</p>
+                        <div class="flex items-center justify-between">
+                            <span class="font-serif text-lg font-bold text-gold">NT$ 1,580</span>
+                            <button onclick="addToCart('mask')" class="btn-gold text-white text-xs px-5 py-2.5 rounded-full">加入</button>
+                        </div>
+                    </div>
+                </div>
+                <!-- P2 -->
+                <div class="hover-lift bg-white rounded-2xl overflow-hidden border border-black/[.04]">
+                    <div class="product-img-wrap aspect-[3/4]"><img src="images/essence.jpg" alt="人類外泌體精華液" loading="lazy"></div>
+                    <div class="p-6">
+                        <p class="text-[.65rem] text-gold tracking-[.2em] uppercase mb-1">Exosome Essence</p>
+                        <h3 class="font-serif text-lg font-bold mb-1">人類外泌體精華液</h3>
+                        <p class="text-xs text-warm-gray mb-4">一瓶重啟青春修復力，多重玻尿酸層層補水</p>
+                        <div class="flex items-center justify-between">
+                            <span class="font-serif text-lg font-bold text-gold">NT$ 3,580</span>
+                            <button onclick="addToCart('essence')" class="btn-gold text-white text-xs px-5 py-2.5 rounded-full">加入</button>
+                        </div>
+                    </div>
+                </div>
+                <!-- P3 -->
+                <div class="hover-lift bg-white rounded-2xl overflow-hidden border border-black/[.04]">
+                    <div class="product-img-wrap aspect-[3/4]"><img src="images/ampoule.jpg" alt="人類外泌體安瓶" loading="lazy"></div>
+                    <div class="p-6">
+                        <p class="text-[.65rem] text-gold tracking-[.2em] uppercase mb-1">Exosome Ampoule</p>
+                        <h3 class="font-serif text-lg font-bold mb-1">人類外泌體安瓶</h3>
+                        <p class="text-xs text-warm-gray mb-4">瞬效修護，多重胜肽煥活，撫平歲月紋理</p>
+                        <div class="flex items-center justify-between">
+                            <span class="font-serif text-lg font-bold text-gold">NT$ 3,980</span>
+                            <button onclick="addToCart('ampoule')" class="btn-gold text-white text-xs px-5 py-2.5 rounded-full">加入</button>
+                        </div>
+                    </div>
+                </div>
+                <!-- P4 -->
+                <div class="hover-lift bg-white rounded-2xl overflow-hidden border border-black/[.04]">
+                    <div class="product-img-wrap aspect-[3/4]"><img src="images/hair.jpg" alt="人類外泌體養髮液" loading="lazy"></div>
+                    <div class="p-6">
+                        <p class="text-[.65rem] text-gold tracking-[.2em] uppercase mb-1">Exosome Hair</p>
+                        <h3 class="font-serif text-lg font-bold mb-1">人類外泌體養髮液</h3>
+                        <p class="text-xs text-warm-gray mb-4">美髮新境界，重拾健康秀髮，散發自信光采</p>
+                        <div class="flex items-center justify-between">
+                            <span class="font-serif text-lg font-bold text-gold">NT$ 4,580</span>
+                            <button onclick="addToCart('hair')" class="btn-gold text-white text-xs px-5 py-2.5 rounded-full">加入</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
 
@@ -831,7 +884,19 @@ window.LineNotifier = LineNotifier;
     // ── Cart ──
     function addToCart(id) {
         const p = LocalDB.products.getById(id);
-        if (!p) return;
+        if (!p) {
+            // 嘗試用 key 查找
+            const allProducts = LocalDB.products.getActive();
+            const keyMap = { mask: 0, essence: 1, ampoule: 2, hair: 3 };
+            const idx = keyMap[id];
+            if (idx !== undefined && allProducts[idx]) {
+                const product = allProducts[idx];
+                cart.push({ id: product.id, name: product.name, price: product.price, imageUrl: product.imageUrl, qty: 1 });
+                updateCartUI();
+                showToast(`${product.name} 已加入購物車`);
+            }
+            return;
+        }
         cart.push({ id: p.id, name: p.name, price: p.price, imageUrl: p.imageUrl, qty: 1 });
         updateCartUI();
         showToast(`${p.name} 已加入購物車`);
