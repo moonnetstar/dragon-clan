@@ -517,6 +517,180 @@ async function deleteMedia(id) {
 }
 
 // ═══════════════════════════════════════
+// 帳號管理
+// ═══════════════════════════════════════
+
+let allAccounts = [];
+
+function loadAccounts() {
+    allAccounts = LocalDB.partners.getAll();
+    renderAccounts(allAccounts);
+}
+
+function renderAccounts(accounts) {
+    const container = document.getElementById('accountList');
+    if (!accounts.length) {
+        container.innerHTML = '<div class="text-center py-16 text-warm-gray">尚無帳號，點擊「新增帳號」開始</div>';
+        return;
+    }
+
+    container.innerHTML = accounts.map(a => `
+        <div class="bg-white rounded-xl p-5 fade-in">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-full bg-gold/10 flex items-center justify-center">
+                        <span class="text-gold text-lg font-bold">${a.name ? a.name.charAt(0) : '?'}</span>
+                    </div>
+                    <div>
+                        <h4 class="font-medium">${a.name || '未命名'}</h4>
+                        <p class="text-xs text-warm-gray">${a.email || '無電子郵件'}</p>
+                        <p class="text-xs text-warm-gray">${a.phone || '無電話'}</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-4">
+                    <div class="text-right">
+                        <p class="text-xs text-warm-gray">分潤比例</p>
+                        <p class="font-serif text-lg font-bold text-gold">${Math.round((a.split || 0) * 100)}%</p>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-xs text-warm-gray">建立時間</p>
+                        <p class="text-sm">${a.createdAt ? new Date(a.createdAt).toLocaleDateString('zh-TW') : '未知'}</p>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="editAccount('${a.id}')" class="btn-outline px-4 py-2 rounded-lg text-xs">編輯</button>
+                        <button onclick="resetPassword('${a.id}')" class="btn-outline px-4 py-2 rounded-lg text-xs text-orange-600 border-orange-200 hover:bg-orange-50">重設密碼</button>
+                        <button onclick="deleteAccount('${a.id}')" class="btn-danger px-4 py-2 rounded-lg text-xs">刪除</button>
+                    </div>
+                </div>
+            </div>
+            ${a.lineToken ? '<p class="text-xs text-green-600 mt-2 flex items-center gap-1"><svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg> LINE Notify 已設定</p>' : '<p class="text-xs text-warm-gray/50 mt-2">LINE Notify 未設定</p>'}
+        </div>
+    `).join('');
+}
+
+function filterAccounts() {
+    const query = document.getElementById('accountSearch').value.toLowerCase().trim();
+    if (!query) {
+        renderAccounts(allAccounts);
+        return;
+    }
+    const filtered = allAccounts.filter(a =>
+        (a.name && a.name.toLowerCase().includes(query)) ||
+        (a.email && a.email.toLowerCase().includes(query)) ||
+        (a.phone && a.phone.includes(query))
+    );
+    renderAccounts(filtered);
+}
+
+function openAccountModal(id = null) {
+    document.getElementById('accountModal').classList.remove('hidden');
+    document.getElementById('accountModalTitle').textContent = id ? '編輯帳號' : '新增帳號';
+    document.getElementById('accountForm').reset();
+    document.getElementById('editAccountId').value = id || '';
+
+    if (id) {
+        const a = allAccounts.find(x => x.id === id);
+        if (a) {
+            document.getElementById('accName').value = a.name || '';
+            document.getElementById('accEmail').value = a.email || '';
+            document.getElementById('accPhone').value = a.phone || '';
+            document.getElementById('accSplit').value = a.split || 0.3;
+            document.getElementById('accLineToken').value = a.lineToken || '';
+            document.getElementById('accActive').checked = a.active !== false;
+        }
+    }
+}
+
+function closeAccountModal() {
+    document.getElementById('accountModal').classList.add('hidden');
+}
+
+async function saveAccount(e) {
+    e.preventDefault();
+    const id = document.getElementById('editAccountId').value;
+    const email = document.getElementById('accEmail').value.trim();
+    const password = document.getElementById('accPassword').value;
+    const name = document.getElementById('accName').value.trim();
+    const phone = document.getElementById('accPhone').value.trim();
+    const split = parseFloat(document.getElementById('accSplit').value);
+    const lineToken = document.getElementById('accLineToken').value.trim();
+    const active = document.getElementById('accActive').checked;
+
+    // 檢查 email 是否重複
+    const existing = LocalDB.partners.getByEmail(email);
+    if (existing && existing.id !== id) {
+        showToast('此電子郵件已被使用', 'error');
+        return;
+    }
+
+    if (id) {
+        // 編輯
+        const data = { name, email, phone, split, lineToken, active };
+        if (password) data.password = password;
+        LocalDB.partners.update(id, data);
+        showToast('帳號已更新');
+    } else {
+        // 新增
+        if (!password) {
+            showToast('請設定密碼', 'error');
+            return;
+        }
+        LocalDB.partners.add({ name, email, phone, password, split, lineToken, active });
+        showToast('帳號已新增');
+    }
+
+    closeAccountModal();
+    loadAccounts();
+}
+
+function editAccount(id) {
+    openAccountModal(id);
+}
+
+function resetPassword(id) {
+    const a = allAccounts.find(x => x.id === id);
+    if (!a) return;
+
+    const newPassword = prompt(`為「${a.name}」設定新密碼：\n（至少 6 個字元）`);
+    if (!newPassword) return;
+    if (newPassword.length < 6) {
+        showToast('密碼至少需要 6 個字元', 'error');
+        return;
+    }
+
+    LocalDB.partners.update(id, { password: newPassword });
+    showToast('密碼已重設');
+    loadAccounts();
+}
+
+async function deleteAccount(id) {
+    const a = allAccounts.find(x => x.id === id);
+    if (!a) return;
+
+    if (!confirm(`確定要刪除帳號「${a.name}」嗎？\n\n此操作無法復原。`)) return;
+
+    // 不能刪除自己
+    if (currentUser && currentUser.uid === id) {
+        showToast('無法刪除目前登入的帳號', 'error');
+        return;
+    }
+
+    LocalDB.partners.delete(id);
+    showToast('帳號已刪除');
+    loadAccounts();
+}
+
+// ── 初始化 ──
+// 切換到帳號管理時自動載入
+const originalShowSection = showSection;
+showSection = function(name) {
+    originalShowSection(name);
+    if (name === 'accounts') {
+        loadAccounts();
+    }
+};
+
+// ═══════════════════════════════════════
 // 設定
 // ═══════════════════════════════════════
 
