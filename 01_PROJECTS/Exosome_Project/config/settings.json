@@ -8,7 +8,7 @@
     "appId": "YOUR_APP_ID"
   },
   "line": {
-    "notifyToken": "YOUR_LINE_NOTIFY_TOKEN",
+    "notifyToken": "e66f82f67e651339a25f7d07fe441a9e",
     "channelAccessToken": "YOUR_CHANNEL_ACCESS_TOKEN"
   },
   "db": {

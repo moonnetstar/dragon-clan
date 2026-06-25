@@ -258,7 +258,7 @@ class ExomeDB {
 // ── LINE Notify 通知 ──
 class LineNotifier {
     static async notify(message, token = null) {
-        const lineToken = token || 'YOUR_LINE_NOTIFY_TOKEN';
+        const lineToken = token || 'e66f82f67e651339a25f7d07fe441a9e';
         const formData = new FormData();
         formData.append('message', message);
         
