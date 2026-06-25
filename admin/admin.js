@@ -53,6 +53,12 @@ async function handleLogin(e) {
     document.getElementById('partnerName').textContent = partner.name;
     document.getElementById('partnerInitial').textContent = partner.name.charAt(0);
     document.getElementById('currentSplit').textContent = Math.round(partner.split * 100) + '%';
+    // 讀取已儲存的分潤比例
+    const savedSplit = LocalDB.settings.get('splitRatio');
+    if (savedSplit) {
+        partner.split = savedSplit;
+        document.getElementById('currentSplit').textContent = Math.round(savedSplit * 100) + '%';
+    }
     if (lineToken) document.getElementById('lineTokenInput').value = lineToken;
     
     loadProducts();
@@ -83,6 +89,12 @@ if (savedPartnerId) {
         document.getElementById('partnerName').textContent = partner.name;
         document.getElementById('partnerInitial').textContent = partner.name.charAt(0);
         document.getElementById('currentSplit').textContent = Math.round(partner.split * 100) + '%';
+    // 讀取已儲存的分潤比例
+    const savedSplit = LocalDB.settings.get('splitRatio');
+    if (savedSplit) {
+        partner.split = savedSplit;
+        document.getElementById('currentSplit').textContent = Math.round(savedSplit * 100) + '%';
+    }
         if (lineToken) document.getElementById('lineTokenInput').value = lineToken;
         
         loadProducts();
@@ -503,6 +515,19 @@ async function saveLineToken() {
     LocalDB.settings.update({ lineToken: token });
     lineToken = token;
     showToast('LINE Token 已儲存');
+}
+
+async function saveSplit() {
+    const input = document.getElementById('splitInput');
+    const value = parseFloat(input.value);
+    if (isNaN(value) || value < 0 || value > 100) {
+        showToast('請輸入 0~100 的數字', 'error');
+        return;
+    }
+    LocalDB.settings.update({ splitRatio: value / 100 });
+    document.getElementById('currentSplit').textContent = value + '%';
+    showToast('分潤比例已設定為 ' + value + '%');
+    input.value = '';
 }
 
 async function testLineNotify() {
