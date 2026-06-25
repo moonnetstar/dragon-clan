@@ -560,6 +560,64 @@ async function testLineNotify() {
     showToast(ok ? '測試通知已發送' : '發送失敗，請確認 Token 是否正確', ok ? 'success' : 'error');
 }
 
+// ═══════════════════════════════════════
+// 廣告文案產生器
+// ═══════════════════════════════════════
+
+const adProducts = {
+    mask:    { name: '人類外泌體面膜',   price: 1580, originalPrice: 1980 },
+    essence: { name: '人類外泌體精華液', price: 3580, originalPrice: 4280 },
+    ampoule: { name: '人類外泌體安瓶',   price: 3980, originalPrice: 4680 },
+    hair:    { name: '人類外泌體養髮液', price: 4580, originalPrice: 5280 },
+    promo:   { name: '節日促銷包',       price: 9980, originalPrice: 12800 }
+};
+
+let adStyle = 'luxury';
+
+function setAdStyle(style) {
+    adStyle = style;
+    document.querySelectorAll('.ad-style-btn').forEach(btn => {
+        if (btn.dataset.style === style) {
+            btn.classList.add('active', 'border-gold/30', 'bg-gold/5', 'text-gold');
+            btn.classList.remove('border-gray-200', 'text-warm-gray');
+        } else {
+            btn.classList.remove('active', 'border-gold/30', 'bg-gold/5', 'text-gold');
+            btn.classList.add('border-gray-200', 'text-warm-gray');
+        }
+    });
+    generateAdCopy();
+}
+
+function generateAdCopy() {
+    const productId = document.getElementById('adProduct').value;
+    const audience = document.getElementById('adAudience').value;
+    const p = adProducts[productId];
+    if (!p) return;
+
+    const styleMap = {
+        luxury: {
+            title: `✨ ${p.name} — 極致奢華肌膚體驗`,
+            body: `【${p.name}】${audience}的首選。\n\n採用人類來源外泌體，深層修護肌底。\n\n🌟 人類來源外泌體 × 富勒烯強效抗氧化\n🌟 臺灣唯一合法認證\n\n💝 限時優惠 NT$ ${p.price.toLocaleString()}（原价 NT$ ${p.originalPrice?.toLocaleString() || p.price.toLocaleString()}）\n\n立即體驗 →`,
+            hashtags: '#ExoMuse #外泌體 #人類來源 #奢華保養 #護膚新革命 #ISEV認證'
+        },
+        urgency: {
+            title: `🔥 最後機會！${p.name} 限時特惠`,
+            body: `⚡ ${audience} 注意！\n\n${p.name} 限時優惠中！\n\n💰 特惠價：NT$ ${p.price.toLocaleString()}（省 NT$ ${(p.originalPrice - p.price).toLocaleString()}！）\n📦 買3件再享8折\n\n數量有限，售完即止！`,
+            hashtags: '#ExoMuse #限時優惠 #外泌體保養 #最後機會 #買3件8折'
+        },
+        educate: {
+            title: `📚 為什麼${audience}都在討論${p.name}？`,
+            body: `【外泌體科學小教室】\n\n你知道什麼是「人類來源外泌體」嗎？\n\n${p.name}採用：\n✅ 人類臍帶間質幹細胞外泌體\n✅ 多重玻尿酸深層補水\n✅ 富勒烯強效抗氧化\n✅ 多重胜肽煥活\n\n符合 ISEV 國際標準，臺灣唯一合法。\n\n特惠價 NT$ ${p.price.toLocaleString()}`,
+            hashtags: '#外泌體知識 #ExoMuse #科學護膚 #人類來源 #ISEV #保養新知'
+        }
+    };
+
+    const copy = styleMap[adStyle];
+    document.getElementById('adCopy').textContent = copy.body;
+    document.getElementById('adTitle').textContent = copy.title;
+    document.getElementById('adHashtags').textContent = copy.hashtags;
+}
+
 // ── 側邊欄 ──
 function toggleSidebar() {
     document.getElementById('sidebar').classList.toggle('hidden');

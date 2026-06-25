@@ -419,71 +419,12 @@
                 </p>
             </div>
 
-            <div class="grid lg:grid-cols-2 gap-12">
-                <!-- 左側：素材庫預覽 -->
-                <div class="fade-up">
-                    <h3 class="font-serif text-xl font-bold mb-6">素材庫</h3>
-                    <div id="mediaGrid" class="grid grid-cols-3 gap-3">
-                        <!-- Media rendered by JS -->
-                    </div>
+            <div class="fade-up">
+                <h3 class="font-serif text-xl font-bold mb-6">素材庫</h3>
+                <div id="mediaGrid" class="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 gap-3">
+                    <!-- Media rendered by JS -->
                 </div>
-
-                <!-- 右側：文案產生器 -->
-                <div class="fade-up" style="transition-delay:.15s;">
-                    <h3 class="font-serif text-xl font-bold mb-6">廣告文案產生器</h3>
-                    <div class="bg-white rounded-2xl p-6 border border-black/[.06]">
-                        <div class="space-y-5">
-                            <div>
-                                <label class="text-xs text-warm-gray tracking-wide uppercase mb-2 block">選擇產品</label>
-                                <select id="adProduct" class="w-full px-4 py-3 rounded-xl border border-black/[.08] text-sm bg-white" onchange="generateAdCopy()">
-                                    <option value="mask">人類外泌體面膜</option>
-                                    <option value="essence">人類外泌體精華液</option>
-                                    <option value="ampoule">人類外泌體安瓶</option>
-                                    <option value="hair">人類外泌體養髮液</option>
-                                    <option value="promo">節日促銷包</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="text-xs text-warm-gray tracking-wide uppercase mb-2 block">文案風格</label>
-                                <div class="grid grid-cols-3 gap-2">
-                                    <button onclick="setAdStyle('luxury')" class="ad-style-btn active px-3 py-2.5 rounded-xl text-xs border border-gold/30 bg-gold/5 text-gold" data-style="luxury">奢華</button>
-                                    <button onclick="setAdStyle('urgency')" class="ad-style-btn px-3 py-2.5 rounded-xl text-xs border border-black/[.08] text-warm-gray" data-style="urgency">限時</button>
-                                    <button onclick="setAdStyle('educate')" class="ad-style-btn px-3 py-2.5 rounded-xl text-xs border border-black/[.08] text-warm-gray" data-style="educate">知識</button>
-                                </div>
-                            </div>
-                            <div>
-                                <label class="text-xs text-warm-gray tracking-wide uppercase mb-2 block">目標受眾</label>
-                                <select id="adAudience" class="w-full px-4 py-3 rounded-xl border border-black/[.08] text-sm bg-white" onchange="generateAdCopy()">
-                                    <option value="25-45女性">25-45歲女性</option>
-                                    <option value="35-55女性">35-55歲女性</option>
-                                    <option value="醫美族群">醫美保養族群</option>
-                                    <option value="新手媽媽">新手媽媽</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="space-y-4 mt-6">
-                            <div class="bg-ivory rounded-2xl p-5">
-                                <div class="flex items-center justify-between mb-2">
-                                    <span class="text-[.65rem] text-warm-gray uppercase tracking-widest">主文案</span>
-                                    <button onclick="copyText('adCopy')" class="text-xs text-gold hover:text-gold-dark">複製</button>
-                                </div>
-                                <p id="adCopy" class="text-sm leading-relaxed">[點擊選擇產品後自動生成]</p>
-                            </div>
-                            <div class="bg-ivory rounded-2xl p-5">
-                                <div class="flex items-center justify-between mb-2">
-                                    <span class="text-[.65rem] text-warm-gray uppercase tracking-widest">標題</span>
-                                    <button onclick="copyText('adTitle')" class="text-xs text-gold hover:text-gold-dark">複製</button>
-                                </div>
-                                <p id="adTitle" class="text-sm font-semibold"></p>
-                            </div>
-                            <div class="bg-ivory rounded-2xl p-5">
-                                <span class="text-[.65rem] text-warm-gray uppercase tracking-widest mb-2 block">建議 HASHTAG</span>
-                                <p id="adHashtags" class="text-sm text-warm-gray"></p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <p class="text-xs text-warm-gray mt-4 text-center">廣告文案產生器請至後台「數位資產管理」使用</p>
             </div>
         </div>
     </section>
@@ -586,7 +527,6 @@
     ];
 
     let cart = [];
-    let adStyle = 'luxury';
 
     // ── Render Products ──
     function renderProducts() {
@@ -708,55 +648,11 @@
         document.getElementById('mobileMenu').classList.toggle('hidden');
     }
 
-    // ── Ad Copy Generator ──
-    function setAdStyle(style) {
-        adStyle = style;
-        document.querySelectorAll('.ad-style-btn').forEach(btn => {
-            if (btn.dataset.style === style) {
-                btn.classList.add('active', 'border-gold/30', 'bg-gold/5', 'text-gold');
-                btn.classList.remove('border-black/[.08]', 'text-warm-gray');
-            } else {
-                btn.classList.remove('active', 'border-gold/30', 'bg-gold/5', 'text-gold');
-                btn.classList.add('border-black/[.08]', 'text-warm-gray');
-            }
-        });
-        generateAdCopy();
-    }
-
-    function generateAdCopy() {
-        const productId = document.getElementById('adProduct').value;
-        const audience = document.getElementById('adAudience').value;
-        const p = products.find(x => x.id === productId);
-        if (!p) return;
-
-        const styleMap = {
-            luxury: {
-                title: `✨ ${p.name} — 極致奢華肌膚體驗`,
-                body: `【${p.name}】${audience}的首選。\n\n${p.description}\n\n🌟 人類來源外泌體 × 富勒ène 強效抗氧化\n🌟 臺灣唯一合法認證\n\n💝 限時優惠 NT$ ${p.price.toLocaleString()}（原价 NT$ ${p.originalPrice?.toLocaleString() || p.price.toLocaleString()}）\n\n立即體驗 →`,
-                cta: '立即購買',
-                hashtags: '#ExoMuse #外泌體 #人類來源 #奢華保養 #護膚新革命 #ISEV認證'
-            },
-            urgency: {
-                title: `🔥 最後機會！${p.name} 限時特惠`,
-                body: `⚡ ${audience} 注意！\n\n${p.name} 限時優惠中！\n${p.description}\n\n💰 特惠價：NT$ ${p.price.toLocaleString()}（省 NT$ ${(p.originalPrice - p.price).toLocaleString()}！）\n📦 買3件再享8折\n\n數量有限，售完即止！`,
-                cta: '立即搶購',
-                hashtags: '#ExoMuse #限時優惠 #外泌體保養 #最後機會 #買3件8折'
-            },
-            educate: {
-                title: `📚 為什麼${audience}都在討論${p.name}？`,
-                body: `【外泌體科學小教室】\n\n你知道什麼是「人類來源外泌體」嗎？\n\n${p.description}\n\n✅ 符合 ISEV 國際標準\n✅ 臺灣唯一合法人類來源\n✅ 多重玻尿酸 + 富勒烯 + 胜肽\n\n${p.name} — 讓肌膚重新啟動修復力。\n特惠價 NT$ ${p.price.toLocaleString()}`,
-                cta: '了解更多',
-                hashtags: '#外泌體知識 #ExoMuse #科學護膚 #人類來源 #ISEV #保養新知'
-            }
-        };
-
-        const copy = styleMap[adStyle];
-        document.getElementById('adCopy').textContent = copy.body;
-        document.getElementById('adTitle').textContent = copy.title;
-        document.getElementById('adHashtags').textContent = copy.hashtags;
-    }
-
-    // ── Utilities ──
+    // ── Init ──
+    document.addEventListener('DOMContentLoaded', () => {
+        renderMedia();
+        initScrollAnimation();
+    });
     function copyText(id) {
         const el = document.getElementById(id);
         if (el && el.textContent) {

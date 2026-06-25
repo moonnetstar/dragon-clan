@@ -271,23 +271,84 @@
                     <div class="flex items-center justify-between mb-8">
                         <div>
                             <h2 class="font-serif text-2xl font-bold">數位資產管理</h2>
-                            <p class="text-sm text-warm-gray mt-1">上傳與管理圖片、影片</p>
+                            <p class="text-sm text-warm-gray mt-1">上傳素材、廣告文案產生器</p>
                         </div>
                     </div>
 
-                    <!-- Upload zone -->
-                    <div id="mediaUploadZone" class="upload-zone rounded-2xl p-12 text-center mb-8 cursor-pointer" onclick="document.getElementById('mediaFileInput').click()">
-                        <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-gold/5 flex items-center justify-center">
-                            <svg class="w-7 h-7 text-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
+                    <div class="grid lg:grid-cols-2 gap-8">
+                        <!-- 左：素材上傳 + 素材庫 -->
+                        <div>
+                            <h3 class="font-medium mb-4">素材庫</h3>
+                            <!-- Upload zone -->
+                            <div id="mediaUploadZone" class="upload-zone rounded-2xl p-8 text-center mb-6 cursor-pointer" onclick="document.getElementById('mediaFileInput').click()">
+                                <div class="w-12 h-12 mx-auto mb-3 rounded-full bg-gold/5 flex items-center justify-center">
+                                    <svg class="w-6 h-6 text-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
+                                </div>
+                                <p class="text-sm text-warm-gray mb-1">點擊或拖曳上傳圖片 / 影片</p>
+                                <p class="text-xs text-warm-gray/50">支援 JPG、PNG、MP4、MOV，最大 100MB</p>
+                                <input type="file" id="mediaFileInput" class="hidden" accept="image/*,video/*" multiple onchange="handleMediaUpload(event)">
+                            </div>
+                            <!-- Media grid -->
+                            <div id="mediaGrid" class="grid grid-cols-3 gap-3">
+                                <div class="text-center py-10 text-warm-gray col-span-3 text-sm">尚無素材</div>
+                            </div>
                         </div>
-                        <p class="text-sm text-warm-gray mb-1">點擊或拖曳上傳圖片 / 影片</p>
-                        <p class="text-xs text-warm-gray/50">支援 JPG、PNG、MP4、MOV，最大 100MB</p>
-                        <input type="file" id="mediaFileInput" class="hidden" accept="image/*,video/*" multiple onchange="handleMediaUpload(event)">
-                    </div>
 
-                    <!-- Media grid -->
-                    <div id="mediaGrid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-                        <div class="text-center py-16 text-warm-gray col-span-full">尚無素材</div>
+                        <!-- 右：廣告文案產生器 -->
+                        <div>
+                            <h3 class="font-medium mb-4">廣告文案產生器</h3>
+                            <div class="bg-white rounded-2xl p-5 border border-gray-100">
+                                <div class="space-y-4">
+                                    <div>
+                                        <label class="text-xs text-warm-gray tracking-wide uppercase mb-2 block">選擇產品</label>
+                                        <select id="adProduct" class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm" onchange="generateAdCopy()">
+                                            <option value="mask">人類外泌體面膜</option>
+                                            <option value="essence">人類外泌體精華液</option>
+                                            <option value="ampoule">人類外泌體安瓶</option>
+                                            <option value="hair">人類外泌體養髮液</option>
+                                            <option value="promo">節日促銷包</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="text-xs text-warm-gray tracking-wide uppercase mb-2 block">文案風格</label>
+                                        <div class="grid grid-cols-3 gap-2">
+                                            <button onclick="setAdStyle('luxury')" class="ad-style-btn active px-3 py-2.5 rounded-xl text-xs border border-gold/30 bg-gold/5 text-gold" data-style="luxury">奢華</button>
+                                            <button onclick="setAdStyle('urgency')" class="ad-style-btn px-3 py-2.5 rounded-xl text-xs border border-gray-200 text-warm-gray" data-style="urgency">限時</button>
+                                            <button onclick="setAdStyle('educate')" class="ad-style-btn px-3 py-2.5 rounded-xl text-xs border border-gray-200 text-warm-gray" data-style="educate">知識</button>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="text-xs text-warm-gray tracking-wide uppercase mb-2 block">目標受眾</label>
+                                        <select id="adAudience" class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm" onchange="generateAdCopy()">
+                                            <option value="25-45女性">25-45歲女性</option>
+                                            <option value="35-55女性">35-55歲女性</option>
+                                            <option value="醫美族群">醫美保養族群</option>
+                                            <option value="新手媽媽">新手媽媽</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="space-y-3 mt-5">
+                                    <div class="bg-ivory rounded-xl p-4">
+                                        <div class="flex items-center justify-between mb-1">
+                                            <span class="text-[.65rem] text-warm-gray uppercase tracking-widest">主文案</span>
+                                            <button onclick="copyText('adCopy')" class="text-xs text-gold">複製</button>
+                                        </div>
+                                        <p id="adCopy" class="text-sm leading-relaxed">[選擇產品後自動生成]</p>
+                                    </div>
+                                    <div class="bg-ivory rounded-xl p-4">
+                                        <div class="flex items-center justify-between mb-1">
+                                            <span class="text-[.65rem] text-warm-gray uppercase tracking-widest">標題</span>
+                                            <button onclick="copyText('adTitle')" class="text-xs text-gold">複製</button>
+                                        </div>
+                                        <p id="adTitle" class="text-sm font-semibold"></p>
+                                    </div>
+                                    <div class="bg-ivory rounded-xl p-4">
+                                        <span class="text-[.65rem] text-warm-gray uppercase tracking-widest mb-1 block">建議 HASHTAG</span>
+                                        <p id="adHashtags" class="text-sm text-warm-gray"></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </section>
 
