@@ -3,1160 +3,529 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ExoMuse 外泌體精華｜人類來源外泌體保養品領導品牌</title>
+    <title>ExoMuse 外泌體精華</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;700&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        gold: { DEFAULT: '#C9A96E', light: '#E8D5A8', dark: '#A68B4B', muted: '#D4C4A0' },
-                        ivory: '#FDFBF7',
-                        charcoal: '#1C1C1C',
-                        'warm-gray': '#6B6560',
-                        'pale-gold': '#F5EDE0',
-                    },
-                    fontFamily: { serif: ['Noto Serif TC','serif'], sans: ['Noto Sans TC','sans-serif'] },
-                    spacing: { '18': '4.5rem', '100': '26rem', '120': '30rem' }
-                }
-            }
-        }
-    </script>
     <style>
-        html, body { font-family: 'Noto Sans TC', sans-serif; }
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Noto Sans TC', sans-serif; }
         .font-serif { font-family: 'Noto Serif TC', serif; }
-
-        /* Minimal luxury aesthetic */
         .text-gold-gradient {
-            background: linear-gradient(135deg, #A68B4B 0%, #E8D5A8 40%, #C9A96E 60%, #A68B4B 100%);
+            background: linear-gradient(135deg, #A68B4B, #E8D5A8, #C9A96E);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            background-clip: text;
         }
-        .bg-gold-gradient {
-            background: linear-gradient(135deg, #C9A96E 0%, #E8D5A8 50%, #C9A96E 100%);
-        }
-        .bg-luxury-dark {
-            background: linear-gradient(180deg, #0F0F0F 0%, #1C1C1C 50%, #0F0F0F 100%);
-        }
-        .divider-elegant {
-            width: 60px; height: 1px;
-            background: linear-gradient(90deg, transparent, #C9A96E, transparent);
-            margin: 0 auto;
-        }
-
-        /* Transitions */
-        .fade-up {
-            opacity: 0; transform: translateY(40px);
-            transition: opacity 0.8s cubic-bezier(.4,0,.2,1), transform 0.8s cubic-bezier(.4,0,.2,1);
-        }
-        .fade-up.visible { opacity: 1; transform: translateY(0); }
-        .hover-lift { transition: transform 0.4s cubic-bezier(.4,0,.2,1), box-shadow 0.4s; }
-        .hover-lift:hover { transform: translateY(-6px); box-shadow: 0 24px 64px rgba(0,0,0,.12); }
-
-        /* Product image container */
-        .product-img-wrap {
-            position: relative; overflow: hidden;
-            background: linear-gradient(145deg, #F5F0E8, #EDE8DF);
-        }
-        .product-img-wrap img {
-            width: 100%; height: 100%; object-fit: cover;
-            transition: transform 0.6s cubic-bezier(.4,0,.2,1);
-        }
+        .bg-gold-gradient { background: linear-gradient(135deg, #C9A96E, #E8D5A8, #C9A96E); }
+        .bg-luxury-dark { background: linear-gradient(180deg, #0F0F0F, #1C1C1C, #0F0F0F); }
+        .divider-elegant { width: 60px; height: 1px; background: linear-gradient(90deg, transparent, #C9A96E, transparent); margin: 0 auto; }
+        .card-hover { transition: transform 0.4s, box-shadow 0.4s; }
+        .card-hover:hover { transform: translateY(-6px); box-shadow: 0 24px 64px rgba(0,0,0,.12); }
+        .product-img-wrap { background: linear-gradient(145deg, #F5F0E8, #EDE8DF); overflow: hidden; }
+        .product-img-wrap img { transition: transform 0.6s; }
         .product-img-wrap:hover img { transform: scale(1.04); }
-
-        /* Floating bubble */
-        .bubble {
-            position: absolute; border-radius: 50%;
-            background: radial-gradient(circle at 30% 30%, rgba(201,169,110,.12), rgba(201,169,110,.04));
-            border: 1px solid rgba(201,169,110,.08);
-            animation: bubbleFloat 8s ease-in-out infinite;
-        }
-        @keyframes bubbleFloat {
-            0%, 100% { transform: translateY(0) rotate(0deg); }
-            33% { transform: translateY(-20px) rotate(2deg); }
-            66% { transform: translateY(10px) rotate(-1deg); }
-        }
-
-        /* Scrol indicator */
-        .scroll-line {
-            width: 1px; height: 60px;
-            background: linear-gradient(to bottom, rgba(201,169,110,.6), transparent);
-            animation: scrollPulse 2s ease-in-out infinite;
-        }
-        @keyframes scrollPulse {
-            0%, 100% { opacity: 1; transform: scaleY(1); }
-            50% { opacity: .4; transform: scaleY(.6); }
-        }
-
-        /* Upload zone */
-        .upload-zone {
-            border: 2px dashed rgba(201,169,110,.3);
-            transition: all .3s;
-        }
-        .upload-zone:hover, .upload-zone.drag-over {
-            border-color: #C9A96E;
-            background: rgba(201,169,110,.04);
-        }
-
-        /* Tag */
-        .tag {
-            display: inline-block; padding: 4px 14px;
-            border-radius: 100px; font-size: .75rem; letter-spacing: .05em;
-            background: rgba(201,169,110,.07); border: 1px solid rgba(201,169,110,.15);
-            color: #A68B4B;
-        }
-
-        /* Minimal button */
-        .btn-gold {
-            background: linear-gradient(135deg, #C9A96E, #A68B4B);
-            color: #fff; transition: all .3s;
-        }
-        .btn-gold:hover {
-            box-shadow: 0 8px 32px rgba(201,169,110,.35);
-            transform: translateY(-1px);
-        }
-        .btn-outline {
-            border: 1px solid rgba(201,169,110,.4); color: #A68B4B;
-            transition: all .3s;
-        }
+        .btn-gold { background: linear-gradient(135deg, #C9A96E, #A68B4B); color: #fff; transition: all .3s; }
+        .btn-gold:hover { box-shadow: 0 8px 32px rgba(201,169,110,.3); transform: translateY(-1px); }
+        .btn-outline { border: 1px solid rgba(201,169,110,.4); color: #A68B4B; transition: all .3s; }
         .btn-outline:hover { background: rgba(201,169,110,.06); }
-
-        /* Nav glass */
-        .nav-glass {
-            backdrop-filter: blur(24px) saturate(180%);
-            -webkit-backdrop-filter: blur(24px) saturate(180%);
-        }
-
-        /* Smooth underline nav link */
+        .tag { display: inline-block; padding: 4px 14px; border-radius: 100px; font-size: .75rem; background: rgba(201,169,110,.07); border: 1px solid rgba(201,169,110,.15); color: #A68B4B; }
+        .nav-glass { backdrop-filter: blur(24px) saturate(180%); -webkit-backdrop-filter: blur(24px) saturate(180%); }
         .nav-link { position: relative; }
-        .nav-link::after {
-            content: ''; position: absolute; bottom: -2px; left: 0;
-            width: 0; height: 1px; background: #C9A96E;
-            transition: width .3s;
-        }
+        .nav-link::after { content: ''; position: absolute; bottom: -2px; left: 0; width: 0; height: 1px; background: #C9A96E; transition: width .3s; }
         .nav-link:hover::after { width: 100%; }
-
-        /* Ingredient icon circle */
-        .ing-circle {
-            width: 56px; height: 56px;
-            background: linear-gradient(135deg, rgba(201,169,110,.12), rgba(201,169,110,.04));
-            border: 1px solid rgba(201,169,110,.15);
-            border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            font-weight: 700; color: #A68B4B; font-size: .85rem;
-        }
-
-        /* Cart drawer */
-        .cart-drawer {
-            position: fixed; top: 0; right: 0; bottom: 0; width: 420px; max-width: 100vw;
-            background: #fff; z-index: 60;
-            transform: translateX(100%);
-            transition: transform .4s cubic-bezier(.4,0,.2,1);
-            overflow-y: auto;
-        }
+        .bubble { position: absolute; border-radius: 50%; background: radial-gradient(circle at 30% 30%, rgba(201,169,110,.12), rgba(201,169,110,.04)); border: 1px solid rgba(201,169,110,.08); animation: bubbleFloat 8s ease-in-out infinite; }
+        @keyframes bubbleFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+        .scroll-line { width: 1px; height: 60px; background: linear-gradient(to bottom, rgba(201,169,110,.6), transparent); animation: scrollPulse 2s ease-in-out infinite; }
+        @keyframes scrollPulse { 0%, 100% { opacity: 1; } 50% { opacity: .4; } }
+        .upload-zone { border: 2px dashed rgba(201,169,110,.3); transition: all .3s; }
+        .upload-zone:hover { border-color: #C9A96E; background: rgba(201,169,110,.04); }
+        .cart-drawer { position: fixed; top: 0; right: 0; bottom: 0; width: 420px; max-width: 100vw; background: #fff; z-index: 60; transform: translateX(100%); transition: transform .4s; overflow-y: auto; }
         .cart-drawer.open { transform: translateX(0); }
-
-        /* FB preview */
-        .fb-preview {
-            background: #fff; border-radius: 12px;
-            box-shadow: 0 1px 3px rgba(0,0,0,.12), 0 1px 2px rgba(0,0,0,.08);
-            overflow: hidden;
-        }
-        .fb-preview-header {
-            padding: 12px 16px; display: flex; align-items: center; gap: 10px;
-            border-bottom: 1px solid #E4E6EB;
-        }
-        .fb-avatar {
-            width: 40px; height: 40px; border-radius: 50%;
-            background: linear-gradient(135deg, #C9A96E, #A68B4B);
-            display: flex; align-items: center; justify-content: center;
-            color: #fff; font-weight: 700; font-size: 1.1rem;
-        }
+        .toast { position: fixed; top: 20px; right: 20px; z-index: 9999; padding: 16px 24px; border-radius: 12px; color: #fff; font-size: .9rem; box-shadow: 0 8px 32px rgba(0,0,0,.15); animation: slideIn .3s; }
+        .toast-success { background: #059669; }
+        .toast-error { background: #DC2626; }
+        @keyframes slideIn { from { opacity:0; transform:translateX(100px); } to { opacity:1; transform:translateX(0); } }
+        .status-pending { background: #FEF3C7; color: #92400E; }
+        .status-confirmed { background: #D1FAE5; color: #065F46; }
+        .status-shipped { background: #DBEAFE; color: #1E40AF; }
+        .status-completed { background: #E5E7EB; color: #374151; }
+        .status-cancelled { background: #FEE2E2; color: #991B1B; }
+        .fb-preview { background: #fff; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,.12); overflow: hidden; }
+        .fb-preview-header { padding: 12px 16px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid #E4E6EB; }
+        .fb-avatar { width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #C9A96E, #A68B4B); display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700; }
+        .sidebar-link { transition: all .2s; border-left: 3px solid transparent; }
+        .sidebar-link:hover, .sidebar-link.active { background: rgba(201,169,110,.06); border-left-color: #C9A96E; }
+        .ing-circle { width: 56px; height: 56px; background: linear-gradient(135deg, rgba(201,169,110,.12), rgba(201,169,110,.04)); border: 1px solid rgba(201,169,110,.15); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; color: #A68B4B; font-size: .85rem; }
     </style>
 </head>
 <body class="bg-ivory text-charcoal">
 
-    <!-- ============================================================
-         NAVIGATION
-    ============================================================ -->
-    <nav id="mainNav" class="fixed top-0 left-0 right-0 z-50 transition-all duration-500">
-        <div class="max-w-7xl mx-auto px-6 lg:px-10 py-5 flex items-center justify-between">
-            <a href="#hero" class="font-serif text-2xl font-bold tracking-widest text-gold-gradient">ExoMuse</a>
-            <div class="hidden md:flex items-center gap-10 text-[.8rem] tracking-[.15em] uppercase text-warm-gray">
-                <a href="#about" class="nav-link hover:text-charcoal transition-colors">品牌故事</a>
-                <a href="#products" class="nav-link hover:text-charcoal transition-colors">產品系列</a>
-                <a href="#ingredients" class="nav-link hover:text-charcoal transition-colors">核心成分</a>
-                <a href="#partner" class="nav-link hover:text-charcoal transition-colors">合作夥伴</a>
-                <a href="#creator" class="nav-link hover:text-charcoal transition-colors">數位資產管理</a>
-            </div>
-            <div class="flex items-center gap-4">
-                <button onclick="toggleCart()" class="relative w-10 h-10 flex items-center justify-center">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
-                    </svg>
-                    <span id="navCartCount" class="absolute -top-0.5 -right-0.5 w-4 h-4 rounded-full bg-gold text-white text-[10px] flex items-center justify-center hidden">0</span>
-                </button>
-                <!-- Mobile menu button -->
-                <button onclick="toggleMobileMenu()" class="md:hidden w-10 h-10 flex items-center justify-center">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 6h16M4 12h16M4 18h16"/>
-                    </svg>
-                </button>
-            </div>
+<!-- ============================================================
+     NAVIGATION
+============================================================ -->
+<nav id="mainNav" class="fixed top-0 left-0 right-0 z-50 transition-all duration-500">
+    <div class="max-w-7xl mx-auto px-6 lg:px-10 py-5 flex items-center justify-between">
+        <a href="#hero" class="font-serif text-2xl font-bold tracking-widest text-gold-gradient">ExoMuse</a>
+        <div class="hidden md:flex items-center gap-10 text-[.8rem] tracking-[.15em] uppercase text-warm-gray">
+            <a href="#about" class="nav-link hover:text-charcoal transition-colors">品牌故事</a>
+            <a href="#products" class="nav-link hover:text-charcoal transition-colors">產品系列</a>
+            <a href="#ingredients" class="nav-link hover:text-charcoal transition-colors">核心成分</a>
+            <a href="#partner" class="nav-link hover:text-charcoal transition-colors">合作夥伴</a>
+            <a href="#assets" class="nav-link hover:text-charcoal transition-colors">數位資產</a>
         </div>
-    </nav>
-
-    <!-- Mobile Menu -->
-    <div id="mobileMenu" class="fixed inset-0 z-40 bg-ivory hidden">
-        <div class="flex flex-col items-center justify-center h-full gap-8 text-lg tracking-widest">
-            <a href="#about" onclick="toggleMobileMenu()" class="hover:text-gold transition-colors">品牌故事</a>
-            <a href="#products" onclick="toggleMobileMenu()" class="hover:text-gold transition-colors">產品系列</a>
-            <a href="#ingredients" onclick="toggleMobileMenu()" class="hover:text-gold transition-colors">核心成分</a>
-            <a href="#partner" onclick="toggleMobileMenu()" class="hover:text-gold transition-colors">合作夥伴</a>
-            <a href="#creator" onclick="toggleMobileMenu()" class="hover:text-gold transition-colors">數位資產管理</a>
-        </div>
-    </div>
-
-    <!-- ============================================================
-         HERO
-    ============================================================ -->
-    <section id="hero" class="relative min-h-screen flex items-center justify-center overflow-hidden bg-luxury-dark">
-        <!-- Bubbles -->
-        <div class="bubble w-[500px] h-[500px] -top-40 -left-40"></div>
-        <div class="bubble w-[350px] h-[350px] bottom-20 right-10" style="animation-delay: -3s;"></div>
-        <div class="bubble w-[200px] h-[200px] top-1/3 right-1/4" style="animation-delay: -5s;"></div>
-
-        <div class="relative z-10 text-center px-6 max-w-4xl mx-auto">
-            <div class="fade-up mb-8">
-                <span class="tag tracking-[.25em] uppercase">Human Exosome Skincare</span>
-            </div>
-            <h1 class="fade-up font-serif text-5xl sm:text-6xl lg:text-[4.5rem] font-bold text-white leading-tight mb-6" style="transition-delay:.15s;">
-                第一也是唯一<br>
-                <span class="text-gold-gradient">合法人類來源</span><br>
-                外泌體保養品
-            </h1>
-            <p class="fade-up text-white/40 text-base sm:text-lg font-light mb-2 tracking-wide" style="transition-delay:.3s;">
-                Exosome × Muse 的完美融合
-            </p>
-            <p class="fade-up text-white/25 text-sm max-w-xl mx-auto mb-12 leading-relaxed" style="transition-delay:.4s;">
-                採用臺灣唯一合法人類臍帶間質幹細胞外泌體<br class="hidden sm:block">符合國際標準奈米級囊泡
-            </p>
-            <div class="fade-up flex flex-col sm:flex-row gap-4 justify-center" style="transition-delay:.5s;">
-                <a href="#products" class="btn-gold px-10 py-4 rounded-full text-sm tracking-widest uppercase font-medium">
-                    探索產品
-                </a>
-                <a href="#partner" class="btn-outline px-10 py-4 rounded-full text-sm tracking-widest uppercase font-material flex items-center justify-center gap-2">
-                    <span>成為合作夥伴</span>
-                </a>
-            </div>
-        </div>
-
-        <div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2">
-            <span class="text-white/20 text-[.65rem] tracking-[.3em]">SCROLL</span>
-            <div class="scroll-line"></div>
-        </div>
-    </section>
-
-    <!-- ============================================================
-         BRAND STORY
-    ============================================================ -->
-    <section id="about" class="py-28 lg:py-36 bg-white">
-        <div class="max-w-6xl mx-auto px-6 lg:px-10">
-            <div class="grid lg:grid-cols-2 gap-20 items-center">
-                <!-- Text -->
-                <div class="fade-up">
-                    <span class="tag mb-6">About ExoMuse</span>
-                    <h2 class="font-serif text-4xl lg:text-5xl font-bold leading-tight mb-8">
-                        肌膚護理的<br><span class="text-gold-gradient">深刻洞察</span>
-                    </h2>
-                    <div class="divider-elegant mb-8 ml-0"></div>
-                    <p class="text-warm-gray leading-[1.9] mb-6">
-                        ExoMuse 是「Exosome」外泌體與「Muse」繆斯女神的完美融合，代表著對肌膚護理最深刻的洞察與追求。我們專注於人類來源外泌體的研發與應用，採用先進的臍帶間質幹細胞外泌體成分，深入肌底，從根源激活肌膚生命力。
-                    </p>
-                    <div class="grid grid-cols-3 gap-8 mt-12">
-                        <div>
-                            <div class="font-serif text-3xl font-bold text-gold">100%</div>
-                            <div class="text-xs text-warm-gray mt-1 tracking-wide">人類來源</div>
-                        </div>
-                        <div>
-                            <div class="font-serif text-2xl font-bold text-gold">ISEV</div>
-                            <div class="text-xs text-warm-gray mt-1 tracking-width">國際認證</div>
-                        </div>
-                        <div>
-                            <div class="font-serif text-3xl font-bold text-gold">4</div>
-                            <div class="text-xs text-warm-gray mt-1 tracking-wide">核心產品</div>
-                        </div>
-                    </div>
-                </div>
-                <!-- Image — brand page from PDF -->
-                <div class="fade-up" style="transition-delay:.2s;">
-                    <div class="relative">
-                        <div class="aspect-[4/5] rounded-3xl product-img-wrap">
-                            <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjUzMyIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICAgICAgICA8ZGVmcz4KICAgICAgICAgICAgPGxpbmVhckdyYWRpZW50IGlkPSJnYnJhbmQiIHgxPSIwJSIgeTE9IjAlIiB4Mj0iMTAwJSIgeTI9IjEwMCUiPgogICAgICAgICAgICAgICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3R5bGU9InN0b3AtY29sb3I6I2Y1ZjBlOCIvPgogICAgICAgICAgICAgICAgPHN0b3Agb2Zmc2V0PSIxMDAlIiBzdHlsZT0ic3RvcC1jb2xvcjojZThlMGQwIi8+CiAgICAgICAgICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgICAgICAgPC9kZWZzPgogICAgICAgIDxyZWN0IHdpZHRoPSI0MDAiIGhlaWdodD0iNTMzIiBmaWxsPSJ1cmwoI2dicmFuZCkiLz4KICAgICAgICA8dGV4dCB4PSIyMDAiIHk9IjI0MCIgZm9udC1mYW1pbHk9InNlcmlmIiBmb250LXNpemU9IjI4IiBmaWxsPSIjQTY4QjRCIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj5FeG9NdXNlPC90ZXh0PgogICAgICAgIDx0ZXh0IHg9IjIwMCIgeT0iMjkwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgZmlsbD0iI0M5QTk2RSIgdGV4dC1hbmNob3I9Im1pZGRsZSI+RXhvTXVzZTwvdGV4dD4KICAgICAgICA8cmVjdCB4PSIxNTAiIHk9IjMyMCIgd2lkdGg9IjEwMCIgaGVpZ2h0PSIyIiBmaWxsPSIjQzlBOTZFIiBvcGFjaXR5PSIwLjUiLz4KICAgIDwvc3ZnPg==" alt="ExoMuse Brand">
-                        </div>
-                        <div class="absolute -bottom-5 -left-5 w-28 h-28 rounded-2xl bg-gold-gradient opacity-15"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- ============================================================
-         PRODUCTS
-    ============================================================ -->
-    <section id="products" class="py-28 lg:py-36 bg-ivory">
-        <div class="max-w-7xl mx-auto px-6 lg:px-10">
-            <div class="text-center mb-20 fade-up">
-                <span class="tag mb-6">Products</span>
-                <h2 class="font-serif text-4xl lg:text-5xl font-bold mt-6">產品系列</h2>
-                <p class="text-warm-gray mt-4 max-w-md mx-auto text-sm">專為專業醫美機構打造，每一瓶都是科學與奢華的完美結合</p>
-            </div>
-            <div id="productList" class="grid sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-6">
-                <!-- P1 -->
-                <div class="hover-lift bg-white rounded-2xl overflow-hidden border border-black/[.04]">
-                    <div class="product-img-wrap aspect-[3/4]"><img src="images/mask.png" alt="人類外泌體面膜"></div>
-                    <div class="p-6">
-                        <p class="text-[.65rem] text-gold tracking-[.2em] uppercase mb-1">Exosome Mask</p>
-                        <h3 class="font-serif text-lg font-bold mb-1">人類外泌體面膜</h3>
-                        <p class="text-xs text-warm-gray mb-4">15分鐘縮時保養，打造無瑕水潤透亮肌</p>
-                        <div class="flex items-center justify-between">
-                            <span class="font-serif text-lg font-bold text-gold">NT$ 1,580</span>
-                            <button onclick="addToCart('mask')" class="btn-gold text-white text-xs px-5 py-2.5 rounded-full">加入</button>
-                        </div>
-                    </div>
-                </div>
-                <!-- P2 -->
-                <div class="hover-lift bg-white rounded-2xl overflow-hidden border border-black/[.04]">
-                    <div class="product-img-wrap aspect-[3/4]"><img src="images/essence.png" alt="人類外泌體精華液"></div>
-                    <div class="p-6">
-                        <p class="text-[.65rem] text-gold tracking-[.2em] uppercase mb-1">Exosome Essence</p>
-                        <h3 class="font-serif text-lg font-bold mb-1">人類外泌體精華液</h3>
-                        <p class="text-xs text-warm-gray mb-4">一瓶重啟青春修復力，多重玻尿酸層層補水</p>
-                        <div class="flex items-center justify-between">
-                            <span class="font-serif text-lg font-bold text-gold">NT$ 3,580</span>
-                            <button onclick="addToCart('essence')" class="btn-gold text-white text-xs px-5 py-2.5 rounded-full">加入</button>
-                        </div>
-                    </div>
-                </div>
-                <!-- P3 -->
-                <div class="hover-lift bg-white rounded-2xl overflow-hidden border border-black/[.04]">
-                    <div class="product-img-wrap aspect-[3/4]"><img src="images/ampoule.png" alt="人類外泌體安瓶"></div>
-                    <div class="p-6">
-                        <p class="text-[.65rem] text-gold tracking-[.2em] uppercase mb-1">Exosome Ampoule</p>
-                        <h3 class="font-serif text-lg font-bold mb-1">人類外泌體安瓶</h3>
-                        <p class="text-xs text-warm-gray mb-4">瞬效修護，多重胜肽煥活，撫平歲月紋理</p>
-                        <div class="flex items-center justify-between">
-                            <span class="font-serif text-lg font-bold text-gold">NT$ 3,980</span>
-                            <button onclick="addToCart('ampoule')" class="btn-gold text-white text-xs px-5 py-2.5 rounded-full">加入</button>
-                        </div>
-                    </div>
-                </div>
-                <!-- P4 -->
-                <div class="hover-lift bg-white rounded-2xl overflow-hidden border border-black/[.04]">
-                    <div class="product-img-wrap aspect-[3/4]"><img src="images/hair.png" alt="人類外泌體養髮液"></div>
-                    <div class="p-6">
-                        <p class="text-[.65rem] text-gold tracking-[.2em] uppercase mb-1">Exosome Hair</p>
-                        <h3 class="font-serif text-lg font-bold mb-1">人類外泌體養髮液</h3>
-                        <p class="text-xs text-warm-gray mb-4">美髮新境界，重拾健康秀髮，散發自信光采</p>
-                        <div class="flex items-center justify-between">
-                            <span class="font-serif text-lg font-bold text-gold">NT$ 4,580</span>
-                            <button onclick="addToCart('hair')" class="btn-gold text-white text-xs px-5 py-2.5 rounded-full">加入</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- ============================================================
-         INGREDIENTS
-    ============================================================ -->
-    ============================================================ -->
-    <section id="ingredients" class="py-28 lg:py-36 bg-luxury-dark text-white">
-        <div class="max-w-6xl mx-auto px-6 lg:px-10">
-            <div class="text-center mb-20 fade-up">
-                <span class="tag mb-6 text-gold border-gold/30 bg-gold/10">Core Ingredients</span>
-                <h2 class="font-serif text-4xl lg:text-5xl font-bold mt-6">核心成分</h2>
-                <p class="text-white/30 mt-4 max-w-md mx-auto text-sm">每一滴精華，都是尖端科技的結晶</p>
-            </div>
-
-            <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                <div class="fade-up p-8 rounded-2xl border border-white/[.07] bg-white/[.03]" style="transition-delay:.1s;">
-                    <div class="ing-circle mb-6">Ex</div>
-                    <h3 class="font-serif text-lg font-bold mb-2 text-gold-light">人類臍帶間質幹細胞外泌體</h3>
-                    <p class="text-white/35 text-sm leading-relaxed">臺灣唯一合法人類來源，符合 ISEV 國際標準奈米級囊泡，深入肌底，改善暗沉膚色與肌膚粗糙</p>
-                </div>
-                <div class="fade-up p-8 rounded-2xl border border-white/[.07] bg-white/[.03]" style="transition-delay:.2s;">
-                    <div class="ing-circle mb-6">P4</div>
-                    <h3 class="font-serif text-lg font-bold mb-2 text-gold-light">四胜肽</h3>
-                    <p class="text-white/35 text-sm leading-relaxed">多重胜肽煥活，撫平歲月紋理，恢復肌膚彈性與屏障修護</p>
-                </div>
-                <div class="fade-up p-8 rounded-2xl border border-white/[.07] bg-white/[.03]" style="transition-delay:.3s;">
-                    <div class="ing-circle mb-6">C60</div>
-                    <h3 class="font-serif text-lg font-bold mb-2 text-gold-light">富勒烯</h3>
-                    <p class="text-white/35 text-sm leading-relaxed">強效抗氧化，與維他命B3協作，有效抵禦自由基傷害</p>
-                </div>
-                <div class="fade-up p-8 rounded-2xl border border-white/[.07] bg-white/[.03]" style="transition-delay:.4s;">
-                    <div class="ing-circle mb-6">HM</div>
-                    <h3 class="font-serif text-lg font-bold mb-2 text-gold-light">水膜磁</h3>
-                    <p class="text-white/35 text-sm leading-relaxed">深層補水科技，搭配多重玻尿酸，層層補水直達肌底</p>
-                </div>
-                <div class="fade-up p-8 rounded-2xl border border-white/[.07] bg-white/[.03]" style="transition-delay:.5s;">
-                    <div class="ing-circle mb-6">HA</div>
-                    <h3 class="font-serif text-lg font-bold mb-2 text-gold-light">海茴香</h3>
-                    <p class="text-white/35 text-sm leading-relaxed">珍稀海洋植物精華，舒緩乾燥泛紅，提升肌膚保護力</p>
-                </div>
-                <div class="fade-up p-8 rounded-2xl border border-white/[.07] bg-white/[.03]" style="transition-delay:.6s;">
-                    <div class="ing-circle mb-6">B5</div>
-                    <h3 class="font-serif text-lg font-bold mb-2 text-gold-light">維他命B5</h3>
-                    <p class="text-white/35 text-sm leading-relaxed">深層修護，不含酒精香精，敏弱肌可安心使用</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- ============================================================
-         PROMO BANNER
-    ============================================================ -->
-    <section class="py-14 bg-gold-gradient">
-        <div class="max-w-3xl mx-auto px-6 text-center">
-            <p class="text-white/90 text-lg">🔥 限時優惠：買滿 3 件享 <span class="font-bold text-2xl">8 折</span>，且額外贈送隨機好禮！</p>
-        </div>
-    </section>
-
-    <!-- ============================================================
-         PARTNER SECTION
-    ============================================================ -->
-    <section id="partner" class="py-28 lg:py-36 bg-white">
-        <div class="max-w-6xl mx-auto px-6 lg:px-10">
-            <div class="grid lg:grid-cols-2 gap-20 items-center">
-                <div class="fade-up">
-                    <span class="tag mb-6">Partner Program</span>
-                    <h2 class="font-serif text-4xl font-bold leading-tight mb-6">合作夥伴計畫</h2>
-                    <div class="divider-elegant mb-8 ml-0"></div>
-                    <p class="text-warm-gray leading-[1.9] mb-6">加入 ExoMuse 銷售夥伴，透過短片引流、極簡下單，我們提供完整的產品素材與分潤機制，讓您輕鬆打造自己的保養品事業。</p>
-                    <div class="space-y-5 mb-10">
-                        <div class="flex items-start gap-4">
-                            <div class="w-8 h-8 rounded-full bg-gold/10 flex items-center justify-center flex-shrink-0 mt-0.5">
-                                <span class="text-gold text-sm font-bold">1</span>
-                            </div>
-                            <div>
-                                <h4 class="font-medium mb-1">註冊夥伴帳號</h4>
-                                <p class="text-sm text-warm-gray">免費註冊，即刻獲得專屬推廣連結</p>
-                            </div>
-                        </div>
-                        <div class="flex items-start gap-4">
-                            <div class="w-8 h-8 rounded-full bg-gold/10 flex items-center justify-center flex-shrink-0 mt-0.5">
-                                <span class="text-gold text-sm font-bold">2</span>
-                            </div>
-                            <div>
-                                <h4 class="font-medium mb-1">上傳行銷素材</h4>
-                                <p class="text-sm text-warm-gray">您可上傳自製的影片、圖片，或使用我們提供的素材</p>
-                            </div>
-                        </div>
-                        <div class="flex items-start gap-4">
-                            <div class="w-8 h-8 rounded-full bg-gold/10 flex items-center justify-center flex-shrink-0 mt-0.5">
-                                <span class="text-gold text-sm font-bold">3</span>
-                            </div>
-                            <div>
-                                <h4 class="font-medium mb-1">自動分潤結算</h4>
-                                <p class="text-sm text-warm-gray">每筆訂單自動計算分潤，每月結算入帳</p>
-                            </div>
-                        </div>
-                    </div>
-                    <a href="admin/index.html" class="btn-gold inline-block text-white px-8 py-3.5 rounded-full text-sm tracking-widest uppercase">進入合作夥伴後台</a>
-                </div>
-
-                <!-- Split calculator -->
-            </div>
-        </div>
-    </section>
-
-    <!-- ============================================================
-         DIGITAL ASSETS (數位資產管理)
-    ============================================================ -->
-    <section id="creator" class="py-28 lg:py-36 bg-ivory">
-        <div class="max-w-6xl mx-auto px-6 lg:px-10">
-            <div class="text-center mb-16 fade-up">
-                <span class="tag mb-6">Digital Assets</span>
-                <h2 class="font-serif text-4xl lg:text-5xl font-bold mt-6">數位資產管理</h2>
-                <p class="text-warm-gray mt-4 max-w-lg mx-auto text-sm">上傳您的產品素材，供前台與廣告投放使用</p>
-            </div>
-
-            <div class="grid lg:grid-cols-2 gap-10">
-                <!-- Upload zone -->
-                <div class="fade-up">
-                    <div class="bg-white rounded-3xl p-8 h-full">
-                        <h3 class="font-serif text-lg font-bold mb-6">上傳素材</h3>
-                        <div id="uploadZone" class="upload-zone rounded-2xl p-10 text-center mb-6 cursor-pointer" onclick="document.getElementById('fileInput').click()">
-                            <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-gold/5 flex items-center justify-center">
-                                <svg class="w-7 h-7 text-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
-                                </svg>
-                            </div>
-                            <p class="text-sm text-warm-gray mb-1">點擊或拖曳上傳圖片 / 影片</p>
-                            <p class="text-xs text-warm-gray/50">支援 JPG、PNG、MP4，最大 50MB</p>
-                            <input type="file" id="fileInput" class="hidden" accept="image/*,video/*" multiple onchange="handleFileUpload(event)">
-                        </div>
-                        <div id="uploadedFiles" class="space-y-3 mb-6"></div>
-                        <button onclick="downloadKit()" class="w-full btn-outline py-3 rounded-full text-sm tracking-wider uppercase">
-                            📦 下載素材包
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Preview -->
-                <div class="fade-up" style="transition-delay:.1s;">
-                    <div class="bg-white rounded-3xl p-8 h-full">
-                        <h3 class="font-serif text-lg font-bold mb-4">素材預覽</h3>
-                        <div class="fb-preview max-w-sm mx-auto mb-6">
-                            <div class="fb-preview-header">
-                                <div class="fb-avatar">E</div>
-                                <div>
-                                    <p class="text-sm font-semibold">ExoMuse 外泌體精華</p>
-                                    <p class="text-xs text-gray-500">剛剛</p>
-                                </div>
-                            </div>
-                            <div class="p-3">
-                                <div class="aspect-square rounded-lg overflow-hidden bg-gray-100">
-                                    <img id="fbPreviewImg" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjUzMyIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjBmOGY4Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJzZXJpZiIgZm9udC1zaXplPSIyNCIgZmlsbD0iI0M5QTk2RSIgdGV4dC1hbmNob3I9Im1pZGRsZSI+RXhvTXVzZTwvdGV4dD48L3N2Zz4=" alt="" class="w-full h-full object-cover">
-                                </div>
-                            </div>
-                        </div>
-                        <p class="text-xs text-warm-gray text-center">上傳圖片後此處即時預覽</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- ============================================================
-         FOOTER
-    ============================================================ -->
-    <footer class="py-16 bg-luxury-dark text-white/30 text-xs">
-        <div class="max-w-6xl mx-auto px-6 lg:px-10">
-            <div class="grid md:grid-cols-3 gap-10 mb-10">
-                <div>
-                    <div class="font-serif text-xl font-bold text-gold-gradient mb-4">ExoMuse</div>
-                    <p class="leading-relaxed">第一也是唯一合法人類來源外泌體保養品。<br>為專業醫美機構打造。</p>
-                </div>
-                <div>
-                    <h4 class="text-white/60 text-[.7rem] uppercase tracking-[.2em] mb-4">快速連結</h4>
-                    <div class="space-y-2">
-                        <a href="#products" class="block hover:text-gold transition-colors">產品系列</a>
-                        <a href="#partner" class="block hover:text-gold transition-colors">合作夥伴</a>
-                        <a href="#creator" class="block hover:text-gold transition-colors">數位資產管理</a>
-                    </div>
-                </div>
-                <div>
-                    <h4 class="text-white/60 text-[.7rem] uppercase tracking-[.2em] mb-4">認證標章</h4>
-                    <div class="flex items-center gap-2">
-                        <span class="px-2 py-1 rounded border border-white/10 text-gold text-[.65rem]">ISEV 認證</span>
-                        <span class="px-2 py-1 rounded border border-white/10 text-gold text-[.65rem]">臺灣唯一合法</span>
-                    </div>
-                    <p class="mt-3 text-[.65rem]">請認明艾萬霖「雷射防偽貼紙」</p>
-                </div>
-            </div>
-            <div class="divider-elegant mb-6"></div>
-            <div class="text-center text-[.65rem] tracking-wide">
-                © 2026 ExoMuse. All rights reserved.
-            </div>
-        </div>
-    </footer>
-
-    <!-- ============================================================
-         CART DRAWER
-    ============================================================ -->
-    <div id="cartOverlay" class="fixed inset-0 bg-black/30 z-50 hidden transition-opacity" onclick="toggleCart()"></div>
-    <div id="cartDrawer" class="cart-drawer">
-        <div class="p-6 border-b border-black/[.06] flex items-center justify-between">
-            <h3 class="font-serif text-xl font-bold">購物車</h3>
-            <button onclick="toggleCart()" class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        <div class="flex items-center gap-4">
+            <button onclick="toggleCart()" class="relative w-10 h-10 flex items-center justify-center">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+                <span id="navCartCount" class="absolute -top-0.5 -right-0.5 w-4 h-4 rounded-full bg-gold text-white text-[10px] flex items-center justify-center hidden">0</span>
             </button>
-        </div>
-        <div id="cartItems" class="p-6 space-y-4 flex-1">
-            <p class="text-center text-warm-gray py-16 text-sm">購物車是空的</p>
-        </div>
-        <div id="cartFooter" class="p-6 border-t border-black/[.06] hidden">
-            <div class="flex justify-between items-center mb-2">
-                <span class="text-warm-gray text-sm">小計</span>
-                <span id="cartSubtotal" class="font-serif text-lg font-bold">NT$ 0</span>
-            </div>
-            <div id="cartPromo" class="text-xs text-gold mb-4 hidden">🎉 已享 8 折優惠！</div>
-            <button onclick="checkout()" class="btn-gold w-full text-white py-3.5 rounded-full text-sm tracking-wider uppercase">立即結帳</button>
+            <a href="admin/index.html" class="hidden md:block btn-outline px-4 py-2 rounded-full text-xs tracking-wider">合作夥伴後台</a>
         </div>
     </div>
+</nav>
 
-    <!-- ============================================================
-         JAVASCRIPT — 本地測試版本
-    ============================================================ -->
-    <script>
-// ExoMuse 本地測試版本 — 資料存在 localStorage
-// 模擬 Firebase 操作，不需任何後端
-
-// ── 本地資料庫操作 ──
-const LocalDB = {
-    // 取得資料
-    get(key, defaultValue = []) {
-        try {
-            return JSON.parse(localStorage.getItem(`exomuse_${key}`)) || defaultValue;
-        } catch {
-            return defaultValue;
-        }
-    },
-    
-    // 儲存資料
-    set(key, data) {
-        localStorage.setItem(`exomuse_${key}`, JSON.stringify(data));
-    },
-    
-    // 產生 ID
-    generateId() {
-        return Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
-    },
-    
-    // 商品管理
-    products: {
-        getAll() {
-            return LocalDB.get('products', []);
-        },
-        getById(id) {
-            return LocalDB.products.getAll().find(p => p.id === id);
-        },
-        add(product) {
-            const products = LocalDB.products.getAll();
-            const newProduct = {
-                ...product,
-                id: LocalDB.generateId(),
-                active: true,
-                createdAt: new Date().toISOString(),
-                updatedAt: new Date().toISOString()
-            };
-            products.push(newProduct);
-            LocalDB.set('products', products);
-            return newProduct.id;
-        },
-        update(id, data) {
-            const products = LocalDB.products.getAll();
-            const index = products.findIndex(p => p.id === id);
-            if (index >= 0) {
-                products[index] = { ...products[index], ...data, updatedAt: new Date().toISOString() };
-                LocalDB.set('products', products);
-            }
-        },
-        delete(id) {
-            const products = LocalDB.products.getAll();
-            const index = products.findIndex(p => p.id === id);
-            if (index >= 0) {
-                products[index].active = false;
-                LocalDB.set('products', products);
-            }
-        },
-        getActive() {
-            return LocalDB.products.getAll().filter(p => p.active);
-        }
-    },
-    
-    // 訂單管理
-    orders: {
-        getAll() {
-            return LocalDB.get('orders', []);
-        },
-        add(order) {
-            const orders = LocalDB.orders.getAll();
-            const newOrder = {
-                ...order,
-                id: LocalDB.generateId(),
-                status: 'pending',
-                createdAt: new Date().toISOString(),
-                updatedAt: new Date().toISOString()
-            };
-            orders.unshift(newOrder);
-            LocalDB.set('orders', orders);
-            return newOrder.id;
-        },
-        updateStatus(id, status, note = '') {
-            const orders = LocalDB.orders.getAll();
-            const index = orders.findIndex(o => o.id === id);
-            if (index >= 0) {
-                orders[index].status = status;
-                orders[index].statusNote = note;
-                orders[index].updatedAt = new Date().toISOString();
-                LocalDB.set('orders', orders);
-            }
-        },
-        getByStatus(status) {
-            if (status === 'all') return LocalDB.orders.getAll();
-            return LocalDB.orders.getAll().filter(o => o.status === status);
-        }
-    },
-    
-    // 合作夥伴管理
-    partners: {
-        getAll() {
-            return LocalDB.get('partners', []);
-        },
-        getById(id) {
-            return LocalDB.partners.getAll().find(p => p.id === id);
-        },
-        getByEmail(email) {
-            return LocalDB.partners.getAll().find(p => p.email === email);
-        },
-        add(partner) {
-            const partners = LocalDB.partners.getAll();
-            const newPartner = {
-                ...partner,
-                id: LocalDB.generateId(),
-                active: true,
-                createdAt: new Date().toISOString()
-            };
-            partners.push(newPartner);
-            LocalDB.set('partners', partners);
-            return newPartner.id;
-        }
-    },
-    
-    // 促銷活動
-    promotions: {
-        getAll() {
-            return LocalDB.get('promotions', []);
-        },
-        getActive() {
-            const now = new Date();
-            return LocalDB.promotions.getAll().filter(p => {
-                if (!p.active) return false;
-                const start = p.startDate ? new Date(p.startDate) : null;
-                const end = p.endDate ? new Date(p.endDate) : null;
-                if (start && now < start) return false;
-                if (end && now > end) return false;
-                return true;
-            });
-        },
-        add(promotion) {
-            const promotions = LocalDB.promotions.getAll();
-            const newPromo = {
-                ...promotion,
-                id: LocalDB.generateId(),
-                active: true,
-                createdAt: new Date().toISOString()
-            };
-            promotions.push(newPromo);
-            LocalDB.set('promotions', promotions);
-            return newPromo.id;
-        },
-        update(id, data) {
-            const promotions = LocalDB.promotions.getAll();
-            const index = promotions.findIndex(p => p.id === id);
-            if (index >= 0) {
-                promotions[index] = { ...promotions[index], ...data };
-                LocalDB.set('promotions', promotions);
-            }
-        },
-        delete(id) {
-            const promotions = LocalDB.promotions.getAll();
-            const index = promotions.findIndex(p => p.id === id);
-            if (index >= 0) {
-                promotions[index].active = false;
-                LocalDB.set('promotions', promotions);
-            }
-        }
-    },
-    
-    // 媒體素材
-    media: {
-        getAll() {
-            return LocalDB.get('media', []);
-        },
-        add(file) {
-            const media = LocalDB.media.getAll();
-            const newFile = {
-                id: LocalDB.generateId(),
-                name: file.name,
-                type: file.type,
-                size: file.size,
-                dataUrl: file.dataUrl,
-                createdAt: new Date().toISOString()
-            };
-            media.push(newFile);
-            LocalDB.set('media', media);
-            return newFile.id;
-        },
-        delete(id) {
-            const media = LocalDB.media.getAll();
-            const filtered = media.filter(m => m.id !== id);
-            LocalDB.set('media', filtered);
-        }
-    },
-    
-    // 設定
-    settings: {
-        get() {
-            return LocalDB.get('settings', { lineToken: '', split: 0.3 });
-        },
-        update(data) {
-            const settings = LocalDB.settings.get();
-            LocalDB.set('settings', { ...settings, ...data });
-        }
-    },
-    
-    // 初始化預設資料
-    initDefaultData() {
-        // 如果沒有商品，建立預設商品
-        if (LocalDB.products.getAll().length === 0) {
-            const defaultProducts = [
-                { name: '人類外泌體面膜', type: 'product', price: 1580, originalPrice: 1980, description: '15分鐘縮時保養，打造無瑕水潤透亮肌。含四胜肽、富勒烯、水膜磁。', imageUrl: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjUzMyIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICAgICAgICA8ZGVmcz4KICAgICAgICAgICAgPGxpbmVhckdyYWRpZW50IGlkPSJnbWFzayIgeDE9IjAlIiB5MT0iMCUiIHgyPSIxMDAlIiB5Mj0iMTAwJSI+CiAgICAgICAgICAgICAgICA8c3RvcCBvZmZzZXQ9IjAlIiBzdHlsZT0ic3RvcC1jb2xvcjojZjVmMGU4Ii8+CiAgICAgICAgICAgICAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0eWxlPSJzdG9wLWNvbG9yOiNlOGUwZDAiLz4KICAgICAgICAgICAgPC9saW5lYXJHcmFkaWVudD4KICAgICAgICA8L2RlZnM+CiAgICAgICAgPHJlY3Qgd2lkdGg9IjQwMCIgaGVpZ2h0PSI1MzMiIGZpbGw9InVybCgjZ21hc2spIi8+CiAgICAgICAgPHRleHQgeD0iMjAwIiB5PSIyNDAiIGZvbnQtZmFtaWx5PSJzZXJpZiIgZm9udC1zaXplPSIyOCIgZmlsbD0iI0E2OEI0QiIgdGV4dC1hbmNob3I9Im1pZGRsZSI+5aSW5rOM6auU6Z2i6IacPC90ZXh0PgogICAgICAgIDx0ZXh0IHg9IjIwMCIgeT0iMjkwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgZmlsbD0iI0M5QTk2RSIgdGV4dC1hbmNob3I9Im1pZGRsZSI+RXhvTXVzZTwvdGV4dD4KICAgICAgICA8cmVjdCB4PSIxNTAiIHk9IjMyMCIgd2lkdGg9IjEwMCIgaGVpZ2h0PSIyIiBmaWxsPSIjQzlBOTZFIiBvcGFjaXR5PSIwLjUiLz4KICAgIDwvc3ZnPg==', sortOrder: 1 },
-                { name: '人類外泌體精華液', type: 'product', price: 3580, originalPrice: 4280, description: '一瓶重啟青春修復力。多重玻尿酸層層補水，富勒烯強效抗氧化。', imageUrl: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjUzMyIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICAgICAgICA8ZGVmcz4KICAgICAgICAgICAgPGxpbmVhckdyYWRpZW50IGlkPSJnZXNzZW5jZSIgeDE9IjAlIiB5MT0iMCUiIHgyPSIxMDAlIiB5Mj0iMTAwJSI+CiAgICAgICAgICAgICAgICA8c3RvcCBvZmZzZXQ9IjAlIiBzdHlsZT0ic3RvcC1jb2xvcjojZjVmMGU4Ii8+CiAgICAgICAgICAgICAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0eWxlPSJzdG9wLWNvbG9yOiNlOGUwZDAiLz4KICAgICAgICAgICAgPC9saW5lYXJHcmFkaWVudD4KICAgICAgICA8L2RlZnM+CiAgICAgICAgPHJlY3Qgd2lkdGg9IjQwMCIgaGVpZ2h0PSI1MzMiIGZpbGw9InVybCgjZ2Vzc2VuY2UpIi8+CiAgICAgICAgPHRleHQgeD0iMjAwIiB5PSIyNDAiIGZvbnQtZmFtaWx5PSJzZXJpZiIgZm9udC1zaXplPSIyOCIgZmlsbD0iI0E2OEI0QiIgdGV4dC1hbmNob3I9Im1pZGRsZSI+5aSW5rOM6auU57K+6I+v5rayPC90ZXh0PgogICAgICAgIDx0ZXh0IHg9IjIwMCIgeT0iMjkwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgZmlsbD0iI0M5QTk2RSIgdGV4dC1hbmNob3I9Im1pZGRsZSI+RXhvTXVzZTwvdGV4dD4KICAgICAgICA8cmVjdCB4PSIxNTAiIHk9IjMyMCIgd2lkdGg9IjEwMCIgaGVpZ2h0PSIyIiBmaWxsPSIjQzlBOTZFIiBvcGFjaXR5PSIwLjUiLz4KICAgIDwvc3ZnPg==', sortOrder: 2 },
-                { name: '人類外泌體安瓶', type: 'product', price: 3980, originalPrice: 4680, description: '瞬效修護，重新定義年輕。多重胜肽煥活，撫平歲月紋理。', imageUrl: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjUzMyIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICAgICAgICA8ZGVmcz4KICAgICAgICAgICAgPGxpbmVhckdyYWRpZW50IGlkPSJnYW1wb3VsZSIgeDE9IjAlIiB5MT0iMCUiIHgyPSIxMDAlIiB5Mj0iMTAwJSI+CiAgICAgICAgICAgICAgICA8c3RvcCBvZmZzZXQ9IjAlIiBzdHlsZT0ic3RvcC1jb2xvcjojZjVmMGU4Ii8+CiAgICAgICAgICAgICAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0eWxlPSJzdG9wLWNvbG9yOiNlOGUwZDAiLz4KICAgICAgICAgICAgPC9saW5lYXJHcmFkaWVudD4KICAgICAgICA8L2RlZnM+CiAgICAgICAgPHJlY3Qgd2lkdGg9IjQwMCIgaGVpZ2h0PSI1MzMiIGZpbGw9InVybCgjZ2FtcG91bGUpIi8+CiAgICAgICAgPHRleHQgeD0iMjAwIiB5PSIyNDAiIGZvbnQtZmFtaWx5PSJzZXJpZiIgZm9udC1zaXplPSIyOCIgZmlsbD0iI0E2OEI0QiIgdGV4dC1hbmNob3I9Im1pZGRsZSI+5aSW5rOM6auU5a6J55O2PC90ZXh0PgogICAgICAgIDx0ZXh0IHg9IjIwMCIgeT0iMjkwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgZmlsbD0iI0M5QTk2RSIgdGV4dC1hbmNob3I9Im1pZGRsZSI+RXhvTXVzZTwvdGV4dD4KICAgICAgICA8cmVjdCB4PSIxNTAiIHk9IjMyMCIgd2lkdGg9IjEwMCIgaGVpZ2h0PSIyIiBmaWxsPSIjQzlBOTZFIiBvcGFjaXR5PSIwLjUiLz4KICAgIDwvc3ZnPg==', sortOrder: 3 },
-                { name: '人類外泌體養髮液', type: 'product', price: 4580, originalPrice: 5280, description: '美髮新境界，從髮根開始。臍帶間質幹細胞外泌體，深入滋養髮根。', imageUrl: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjUzMyIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICAgICAgICA8ZGVmcz4KICAgICAgICAgICAgPGxpbmVhckdyYWRpZW50IGlkPSJnaGFpciIgeDE9IjAlIiB5MT0iMCUiIHgyPSIxMDAlIiB5Mj0iMTAwJSI+CiAgICAgICAgICAgICAgICA8c3RvcCBvZmZzZXQ9IjAlIiBzdHlsZT0ic3RvcC1jb2xvcjojZjVmMGU4Ii8+CiAgICAgICAgICAgICAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0eWxlPSJzdG9wLWNvbG9yOiNlOGUwZDAiLz4KICAgICAgICAgICAgPC9saW5lYXJHcmFkaWVudD4KICAgICAgICA8L2RlZnM+CiAgICAgICAgPHJlY3Qgd2lkdGg9IjQwMCIgaGVpZ2h0PSI1MzMiIGZpbGw9InVybCgjZ2hhaXIpIi8+CiAgICAgICAgPHRleHQgeD0iMjAwIiB5PSIyNDAiIGZvbnQtZmFtaWx5PSJzZXJpZiIgZm9udC1zaXplPSIyOCIgZmlsbD0iI0E2OEI0QiIgdGV4dC1hbmNob3I9Im1pZGRsZSI+5aSW5rOM6auU6aSK6auu5rayPC90ZXh0PgogICAgICAgIDx0ZXh0IHg9IjIwMCIgeT0iMjkwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgZmlsbD0iI0M5QTk2RSIgdGV4dC1hbmNob3I9Im1pZGRsZSI+RXhvTXVzZTwvdGV4dD4KICAgICAgICA8cmVjdCB4PSIxNTAiIHk9IjMyMCIgd2lkdGg9IjEwMCIgaGVpZ2h0PSIyIiBmaWxsPSIjQzlBOTZFIiBvcGFjaXR5PSIwLjUiLz4KICAgIDwvc3ZnPg==', sortOrder: 4 }
-            ];
-            defaultProducts.forEach(p => LocalDB.products.add(p));
-        }
-        
-        // 如果沒有促銷，建立預設促銷
-        if (LocalDB.promotions.getAll().length === 0) {
-            const now = new Date();
-            const nextMonth = new Date(now);
-            nextMonth.setMonth(nextMonth.getMonth() + 1);
-            LocalDB.promotions.add({
-                name: '限時 8 折優惠',
-                type: 'discount',
-                value: 0.8,
-                minSpend: 0,
-                startDate: now.toISOString(),
-                endDate: nextMonth.toISOString(),
-                code: ''
-            });
-        }
-    }
-};
-
-// ── LINE Notify 通知 ──
-const LineNotifier = {
-    async notify(message, token = null) {
-        const lineToken = token || LocalDB.settings.get().lineToken;
-        if (!lineToken) {
-            console.log('LINE Token 未設定，跳過通知');
-            return false;
-        }
-        
-        try {
-            const formData = new FormData();
-            formData.append('message', message);
-            const response = await fetch('https://notify-api.line.me/api/notify', {
-                method: 'POST',
-                headers: { 'Authorization': `Bearer ${lineToken}` },
-                body: formData
-            });
-            return response.ok;
-        } catch (error) {
-            console.error('LINE Notify 發送失敗:', error);
-            return false;
-        }
-    },
-    
-    async newOrderNotify(order) {
-        const items = order.items.map(item => 
-            `  ${item.name} x${item.qty} = NT$ ${(item.price * item.qty).toLocaleString()}`
-        ).join('\n');
-        
-        const message = `
-🛒 新訂單通知
-━━━━━━━━━━━━━━
-📋 訂單編號：${order.id}
-👤 客戶：${order.customer.name}
-📱 電話：${order.customer.phone}
-📍 地址：${order.customer.address}
-━━━━━━━━━━━━━━
-📦 商品：
-${items}
-━━━━━━━━━━━━━━
-💰 總金額：NT$ ${order.total.toLocaleString()}
-🎁 優惠：${order.discount ? `NT$ ${order.discount}` : '無'}
-💳 實付：NT$ ${order.finalTotal.toLocaleString()}
-━━━━━━━━━━━━━━
-⏰ 下單時間：${new Date().toLocaleString('zh-TW')}
-        `.trim();
-        
-        return this.notify(message);
-    }
-};
-
-// 匯出
-window.LocalDB = LocalDB;
-window.LineNotifier = LineNotifier;
-
-</script>
-    <script>
-    // ── 全域變數 ──
-    let cart = [];
-    let adStyle = 'luxury';
-    let adPlatform = 'fb';
-
-    // 初始化
-    LocalDB.initDefaultData();
-
-    // ── 動態渲染商品 ──
-    function renderProducts() {
-        const products = LocalDB.products.getActive();
-        const container = document.getElementById('productList');
-        
-        if (!products.length) {
-            container.innerHTML = '<div class="text-center py-16 text-warm-gray col-span-full">尚無商品</div>';
-            return;
-        }
-        
-        // 預設圖片（base64 佔位）
-        const placeholderImg = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjUzMyIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjBlOGUwIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJzZXJpZiIgZm9udC1zaXplPSIyNCIgZmlsbD0iI0M5QTk2RSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkV4b011c2U8L3RleHQ+PC9zdmc+';
-        
-        container.innerHTML = products.map((p, i) => {
-            const imgSrc = p.imageUrl || placeholderImg;
-            return `
-            <div class="fade-up visible hover-lift bg-white rounded-2xl overflow-hidden border border-black/[.04]" style="transition-delay:${i * 0.1}s;">
-                <div class="product-img-wrap aspect-[3/4]">
-                    <img src="${imgSrc}" alt="${p.name}" loading="lazy" onerror="this.src='${placeholderImg}'">
-                    ${p.type === 'video' ? '<div class="absolute top-4 left-4 px-3 py-1 rounded-full bg-purple-600 text-white text-[.65rem]">影片</div>' : ''}
-                    ${p.type === 'promo' ? '<div class="absolute top-4 left-4 px-3 py-1 rounded-full bg-orange-500 text-white text-[.65rem]">促銷</div>' : ''}
-                </div>
-                <div class="p-6">
-                    <p class="text-[.65rem] text-gold tracking-[.2em] uppercase mb-1">${p.type === 'video' ? 'Video' : p.type === 'promo' ? 'Promo' : 'Product'}</p>
-                    <h3 class="font-serif text-lg font-bold mb-1">${p.name}</h3>
-                    <p class="text-xs text-warm-gray mb-4 leading-relaxed">${p.description || ''}</p>
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <span class="font-serif text-lg font-bold text-gold">NT$ ${p.price?.toLocaleString() || 0}</span>
-                            ${p.originalPrice ? `<span class="text-xs text-warm-gray line-through ml-2">NT$ ${p.originalPrice.toLocaleString()}</span>` : ''}
-                        </div>
-                        <button onclick="addToCart('${p.id}')" class="btn-gold text-white text-xs px-5 py-2.5 rounded-full tracking-wider uppercase">加入</button>
-                    </div>
-                </div>
-            </div>
-        `}).join('');
-    }
-
-    // ── Cart ──
-    function addToCart(id) {
-        const p = LocalDB.products.getById(id);
-        if (!p) {
-            // 嘗試用 key 查找
-            const allProducts = LocalDB.products.getActive();
-            const keyMap = { mask: 0, essence: 1, ampoule: 2, hair: 3 };
-            const idx = keyMap[id];
-            if (idx !== undefined && allProducts[idx]) {
-                const product = allProducts[idx];
-                cart.push({ id: product.id, name: product.name, price: product.price, imageUrl: product.imageUrl, qty: 1 });
-                updateCartUI();
-                showToast(`${product.name} 已加入購物車`);
-            }
-            return;
-        }
-        cart.push({ id: p.id, name: p.name, price: p.price, imageUrl: p.imageUrl, qty: 1 });
-        updateCartUI();
-        showToast(`${p.name} 已加入購物車`);
-    }
-
-    function removeFromCart(idx) {
-        cart.splice(idx, 1);
-        updateCartUI();
-    }
-
-    function updateCartUI() {
-        const count = cart.length;
-        const badge = document.getElementById('navCartCount');
-        if (count > 0) { badge.textContent = count; badge.classList.remove('hidden'); }
-        else { badge.classList.add('hidden'); }
-
-        const container = document.getElementById('cartItems');
-        const footer = document.getElementById('cartFooter');
-
-        if (count === 0) {
-            container.innerHTML = '<p class="text-center text-warm-gray py-16 text-sm">購物車是空的</p>';
-            footer.classList.add('hidden');
-            return;
-        }
-
-        footer.classList.remove('hidden');
-        const subtotal = cart.reduce((s, i) => s + i.price * i.qty, 0);
-        const discount = count >= 3 ? 0.8 : 1;
-        const finalTotal = Math.round(subtotal * discount);
-
-        container.innerHTML = cart.map((item, idx) => `
-            <div class="flex items-center gap-4 p-3 rounded-xl bg-ivory">
-                <div class="w-14 h-14 rounded-lg overflow-hidden flex-shrink-0 bg-gray-100">
-                    ${item.imageUrl ? `<img src="${item.imageUrl}" class="w-full h-full object-cover">` : '<div class="w-full h-full flex items-center justify-center text-gray-300 text-xs">無圖</div>'}
-                </div>
-                <div class="flex-1 min-w-0">
-                    <p class="font-medium text-sm truncate">${item.name}</p>
-                    <p class="text-gold font-bold text-sm">NT$ ${item.price.toLocaleString()}</p>
-                </div>
-                <button onclick="removeFromCart(${idx})" class="w-6 h-6 rounded-full bg-gray-200 flex items-center justify-center text-xs hover:bg-gray-300">✕</button>
-            </div>
-        `).join('');
-
-        const subtotalEl = document.getElementById('cartSubtotal');
-        const promoEl = document.getElementById('cartPromo');
-        if (discount < 1) {
-            subtotalEl.innerHTML = `<span class="line-through text-warm-gray text-sm mr-2">NT$ ${subtotal.toLocaleString()}</span> NT$ ${finalTotal.toLocaleString()}`;
-            promoEl.classList.remove('hidden');
-        } else {
-            subtotalEl.textContent = `NT$ ${subtotal.toLocaleString()}`;
-            promoEl.classList.add('hidden');
-        }
-    }
-
-    function toggleCart() {
-        const drawer = document.getElementById('cartDrawer');
-        const overlay = document.getElementById('cartOverlay');
-        const isOpen = drawer.classList.contains('open');
-        if (isOpen) { drawer.classList.remove('open'); overlay.classList.add('hidden'); }
-        else { drawer.classList.add('open'); overlay.classList.remove('hidden'); }
-    }
-
-    // ── 結帳 ──
-    function checkout() {
-        if (!cart.length) return;
-        
-        // 顯示結帳表單
-        document.getElementById('checkoutModal').classList.remove('hidden');
-    }
-
-    function closeCheckout() {
-        document.getElementById('checkoutModal').classList.add('hidden');
-    }
-
-    async function submitOrder(e) {
-        e.preventDefault();
-        
-        const subtotal = cart.reduce((s, i) => s + i.price * i.qty, 0);
-        const discount = cart.length >= 3 ? Math.round(subtotal * 0.2) : 0;
-        const finalTotal = subtotal - discount;
-        
-        const order = {
-            items: cart.map(item => ({ id: item.id, name: item.name, price: item.price, qty: item.qty })),
-            customer: {
-                name: document.getElementById('custName').value,
-                phone: document.getElementById('custPhone').value,
-                address: document.getElementById('custAddress').value,
-                note: document.getElementById('custNote').value
-            },
-            subtotal,
-            discount,
-            finalTotal,
-            total: finalTotal
-        };
-        
-        // 儲存訂單
-        const orderId = LocalDB.orders.add(order);
-        
-        // 發送 LINE 通知
-        order.id = orderId;
-        await LineNotifier.newOrderNotify(order);
-        
-        // 清空購物車
-        cart = [];
-        updateCartUI();
-        closeCheckout();
-        
-        showToast(`訂單已成立！訂單編號：${orderId}`);
-    }
-
-    // ── Toast 通知 ──
-    function showToast(message, type = 'success') {
-        const toast = document.createElement('div');
-        toast.className = `toast toast-${type}`;
-        toast.textContent = message;
-        document.body.appendChild(toast);
-        setTimeout(() => toast.remove(), 3000);
-    }
-
-    // ── Mobile menu ──
-    function toggleMobileMenu() {
-        document.getElementById('mobileMenu').classList.toggle('hidden');
-    }
-
-    // ── Nav scroll effect ──
-    window.addEventListener('scroll', () => {
-        const nav = document.getElementById('mainNav');
-        if (window.scrollY > 60) {
-            nav.classList.add('nav-glass', 'bg-white/90', 'shadow-sm');
-            nav.classList.remove('bg-transparent');
-        } else {
-            nav.classList.remove('nav-glass', 'bg-white/90', 'shadow-sm');
-            nav.classList.add('bg-transparent');
-        }
-    });
-
-    // ── Scroll animations ──
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
-    }, { threshold: 0.08 });
-    document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
-
-    // ── Calculator ──
-    function updateCalc() {
-        const price = +document.getElementById('calcProduct').value || 0;
-        const qty = Math.max(1, +document.getElementById('calcQty').value || 1);
-        const split = +document.getElementById('calcSplit').value || 0.3;
-        const total = price * qty;
-        let finalTotal = total;
-        const discountRow = document.getElementById('calcDiscountRow');
-        const discountEl = document.getElementById('calcDiscount');
-        if (qty >= 3) {
-            finalTotal = Math.round(total * 0.8);
-            discountRow.style.display = 'flex';
-            discountEl.textContent = `-NT$ ${total - finalTotal}`;
-        } else {
-            discountRow.style.display = 'none';
-        }
-        const profit = Math.round(finalTotal * split);
-        document.getElementById('calcTotal').textContent = `NT$ ${total.toLocaleString()}`;
-        document.getElementById('calcProfit').textContent = `NT$ ${profit.toLocaleString()}`;
-    }
-    updateCalc();
-
-    // ── File upload ──
-    let uploadedFiles = [];
-    function handleFileUpload(e) {
-        const files = Array.from(e.target.files);
-        files.forEach(f => {
-            const reader = new FileReader();
-            reader.onload = (event) => {
-                const dataUrl = event.target.result;
-                LocalDB.media.add({ name: f.name, type: f.type, size: f.size, dataUrl });
-                uploadedFiles.push({ name: f.name, dataUrl });
-                const isImg = f.type.startsWith('image/');
-                const div = document.createElement('div');
-                div.className = 'flex items-center gap-3 p-3 rounded-xl bg-ivory';
-                div.innerHTML = `
-                    <div class="w-12 h-12 rounded-lg overflow-hidden flex-shrink-0 bg-gray-100">
-                        ${isImg ? `<img src="${dataUrl}" class="w-full h-full object-cover">` : '<div class="w-full h-full flex items-center justify-center text-lg">🎬</div>'}
-                    </div>
-                    <div class="flex-1 min-w-0">
-                        <p class="text-sm truncate">${f.name}</p>
-                        <p class="text-xs text-warm-gray">${(f.size/1024).toFixed(0)} KB</p>
-                    </div>
-                    <span class="text-xs text-gold">✓ 已上傳</span>
-                `;
-                document.getElementById('uploadedFiles').appendChild(div);
-                if (isImg) {
-                    document.getElementById('fbPreviewImg').src = dataUrl;
-                    document.getElementById('igPreviewImg').src = dataUrl;
-                    document.getElementById('igStoryPreviewImg').src = dataUrl;
-                }
-    // ── Init ──
-    window.addEventListener('load', function() {
-        renderProducts();
-    });
-    </script>
-
-    <!-- Footer -->
-    <footer class="bg-charcoal/95 py-6 mt-12">
-        <div class="max-w-4xl mx-auto px-6 text-center">
-            <p class="text-xs text-white/40">本平台由 <span class="text-gold">創。虹橋</span> 協助架設</p>
-            <p class="text-[10px] text-white/25 mt-1">Powered by ExoMuse &copy; 2026</p>
+<!-- ============================================================
+     HERO
+============================================================ -->
+<section id="hero" class="relative min-h-screen flex items-center justify-center overflow-hidden bg-luxury-dark">
+    <div class="bubble w-[500px] h-[500px] -top-40 -left-40"></div>
+    <div class="bubble w-[350px] h-[350px] bottom-20 right-10" style="animation-delay: -3s;"></div>
+    <div class="relative z-10 text-center px-6 max-w-4xl mx-auto">
+        <div class="mb-8">
+            <span class="tag tracking-[.25em] uppercase">Human Exosome Skincare</span>
         </div>
-    </footer>
+        <h1 class="font-serif text-5xl sm:text-6xl lg:text-7xl font-bold text-white leading-tight mb-6">
+            第一也是唯一<br>
+            <span class="text-gold-gradient">合法人類來源</span><br>
+            外泌體保養品
+        </h1>
+        <p class="text-white/40 text-lg font-light mb-2 tracking-wide">Exosome × Muse 的完美融合</p>
+        <p class="text-white/25 text-sm max-w-xl mx-auto mb-12">採用臺灣唯一合法人類臍帶間質幹細胞外泌體，符合國際標準奈米級囊泡</p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            <a href="#products" class="btn-gold px-10 py-4 rounded-full text-sm tracking-widest uppercase font-medium">探索產品</a>
+            <a href="#partner" class="btn-outline px-10 py-4 rounded-full text-sm tracking-widest uppercase font-medium">成為合作夥伴</a>
+        </div>
+    </div>
+    <div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2">
+        <span class="text-white/20 text-[.65rem] tracking-[.3em]">SCROLL</span>
+        <div class="scroll-line"></div>
+    </div>
+</section>
+
+<!-- ============================================================
+     BRAND STORY
+============================================================ -->
+<section id="about" class="py-28 lg:py-36 bg-white">
+    <div class="max-w-6xl mx-auto px-6 lg:px-10">
+        <div class="grid lg:grid-cols-2 gap-20 items-center">
+            <div>
+                <span class="tag mb-6">About ExoMuse</span>
+                <h2 class="font-serif text-4xl lg:text-5xl font-bold leading-tight mb-8">肌膚護理的<br><span class="text-gold-gradient">深刻洞察</span></h2>
+                <div class="divider-elegant mb-8 ml-0"></div>
+                <p class="text-warm-gray leading-[1.9] mb-6">ExoMuse 是「Exosome」外泌體與「Muse」繆斯女神的完美融合，代表著對肌膚護理最深刻的洞察與追求。</p>
+                <p class="text-warm-gray leading-[1.9] mb-8">我們專注於人類來源外泌體的研發與應用，採用先進的臍帶間質幹細胞外泌體成分，深入肌底，從根源激活肌膚生命力。</p>
+                <div class="grid grid-cols-3 gap-8">
+                    <div><div class="font-serif text-3xl font-bold text-gold">100%</div><div class="text-xs text-warm-gray mt-1">人類來源</div></div>
+                    <div><div class="font-serif text-2xl font-bold text-gold">ISEV</div><div class="text-xs text-warm-gray mt-1">國際認證</div></div>
+                    <div><div class="font-serif text-3xl font-bold text-gold">4</div><div class="text-xs text-warm-gray mt-1">核心產品</div></div>
+                </div>
+            </div>
+            <div class="relative">
+                <div class="aspect-[4/5] rounded-3xl overflow-hidden" style="background: linear-gradient(145deg, #F5F0E8, #EDE8DF);">
+                    <div class="absolute inset-0 flex items-center justify-center">
+                        <div class="text-center">
+                            <div class="w-24 h-24 mx-auto mb-4 rounded-full bg-gold-gradient flex items-center justify-center"><span class="text-white font-serif text-3xl font-bold">E</span></div>
+                            <p class="font-serif text-2xl text-charcoal/60">ExoMuse</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ============================================================
+     PRODUCTS
+============================================================ -->
+<section id="products" class="py-28 lg:py-36 bg-ivory">
+    <div class="max-w-7xl mx-auto px-6 lg:px-10">
+        <div class="text-center mb-20">
+            <span class="tag mb-6">Products</span>
+            <h2 class="font-serif text-4xl lg:text-5xl font-bold mt-6">產品系列</h2>
+            <p class="text-warm-gray mt-4 max-w-md mx-auto text-sm">專為專業醫美機構打造，每一瓶都是科學與奢華的完美結合</p>
+        </div>
+        <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-6">
+            <div class="card-hover bg-white rounded-2xl overflow-hidden border border-black/[.04]">
+                <div class="product-img-wrap aspect-[3/4]"><img src="images/mask.png" alt="人類外泌體面膜" loading="lazy"></div>
+                <div class="p-6">
+                    <p class="text-[.65rem] text-gold tracking-[.2em] uppercase mb-1">Exosome Mask</p>
+                    <h3 class="font-serif text-lg font-bold mb-1">人類外泌體面膜</h3>
+                    <p class="text-xs text-warm-gray mb-4">15分鐘縮時保養，打造無瑕水潤透亮肌</p>
+                    <div class="flex flex-wrap gap-1.5 mb-5"><span class="tag text-[.65rem]">四胜肽</span><span class="tag text-[.65rem]">富勒烯</span><span class="tag text-[.65rem]">水膜磁</span></div>
+                    <div class="flex items-center justify-between">
+                        <span class="font-serif text-lg font-bold text-gold">NT$ 1,580</span>
+                        <button onclick="addToCart('mask')" class="btn-gold text-white text-xs px-5 py-2.5 rounded-full">加入</button>
+                    </div>
+                </div>
+            </div>
+            <div class="card-hover bg-white rounded-2xl overflow-hidden border border-black/[.04]">
+                <div class="product-img-wrap aspect-[3/4]"><img src="images/essence.png" alt="人類外泌體精華液" loading="lazy"></div>
+                <div class="p-6">
+                    <p class="text-[.65rem] text-gold tracking-[.2em] uppercase mb-1">Exosome Essence</p>
+                    <h3 class="font-serif text-lg font-bold mb-1">人類外泌體精華液</h3>
+                    <p class="text-xs text-warm-gray mb-4">一瓶重啟青春修復力，多重玻尿酸層層補水</p>
+                    <div class="flex flex-wrap gap-1.5 mb-5"><span class="tag text-[.65rem]">水膜磁</span><span class="tag text-[.65rem]">海茴香</span><span class="tag text-[.65rem]">維他命B5</span></div>
+                    <div class="flex items-center justify-between">
+                        <span class="font-serif text-lg font-bold text-gold">NT$ 3,580</span>
+                        <button onclick="addToCart('essence')" class="btn-gold text-white text-xs px-5 py-2.5 rounded-full">加入</button>
+                    </div>
+                </div>
+            </div>
+            <div class="card-hover bg-white rounded-2xl overflow-hidden border border-black/[.04]">
+                <div class="product-img-wrap aspect-[3/4]"><img src="images/ampoule.png" alt="人類外泌體安瓶" loading="lazy"></div>
+                <div class="p-6">
+                    <p class="text-[.65rem] text-gold tracking-[.2em] uppercase mb-1">Exosome Ampoule</p>
+                    <h3 class="font-serif text-lg font-bold mb-1">人類外泌體安瓶</h3>
+                    <p class="text-xs text-warm-gray mb-4">瞬效修護，多重胜肽煥活，撫平歲月紋理</p>
+                    <div class="flex flex-wrap gap-1.5 mb-5"><span class="tag text-[.65rem]">多重胜肽</span><span class="tag text-[.65rem]">海茴香</span><span class="tag text-[.65rem]">藍藻</span></div>
+                    <div class="flex items-center justify-between">
+                        <span class="font-serif text-lg font-bold text-gold">NT$ 3,980</span>
+                        <button onclick="addToCart('ampoule')" class="btn-gold text-white text-xs px-5 py-2.5 rounded-full">加入</button>
+                    </div>
+                </div>
+            </div>
+            <div class="card-hover bg-white rounded-2xl overflow-hidden border border-black/[.04]">
+                <div class="product-img-wrap aspect-[3/4]"><img src="images/hair.png" alt="人類外泌體養髮液" loading="lazy"></div>
+                <div class="p-6">
+                    <p class="text-[.65rem] text-gold tracking-[.2em] uppercase mb-1">Exosome Hair</p>
+                    <h3 class="font-serif text-lg font-bold mb-1">人類外泌體養髮液</h3>
+                    <p class="text-xs text-warm-gray mb-4">美髮新境界，重拾健康秀髮，散發自信光采</p>
+                    <div class="flex flex-wrap gap-1.5 mb-5"><span class="tag text-[.65rem]">臍帶幹細胞</span><span class="tag text-[.65rem]">外泌體</span><span class="tag text-[.65rem]">髮根滋養</span></div>
+                    <div class="flex items-center justify-between">
+                        <span class="font-serif text-lg font-bold text-gold">NT$ 4,580</span>
+                        <button onclick="addToCart('hair')" class="btn-gold text-white text-xs px-5 py-2.5 rounded-full">加入</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ============================================================
+     INGREDIENTS
+============================================================ -->
+<section id="ingredients" class="py-28 lg:py-36 bg-luxury-dark text-white">
+    <div class="max-w-6xl mx-auto px-6 lg:px-10">
+        <div class="text-center mb-20">
+            <span class="tag mb-6 text-gold border-gold/30 bg-gold/10">Core Ingredients</span>
+            <h2 class="font-serif text-4xl lg:text-5xl font-bold mt-6">核心成分</h2>
+            <p class="text-white/30 mt-4 max-w-md mx-auto text-sm">每一滴精華，都是尖端科技的結晶</p>
+        </div>
+        <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div class="p-8 rounded-2xl border border-white/[.07] bg-white/[.03]">
+                <div class="ing-circle mb-6">Ex</div>
+                <h3 class="font-serif text-lg font-bold mb-2 text-gold-light">人類臍帶間質幹細胞外泌體</h3>
+                <p class="text-white/35 text-sm leading-relaxed">臺灣唯一合法人類來源，符合 ISEV 國際標準奈米級囊泡，深入肌底修護</p>
+            </div>
+            <div class="p-8 rounded-2xl border border-white/[.07] bg-white/[.03]">
+                <div class="ing-circle mb-6">P4</div>
+                <h3 class="font-serif text-lg font-bold mb-2 text-gold-light">四胜肽</h3>
+                <p class="text-white/35 text-sm leading-relaxed">多重胜肽煥活，撫平歲月紋理，恢復肌膚彈性與屏障修護</p>
+            </div>
+            <div class="p-8 rounded-2xl border border-white/[.07] bg-white/[.03]">
+                <div class="ing-circle mb-6">C60</div>
+                <h3 class="font-serif text-lg font-bold mb-2 text-gold-light">富勒烯</h3>
+                <p class="text-white/35 text-sm leading-relaxed">強效抗氧化，與維他命B3協作，有效抵禦自由基傷害</p>
+            </div>
+            <div class="p-8 rounded-2xl border border-white/[.07] bg-white/[.03]">
+                <div class="ing-circle mb-6">HM</div>
+                <h3 class="font-serif text-lg font-bold mb-2 text-gold-light">水膜磁</h3>
+                <p class="text-white/35 text-sm leading-relaxed">深層補水科技，搭配多重玻尿酸，層層補水直達肌底</p>
+            </div>
+            <div class="p-8 rounded-2xl border border-white/[.07] bg-white/[.03]">
+                <div class="ing-circle mb-6">HA</div>
+                <h3 class="font-serif text-lg font-bold mb-2 text-gold-light">海茴香</h3>
+                <p class="text-white/35 text-sm leading-relaxed">珍稀海洋植物精華，舒緩乾燥泛紅，提升肌膚保護力</p>
+            </div>
+            <div class="p-8 rounded-2xl border border-white/[.07] bg-white/[.03]">
+                <div class="ing-circle mb-6">B5</div>
+                <h3 class="font-serif text-lg font-bold mb-2 text-gold-light">維他命B5</h3>
+                <p class="text-white/35 text-sm leading-relaxed">深層修護，不含酒精香精，敏弱肌可安心使用</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ============================================================
+     PROMO BANNER
+============================================================ -->
+<section class="py-14 bg-gold-gradient">
+    <div class="max-w-3xl mx-auto px-6 text-center">
+        <p class="text-white/90 text-lg">🔥 限時優惠：買滿 3 件享 <span class="font-bold text-2xl">8 折</span>，且額外贈送隨機好禮！</p>
+    </div>
+</section>
+
+<!-- ============================================================
+     PARTNER
+============================================================ -->
+<section id="partner" class="py-28 lg:py-36 bg-white">
+    <div class="max-w-6xl mx-auto px-6 lg:px-10">
+        <div class="grid lg:grid-cols-2 gap-20 items-center">
+            <div>
+                <span class="tag mb-6">Partner Program</span>
+                <h2 class="font-serif text-4xl font-bold leading-tight mb-6">合作夥伴計畫</h2>
+                <div class="divider-elegant mb-8 ml-0"></div>
+                <p class="text-warm-gray leading-[1.9] mb-6">加入 ExoMuse 銷售夥伴，透過短片引流、極簡下單，我們提供完整的產品素材，讓您輕鬆打造自己的保養品事業。</p>
+                <div class="space-y-5 mb-10">
+                    <div class="flex items-start gap-4"><div class="w-8 h-8 rounded-full bg-gold/10 flex items-center justify-center flex-shrink-0 mt-0.5"><span class="text-gold text-sm font-bold">1</span></div><div><h4 class="font-medium mb-1">註冊夥伴帳號</h4><p class="text-sm text-warm-gray">免費註冊，即刻獲得專屬推廣連結</p></div></div>
+                    <div class="flex items-start gap-4"><div class="w-8 h-8 rounded-full bg-gold/10 flex items-center justify-center flex-shrink-0 mt-0.5"><span class="text-gold text-sm font-bold">2</span></div><div><h4 class="font-medium mb-1">上傳行銷素材</h4><p class="text-sm text-warm-gray">上傳影片、圖片，或使用我們提供的素材</p></div></div>
+                    <div class="flex items-start gap-4"><div class="w-8 h-8 rounded-full bg-gold/10 flex items-center justify-center flex-shrink-0 mt-0.5"><span class="text-gold text-sm font-bold">3</span></div><div><h4 class="font-medium mb-1">LINE 即時通知</h4><p class="text-sm text-warm-gray">新訂單自動通知，即時處理出貨</p></div></div>
+                </div>
+                <a href="admin/index.html" class="btn-gold inline-block text-white px-8 py-3.5 rounded-full text-sm tracking-widest uppercase">進入後台</a>
+            </div>
+            <div>
+                <div class="bg-ivory rounded-3xl p-8 lg:p-10">
+                    <h3 class="font-serif text-xl font-bold mb-6 text-center">分潤計算器</h3>
+                    <div class="space-y-5">
+                        <div><label class="text-xs text-warm-gray uppercase tracking-wider mb-2 block">產品</label><select id="calcProduct" class="w-full px-4 py-3 rounded-xl border border-black/[.08] text-sm bg-white" onchange="updateCalc()"><option value="1580">面膜 NT$ 1,580</option><option value="3580">精華液 NT$ 3,580</option><option value="3980">安瓶 NT$ 3,980</option><option value="4580">養髮液 NT$ 4,580</option></select></div>
+                        <div><label class="text-xs text-warm-gray uppercase tracking-wider mb-2 block">數量</label><input id="calcQty" type="number" value="1" min="1" max="10" class="w-full px-4 py-3 rounded-xl border border-black/[.08] text-sm bg-white" oninput="updateCalc()"></div>
+                        <div><label class="text-xs text-warm-gray uppercase tracking-wider mb-2 block">分潤比例</label><select id="calcSplit" class="w-full px-4 py-3 rounded-xl border border-black/[.08] text-sm bg-white" onchange="updateCalc()"><option value="0.3">30% 標準</option><option value="0.4">40% 進階</option><option value="0.5">50% VIP</option></select></div>
+                        <div class="divider-elegant my-4"></div>
+                        <div class="flex justify-between text-sm"><span class="text-warm-gray">訂單總額</span><span id="calcTotal" class="font-medium">NT$ 1,580</span></div>
+                        <div class="flex justify-between text-sm" id="calcDiscountRow"><span class="text-warm-gray">3件折扣</span><span id="calcDiscount" class="font-medium text-gold">—</span></div>
+                        <div class="flex justify-between text-sm pt-2 border-t border-black/[.06]"><span class="font-medium">預估分潤</span><span id="calcProfit" class="font-serif text-xl font-bold text-gold">NT$ 474</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ============================================================
+     DIGITAL ASSETS
+============================================================ -->
+<section id="assets" class="py-28 lg:py-36 bg-ivory">
+    <div class="max-w-6xl mx-auto px-6 lg:px-10">
+        <div class="text-center mb-16">
+            <span class="tag mb-6">Digital Assets</span>
+            <h2 class="font-serif text-4xl lg:text-5xl font-bold mt-6">數位資產管理</h2>
+            <p class="text-warm-gray mt-4 max-w-lg mx-auto text-sm">上傳您的產品素材，供前台與廣告投放使用</p>
+        </div>
+        <div class="grid lg:grid-cols-2 gap-10">
+            <div class="bg-white rounded-3xl p-8">
+                <h3 class="font-serif text-lg font-bold mb-6">上傳素材</h3>
+                <div id="uploadZone" class="upload-zone rounded-2xl p-10 text-center mb-6 cursor-pointer" onclick="document.getElementById('fileInput').click()">
+                    <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-gold/5 flex items-center justify-center"><svg class="w-7 h-7 text-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg></div>
+                    <p class="text-sm text-warm-gray mb-1">點擊或拖曳上傳圖片 / 影片</p>
+                    <p class="text-xs text-warm-gray/50">支援 JPG、PNG、MP4，最大 50MB</p>
+                    <input type="file" id="fileInput" class="hidden" accept="image/*,video/*" multiple onchange="handleFileUpload(event)">
+                </div>
+                <div id="uploadedFiles" class="space-y-3 mb-6"></div>
+                <button onclick="downloadKit()" class="w-full btn-outline py-3 rounded-full text-sm tracking-wider uppercase">📦 下載素材包</button>
+            </div>
+            <div class="bg-white rounded-3xl p-8">
+                <h3 class="font-serif text-lg font-bold mb-4">素材預覽</h3>
+                <div class="fb-preview max-w-sm mx-auto mb-6">
+                    <div class="fb-preview-header"><div class="fb-avatar">E</div><div><p class="text-sm font-semibold">ExoMuse 外泌體精華</p><p class="text-xs text-gray-500">剛剛</p></div></div>
+                    <div class="p-3"><div class="aspect-square rounded-lg overflow-hidden bg-gray-100"><img id="fbPreviewImg" src="images/mask.png" alt="" class="w-full h-full object-cover"></div></div>
+                </div>
+                <p class="text-xs text-warm-gray text-center">上傳圖片後此處即時預覽</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ============================================================
+     FOOTER
+============================================================ -->
+<footer class="py-16 bg-luxury-dark text-white/30 text-xs">
+    <div class="max-w-6xl mx-auto px-6 lg:px-10">
+        <div class="grid md:grid-cols-3 gap-10 mb-10">
+            <div><div class="font-serif text-xl font-bold text-gold-gradient mb-4">ExoMuse</div><p class="leading-relaxed">第一也是唯一合法人類來源外泌體保養品。<br>為專業醫美機構打造。</p></div>
+            <div><h4 class="text-white/60 text-[.7rem] uppercase tracking-[.2em] mb-4">快速連結</h4><div class="space-y-2"><a href="#products" class="block hover:text-gold transition-colors">產品系列</a><a href="#partner" class="block hover:text-gold transition-colors">合作夥伴</a><a href="#assets" class="block hover:text-gold transition-colors">數位資產</a></div></div>
+            <div><h4 class="text-white/60 text-[.7rem] uppercase tracking-[.2em] mb-4">認證標章</h4><div class="flex items-center gap-2"><span class="px-2 py-1 rounded border border-white/10 text-gold text-[.65rem]">ISEV 認證</span><span class="px-2 py-1 rounded border border-white/10 text-gold text-[.65rem]">臺灣唯一合法</span></div><p class="mt-3 text-[.65rem]">請認明艾萬霖「雷射防偽貼紙」</p></div>
+        </div>
+        <div class="divider-elegant mb-6"></div>
+        <div class="text-center text-[.65rem] tracking-wide">© 2026 ExoMuse. All rights reserved.</div>
+    </div>
+</footer>
+
+<!-- ============================================================
+     CART DRAWER
+============================================================ -->
+<div id="cartOverlay" class="fixed inset-0 bg-black/30 z-50 hidden transition-opacity" onclick="toggleCart()"></div>
+<div id="cartDrawer" class="cart-drawer">
+    <div class="p-6 border-b border-black/[.06] flex items-center justify-between">
+        <h3 class="font-serif text-xl font-bold">購物車</h3>
+        <button onclick="toggleCart()" class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>
+    </div>
+    <div id="cartItems" class="p-6 space-y-4 flex-1"><p class="text-center text-warm-gray py-16 text-sm">購物車是空的</p></div>
+    <div id="cartFooter" class="p-6 border-t border-black/[.06] hidden">
+        <div class="flex justify-between items-center mb-2"><span class="text-warm-gray text-sm">小計</span><span id="cartSubtotal" class="font-serif text-lg font-bold">NT$ 0</span></div>
+        <div id="cartPromo" class="text-xs text-gold mb-4 hidden">🎉 已享 8 折優惠！</div>
+        <button onclick="checkout()" class="btn-gold w-full text-white py-3.5 rounded-full text-sm tracking-wider uppercase">立即結帳</button>
+    </div>
+</div>
+
+<!-- ============================================================
+     CHECKOUT MODAL
+============================================================ -->
+<div id="checkoutModal" class="fixed inset-0 z-50 hidden">
+    <div class="absolute inset-0 bg-black/40" onclick="closeCheckout()"></div>
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md bg-white rounded-2xl shadow-2xl p-8">
+        <h3 class="font-serif text-xl font-bold mb-6">填寫結帳資訊</h3>
+        <form onsubmit="submitOrder(event)" class="space-y-4">
+            <div><label class="text-xs text-warm-gray uppercase tracking-wider mb-1 block">姓名 *</label><input type="text" id="custName" required class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm"></div>
+            <div><label class="text-xs text-warm-gray uppercase tracking-wider mb-1 block">電話 *</label><input type="tel" id="custPhone" required class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm"></div>
+            <div><label class="text-xs text-warm-gray uppercase tracking-wider mb-1 block">地址 *</label><input type="text" id="custAddress" required class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm"></div>
+            <div><label class="text-xs text-warm-gray uppercase tracking-wider mb-1 block">備註</label><input type="text" id="custNote" class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm"></div>
+            <div class="flex gap-3 pt-4">
+                <button type="button" onclick="closeCheckout()" class="flex-1 py-3 rounded-xl border border-gray-200 text-sm">取消</button>
+                <button type="submit" class="btn-gold flex-1 py-3 rounded-xl text-sm">確認下單</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- ============================================================
+     JAVASCRIPT
+============================================================ -->
+<script>
+// ── LocalDB ──
+const LocalDB = {
+    get(key, def = []) { try { return JSON.parse(localStorage.getItem('exomuse_' + key)) || def; } catch { return def; } },
+    set(key, data) { localStorage.setItem('exomuse_' + key, JSON.stringify(data)); },
+    genId() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 8); },
+    products: {
+        getAll() { return LocalDB.get('products', []); },
+        getById(id) { return LocalDB.products.getAll().find(p => p.id === id); },
+        getActive() { return LocalDB.products.getAll().filter(p => p.active !== false); },
+        add(p) { const all = LocalDB.products.getAll(); all.push({ ...p, id: LocalDB.genId(), active: true, createdAt: new Date().toISOString() }); LocalDB.set('products', all); return all[all.length-1].id; },
+        update(id, data) { const all = LocalDB.products.getAll(); const i = all.findIndex(p => p.id === id); if (i >= 0) { all[i] = { ...all[i], ...data }; LocalDB.set('products', all); } },
+        del(id) { const all = LocalDB.products.getAll(); const i = all.findIndex(p => p.id === id); if (i >= 0) { all[i].active = false; LocalDB.set('products', all); } }
+    },
+    orders: {
+        getAll() { return LocalDB.get('orders', []); },
+        add(o) { const all = LocalDB.orders.getAll(); all.unshift({ ...o, id: LocalDB.genId(), status: 'pending', createdAt: new Date().toISOString() }); LocalDB.set('orders', all); return all[0].id; },
+        updateStatus(id, status) { const all = LocalDB.orders.getAll(); const i = all.findIndex(o => o.id === id); if (i >= 0) { all[i].status = status; LocalDB.set('orders', all); } }
+    },
+    media: {
+        getAll() { return LocalDB.get('media', []); },
+        add(m) { const all = LocalDB.media.getAll(); all.push({ ...m, id: LocalDB.genId() }); LocalDB.set('media', all); },
+        del(id) { LocalDB.set('media', LocalDB.media.getAll().filter(m => m.id !== id)); }
+    },
+    settings: {
+        get() { return LocalDB.get('settings', { lineToken: '' }); },
+        update(d) { LocalDB.set('settings', { ...LocalDB.settings.get(), ...d }); }
+    },
+    init() {
+        if (LocalDB.products.getAll().length === 0) {
+            [{ n: 'mask', name: '人類外泌體面膜', p: 1580, op: 1980, d: '15分鐘縮時保養，打造無瑕水潤透亮肌' },
+             { n: 'essence', name: '人類外泌體精華液', p: 3580, op: 4280, d: '一瓶重啟青春修復力，多重玻尿酸層層補水' },
+             { n: 'ampoule', name: '人類外泌體安瓶', p: 3980, op: 4680, d: '瞬效修護，多重胜肽煥活，撫平歲月紋理' },
+             { n: 'hair', name: '人類外泌體養髮液', p: 4580, op: 5280, d: '美髮新境界，重拾健康秀髮，散發自信光采' }
+            ].forEach(p => LocalDB.products.add({ name: p.name, type: 'product', price: p.p, originalPrice: p.op, description: p.d, imageUrl: `images/${p.n}.png`, sortOrder: 1 }));
+        }
+    }
+};
+LocalDB.init();
+
+// ── Product Key Map ──
+const keyMap = { mask: 0, essence: 1, ampoule: 2, hair: 3 };
+
+// ── Cart ──
+let cart = [];
+function addToCart(key) {
+    const products = LocalDB.products.getActive();
+    const p = products[keyMap[key]];
+    if (!p) return;
+    cart.push({ id: p.id, name: p.name, price: p.price, qty: 1 });
+    updateCartUI();
+    showToast(p.name + ' 已加入購物車');
+}
+function removeFromCart(idx) { cart.splice(idx, 1); updateCartUI(); }
+function updateCartUI() {
+    const count = cart.length;
+    const badge = document.getElementById('navCartCount');
+    if (count > 0) { badge.textContent = count; badge.classList.remove('hidden'); } else { badge.classList.add('hidden'); }
+    const container = document.getElementById('cartItems');
+    const footer = document.getElementById('cartFooter');
+    if (!count) { container.innerHTML = '<p class="text-center text-warm-gray py-16 text-sm">購物車是空的</p>'; footer.classList.add('hidden'); return; }
+    footer.classList.remove('hidden');
+    const subtotal = cart.reduce((s, i) => s + i.price * i.qty, 0);
+    const discount = count >= 3 ? 0.8 : 1;
+    const finalTotal = Math.round(subtotal * discount);
+    container.innerHTML = cart.map((item, i) => `<div class="flex items-center gap-4 p-3 rounded-xl bg-ivory"><div class="flex-1 min-w-0"><p class="font-medium text-sm truncate">${item.name}</p><p class="text-gold font-bold text-sm">NT$ ${item.price.toLocaleString()}</p></div><button onclick="removeFromCart(${i})" class="w-6 h-6 rounded-full bg-gray-200 flex items-center justify-center text-xs">✕</button></div>`).join('');
+    const subtotalEl = document.getElementById('cartSubtotal');
+    const promoEl = document.getElementById('cartPromo');
+    if (discount < 1) { subtotalEl.innerHTML = `<span class="line-through text-warm-gray text-sm mr-2">NT$ ${subtotal.toLocaleString()}</span> NT$ ${finalTotal.toLocaleString()}`; promoEl.classList.remove('hidden'); } else { subtotalEl.textContent = 'NT$ ' + subtotal.toLocaleString(); promoEl.classList.add('hidden'); }
+}
+function toggleCart() {
+    const drawer = document.getElementById('cartDrawer');
+    const overlay = document.getElementById('cartOverlay');
+    if (drawer.classList.contains('open')) { drawer.classList.remove('open'); overlay.classList.add('hidden'); } else { drawer.classList.add('open'); overlay.classList.remove('hidden'); }
+}
+function checkout() { if (!cart.length) return; document.getElementById('checkoutModal').classList.remove('hidden'); }
+function closeCheckout() { document.getElementById('checkoutModal').classList.add('hidden'); }
+function submitOrder(e) {
+    e.preventDefault();
+    const subtotal = cart.reduce((s, i) => s + i.price * i.qty, 0);
+    const discount = cart.length >= 3 ? Math.round(subtotal * 0.2) : 0;
+    const finalTotal = subtotal - discount;
+    const order = { items: cart.map(i => ({ id: i.id, name: i.name, price: i.price, qty: i.qty })), customer: { name: document.getElementById('custName').value, phone: document.getElementById('custPhone').value, address: document.getElementById('custAddress').value, note: document.getElementById('custNote').value }, subtotal, discount, finalTotal };
+    const orderId = LocalDB.orders.add(order);
+    showToast('訂單已成立！編號：' + orderId.slice(0, 8));
+    cart = []; updateCartUI(); closeCheckout();
+}
+
+// ── Toast ──
+function showToast(msg, type = 'success') {
+    const t = document.createElement('div'); t.className = 'toast toast-' + type; t.textContent = msg; document.body.appendChild(t); setTimeout(() => t.remove(), 3000);
+}
+
+// ── Calculator ──
+function updateCalc() {
+    const price = +document.getElementById('calcProduct').value || 0;
+    const qty = Math.max(1, +document.getElementById('calcQty').value || 1);
+    const split = +document.getElementById('calcSplit').value || 0.3;
+    const total = price * qty;
+    let finalTotal = total;
+    const dRow = document.getElementById('calcDiscountRow');
+    const dEl = document.getElementById('calcDiscount');
+    if (qty >= 3) { finalTotal = Math.round(total * 0.8); dRow.style.display = 'flex'; dEl.textContent = '-NT$ ' + (total - finalTotal).toLocaleString(); } else { dRow.style.display = 'none'; }
+    document.getElementById('calcTotal').textContent = 'NT$ ' + total.toLocaleString();
+    document.getElementById('calcProfit').textContent = 'NT$ ' + Math.round(finalTotal * split).toLocaleString();
+}
+
+// ── File Upload ──
+function handleFileUpload(e) {
+    Array.from(e.target.files).forEach(f => {
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+            LocalDB.media.add({ name: f.name, type: f.type, size: f.size, dataUrl: ev.target.result });
+            const div = document.createElement('div');
+            div.className = 'flex items-center gap-3 p-3 rounded-xl bg-ivory';
+            div.innerHTML = `<div class="w-12 h-12 rounded-lg overflow-hidden flex-shrink-0 bg-gray-100">${f.type.startsWith('image/') ? `<img src="${ev.target.result}" class="w-full h-full object-cover">` : '<div class="w-full h-full flex items-center justify-center text-lg">🎬</div>'}</div><div class="flex-1 min-w-0"><p class="text-sm truncate">${f.name}</p><p class="text-xs text-warm-gray">${(f.size/1024).toFixed(0)} KB</p></div><span class="text-xs text-gold">✓</span>`;
+            document.getElementById('uploadedFiles').appendChild(div);
+            if (f.type.startsWith('image/')) document.getElementById('fbPreviewImg').src = ev.target.result;
+            showToast(f.name + ' 上傳成功');
+        };
+        reader.readAsDataURL(f);
+    });
+}
+const uploadZone = document.getElementById('uploadZone');
+uploadZone.addEventListener('dragover', e => { e.preventDefault(); uploadZone.style.borderColor = '#C9A96E'; });
+uploadZone.addEventListener('dragleave', () => { uploadZone.style.borderColor = ''; });
+uploadZone.addEventListener('drop', e => { e.preventDefault(); uploadZone.style.borderColor = ''; handleFileUpload({ target: { files: e.dataTransfer.files } }); });
+function downloadKit() { showToast('素材包下載功能（展示用）'); }
+
+// ── Nav Scroll ──
+window.addEventListener('scroll', () => {
+    const nav = document.getElementById('mainNav');
+    if (window.scrollY > 60) nav.classList.add('nav-glass', 'bg-white/90', 'shadow-sm');
+    else nav.classList.remove('nav-glass', 'bg-white/90', 'shadow-sm');
+});
+
+// ── Init ──
+updateCalc();
+</script>
 </body>
 </html>
