@@ -154,7 +154,7 @@
         </div>
         <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-6">
             <div class="card-hover bg-white rounded-2xl overflow-hidden border border-black/[.04]">
-                <div class="product-img-wrap"><img src="images/mask2.png" alt="人類外泌體面膜" loading="lazy"></div>
+                <div class="product-img-wrap"><img src="images/essence3.jpg" alt="人類外泌體精華液"></div>
                 <div class="p-6">
                     <p class="text-[.65rem] text-gold tracking-[.2em] uppercase mb-1">Exosome Mask</p>
                     <h3 class="font-serif text-lg font-bold mb-1">人類外泌體面膜</h3>
@@ -167,7 +167,7 @@
                 </div>
             </div>
             <div class="card-hover bg-white rounded-2xl overflow-hidden border border-black/[.04]">
-                <div class="product-img-wrap aspect-[3/4]"><img src="images/essence2.png" alt="人類外泌體精華液" loading="lazy"></div>
+                <div class="product-img-wrap"><img src="images/essence3.jpg" alt="人類外泌體精華液"></div>
                 <div class="p-6">
                     <p class="text-[.65rem] text-gold tracking-[.2em] uppercase mb-1">Exosome Essence</p>
                     <h3 class="font-serif text-lg font-bold mb-1">人類外泌體精華液</h3>
@@ -180,7 +180,7 @@
                 </div>
             </div>
             <div class="card-hover bg-white rounded-2xl overflow-hidden border border-black/[.04]">
-                <div class="product-img-wrap aspect-[3/4]"><img src="images/ampoule2.png" alt="人類外泌體安瓶" loading="lazy"></div>
+                <div class="product-img-wrap"><img src="images/essence3.jpg" alt="人類外泌體精華液"></div>
                 <div class="p-6">
                     <p class="text-[.65rem] text-gold tracking-[.2em] uppercase mb-1">Exosome Ampoule</p>
                     <h3 class="font-serif text-lg font-bold mb-1">人類外泌體安瓶</h3>
@@ -193,7 +193,7 @@
                 </div>
             </div>
             <div class="card-hover bg-white rounded-2xl overflow-hidden border border-black/[.04]">
-                <div class="product-img-wrap aspect-[3/4]"><img src="images/hair2.png" alt="人類外泌體養髮液" loading="lazy"></div>
+                <div class="product-img-wrap"><img src="images/essence3.jpg" alt="人類外泌體精華液"></div>
                 <div class="p-6">
                     <p class="text-[.65rem] text-gold tracking-[.2em] uppercase mb-1">Exosome Hair</p>
                     <h3 class="font-serif text-lg font-bold mb-1">人類外泌體養髮液</h3>
@@ -325,7 +325,7 @@
                 <h3 class="font-serif text-lg font-bold mb-4">素材預覽</h3>
                 <div class="fb-preview max-w-sm mx-auto mb-6">
                     <div class="fb-preview-header"><div class="fb-avatar">E</div><div><p class="text-sm font-semibold">ExoMuse 外泌體精華</p><p class="text-xs text-gray-500">剛剛</p></div></div>
-                    <div class="p-3"><div class="aspect-square rounded-lg overflow-hidden bg-gray-100"><img id="fbPreviewImg" src="images/mask.png" alt="" class="w-full h-full object-cover"></div></div>
+                    <div class="p-3"><div class="aspect-square rounded-lg overflow-hidden bg-gray-100"><img id="fbPreviewImg" src="images/mask3.jpg" alt="" class="w-full h-full object-cover"></div></div>
                 </div>
                 <p class="text-xs text-warm-gray text-center">上傳圖片後此處即時預覽</p>
             </div>
@@ -418,11 +418,11 @@ const LocalDB = {
     },
     init() {
         if (LocalDB.products.getAll().length === 0) {
-            [{ n: 'mask2', name: '人類外泌體面膜', p: 1580, op: 1980, d: '15分鐘縮時保養，打造無瑕水潤透亮肌' },
-             { n: 'essence2', name: '人類外泌體精華液', p: 3580, op: 4280, d: '一瓶重啟青春修復力，多重玻尿酸層層補水' },
-             { n: 'ampoule2', name: '人類外泌體安瓶', p: 3980, op: 4680, d: '瞬效修護，多重胜肽煥活，撫平歲月紋理' },
-             { n: 'hair2', name: '人類外泌體養髮液', p: 4580, op: 5280, d: '美髮新境界，重拾健康秀髮，散發自信光采' }
-            ].forEach(p => LocalDB.products.add({ name: p.name, type: 'product', price: p.p, originalPrice: p.op, description: p.d, imageUrl: `images/${p.n}.png`, sortOrder: 1 }));
+            [{ n: 'mask3', name: '人類外泌體面膜', p: 1580, op: 1980, d: '15分鐘縮時保養，打造無瑕水潤透亮肌' },
+             { n: 'essence3', name: '人類外泌體精華液', p: 3580, op: 4280, d: '一瓶重啟青春修復力，多重玻尿酸層層補水' },
+             { n: 'ampoule3', name: '人類外泌體安瓶', p: 3980, op: 4680, d: '瞬效修護，多重胜肽煥活，撫平歲月紋理' },
+             { n: 'hair3', name: '人類外泌體養髮液', p: 4580, op: 5280, d: '美髮新境界，重拾健康秀髮，散發自信光采' }
+            ].forEach(p => LocalDB.products.add({ name: p.name, type: 'product', price: p.p, originalPrice: p.op, description: p.d, imageUrl: `images/${p.n}.jpg`, sortOrder: 1 }));
         }
     }
 };
