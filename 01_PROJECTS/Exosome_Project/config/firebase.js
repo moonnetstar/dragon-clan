@@ -18,7 +18,7 @@ import {
 // ── Firebase 配置 ──
 // ⚠️ 請替換為您的 Firebase 專案配置
 const firebaseConfig = {
-    apiKey: "YOUR_API_KEY",
+    apiKey: "AIzaSyCH-Hu28_Oz6i8MSraiD1l29Qn12U04RrI",
     authDomain: "exomuse-shop.firebaseapp.com",
     projectId: "exomuse-shop",
     storageBucket: "exomuse-shop.appspot.com",
