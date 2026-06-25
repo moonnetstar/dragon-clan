@@ -294,7 +294,7 @@
                 <div class="fade-up" style="transition-delay:.2s;">
                     <div class="relative">
                         <div class="aspect-[4/5] rounded-3xl product-img-wrap">
-                            <img src="images/brand.jpg" alt="ExoMuse Brand" loading="lazy">
+                            <img src="images/brand.svg" alt="ExoMuse Brand">
                         </div>
                         <div class="absolute -bottom-5 -left-5 w-28 h-28 rounded-2xl bg-gold-gradient opacity-15"></div>
                     </div>
@@ -316,7 +316,7 @@
             <div id="productList" class="grid sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-6">
                 <!-- P1 -->
                 <div class="hover-lift bg-white rounded-2xl overflow-hidden border border-black/[.04]">
-                    <div class="product-img-wrap aspect-[3/4]"><img src="images/mask.jpg" alt="人類外泌體面膜" loading="lazy"></div>
+                    <div class="product-img-wrap aspect-[3/4]"><img src="images/mask.svg" alt="人類外泌體面膜"></div>
                     <div class="p-6">
                         <p class="text-[.65rem] text-gold tracking-[.2em] uppercase mb-1">Exosome Mask</p>
                         <h3 class="font-serif text-lg font-bold mb-1">人類外泌體面膜</h3>
@@ -329,7 +329,7 @@
                 </div>
                 <!-- P2 -->
                 <div class="hover-lift bg-white rounded-2xl overflow-hidden border border-black/[.04]">
-                    <div class="product-img-wrap aspect-[3/4]"><img src="images/essence.jpg" alt="人類外泌體精華液" loading="lazy"></div>
+                    <div class="product-img-wrap aspect-[3/4]"><img src="images/essence.svg" alt="人類外泌體精華液"></div>
                     <div class="p-6">
                         <p class="text-[.65rem] text-gold tracking-[.2em] uppercase mb-1">Exosome Essence</p>
                         <h3 class="font-serif text-lg font-bold mb-1">人類外泌體精華液</h3>
@@ -342,7 +342,7 @@
                 </div>
                 <!-- P3 -->
                 <div class="hover-lift bg-white rounded-2xl overflow-hidden border border-black/[.04]">
-                    <div class="product-img-wrap aspect-[3/4]"><img src="images/ampoule.jpg" alt="人類外泌體安瓶" loading="lazy"></div>
+                    <div class="product-img-wrap aspect-[3/4]"><img src="images/ampoule.svg" alt="人類外泌體安瓶"></div>
                     <div class="p-6">
                         <p class="text-[.65rem] text-gold tracking-[.2em] uppercase mb-1">Exosome Ampoule</p>
                         <h3 class="font-serif text-lg font-bold mb-1">人類外泌體安瓶</h3>
@@ -355,7 +355,7 @@
                 </div>
                 <!-- P4 -->
                 <div class="hover-lift bg-white rounded-2xl overflow-hidden border border-black/[.04]">
-                    <div class="product-img-wrap aspect-[3/4]"><img src="images/hair.jpg" alt="人類外泌體養髮液" loading="lazy"></div>
+                    <div class="product-img-wrap aspect-[3/4]"><img src="images/hair.svg" alt="人類外泌體養髮液"></div>
                     <div class="p-6">
                         <p class="text-[.65rem] text-gold tracking-[.2em] uppercase mb-1">Exosome Hair</p>
                         <h3 class="font-serif text-lg font-bold mb-1">人類外泌體養髮液</h3>
@@ -752,10 +752,10 @@ const LocalDB = {
         // 如果沒有商品，建立預設商品
         if (LocalDB.products.getAll().length === 0) {
             const defaultProducts = [
-                { name: '人類外泌體面膜', type: 'product', price: 1580, originalPrice: 1980, description: '15分鐘縮時保養，打造無瑕水潤透亮肌。含四胜肽、富勒烯、水膜磁。', imageUrl: 'images/mask.jpg', sortOrder: 1 },
-                { name: '人類外泌體精華液', type: 'product', price: 3580, originalPrice: 4280, description: '一瓶重啟青春修復力。多重玻尿酸層層補水，富勒烯強效抗氧化。', imageUrl: 'images/essence.jpg', sortOrder: 2 },
-                { name: '人類外泌體安瓶', type: 'product', price: 3980, originalPrice: 4680, description: '瞬效修護，重新定義年輕。多重胜肽煥活，撫平歲月紋理。', imageUrl: 'images/ampoule.jpg', sortOrder: 3 },
-                { name: '人類外泌體養髮液', type: 'product', price: 4580, originalPrice: 5280, description: '美髮新境界，從髮根開始。臍帶間質幹細胞外泌體，深入滋養髮根。', imageUrl: 'images/hair.jpg', sortOrder: 4 }
+                { name: '人類外泌體面膜', type: 'product', price: 1580, originalPrice: 1980, description: '15分鐘縮時保養，打造無瑕水潤透亮肌。含四胜肽、富勒烯、水膜磁。', imageUrl: 'images/mask.svg', sortOrder: 1 },
+                { name: '人類外泌體精華液', type: 'product', price: 3580, originalPrice: 4280, description: '一瓶重啟青春修復力。多重玻尿酸層層補水，富勒烯強效抗氧化。', imageUrl: 'images/essence.svg', sortOrder: 2 },
+                { name: '人類外泌體安瓶', type: 'product', price: 3980, originalPrice: 4680, description: '瞬效修護，重新定義年輕。多重胜肽煥活，撫平歲月紋理。', imageUrl: 'images/ampoule.svg', sortOrder: 3 },
+                { name: '人類外泌體養髮液', type: 'product', price: 4580, originalPrice: 5280, description: '美髮新境界，從髮根開始。臍帶間質幹細胞外泌體，深入滋養髮根。', imageUrl: 'images/hair.svg', sortOrder: 4 }
             ];
             defaultProducts.forEach(p => LocalDB.products.add(p));
         }
