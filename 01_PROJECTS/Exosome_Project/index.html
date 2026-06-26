@@ -273,7 +273,7 @@
                 <div class="fade-up" style="transition-delay:.2s;">
                     <div class="relative">
                         <div class="aspect-[4/5] rounded-3xl product-img-wrap">
-                            <img src="images/brand.jpg" alt="ExoMuse Brand" loading="lazy">
+                            <img src="images/brand.jpg" alt="ExoMuse Brand" loading="eager">
                         </div>
                         <div class="absolute -bottom-5 -left-5 w-28 h-28 rounded-2xl bg-gold-gradient opacity-15"></div>
                     </div>
@@ -534,7 +534,7 @@
         grid.innerHTML = products.map(p => `
             <div class="hover-lift bg-white rounded-2xl overflow-hidden border border-black/[.06] fade-up">
                 <div class="product-img-wrap aspect-[3/4]">
-                    <img src="${p.img}" alt="${p.name}" loading="lazy" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjUzMyIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNDAwIiBoZWlnaHQ9IjUzMyIgZmlsbD0iI0Y1RjBFOCIvPjx0ZXh0IHg9IjIwMCIgeT0iMjY2IiBmb250LWZhbWlseT0ic2VyaWYiIGZvbnQtc2l6ZT0iMjAiIGZpbGw9IiNBNjhCNEIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj5FeG9NdXNlPC90ZXh0Pjwvc3ZnPg=='">
+                    <img src="${p.img}" alt="${p.name}" loading="eager" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjUzMyIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNDAwIiBoZWlnaHQ9IjUzMyIgZmlsbD0iI0Y1RjBFOCIvPjx0ZXh0IHg9IjIwMCIgeT0iMjY2IiBmb250LWZhbWlseT0ic2VyaWYiIGZvbnQtc2l6ZT0iMjAiIGZpbGw9IiNBNjhCNEIiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkV4b011c2U8L3RleHQ+PC9zdmc+'">
                 </div>
                 <div class="p-5">
                     <h3 class="font-serif text-lg font-bold mb-1">${p.name}</h3>
@@ -556,7 +556,7 @@
         const grid = document.getElementById('mediaGrid');
         grid.innerHTML = mediaLibrary.map(m => `
             <div class="relative group rounded-xl overflow-hidden bg-gray-100 aspect-square">
-                <img src="${m.url}" alt="${m.name}" class="w-full h-full object-cover" loading="lazy" onerror="this.style.display='none'">
+                <img src="${m.url}" alt="${m.name}" class="w-full h-full object-cover" loading="eager" onerror="this.style.display='none'">
                 <div class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                     <button onclick="copyMediaUrl('${m.url}')" class="px-3 py-1.5 rounded-lg bg-white text-xs">複製路徑</button>
                 </div>
@@ -648,11 +648,6 @@
         document.getElementById('mobileMenu').classList.toggle('hidden');
     }
 
-    // ── Init ──
-    document.addEventListener('DOMContentLoaded', () => {
-        renderMedia();
-        initScrollAnimation();
-    });
     function copyText(id) {
         const el = document.getElementById(id);
         if (el && el.textContent) {
@@ -667,20 +662,20 @@
         showToast('路徑已複製');
     }
 
-    function showToast(message, type = 'success') {
+    function showToast(msg) {
         const toast = document.createElement('div');
-        toast.className = `toast toast-${type}`;
-        toast.textContent = message;
+        toast.className = 'fixed bottom-6 right-6 bg-charcoal text-white px-6 py-3 rounded-2xl text-sm shadow-lg z-[100] transition-all duration-300';
+        toast.textContent = msg;
         document.body.appendChild(toast);
-        setTimeout(() => toast.remove(), 3000);
+        setTimeout(() => toast.remove(), 2000);
     }
 
-    // ── Scroll Animation ──
     function initScrollAnimation() {
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     entry.target.classList.add('visible');
+                    observer.unobserve(entry.target);
                 }
             });
         }, { threshold: 0.1 });
@@ -691,7 +686,6 @@
     document.addEventListener('DOMContentLoaded', () => {
         renderProducts();
         renderMedia();
-        generateAdCopy();
         initScrollAnimation();
     });
     </script>
