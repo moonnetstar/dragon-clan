@@ -8,6 +8,70 @@ let orders = [];
 let promotions = [];
 let lineToken = '';
 
+// ── 簡易認證（LocalDB 模式，不依賴 Firebase Auth） ──
+const ADMIN_ACCOUNTS = [
+    { email: 'admin@exomuse.com', password: 'ExoMuse2026!', name: '系統管理員', split: 0.5 },
+    { email: 'test@exomuse.com', password: 'test1234', name: '測試帳號', split: 0.3 }
+];
+
+function handleLogin(e) {
+    e.preventDefault();
+    const email = document.getElementById('loginEmail').value.trim();
+    const password = document.getElementById('loginPassword').value;
+    const account = ADMIN_ACCOUNTS.find(a => a.email === email && a.password === password);
+    if (!account) {
+        showToast('帳號或密碼錯誤', 'error');
+        return;
+    }
+    currentUser = { uid: email, email };
+    partnerData = { name: account.name, split: account.split, lineToken: '', email: account.email };
+    localStorage.setItem('exomuse_auth', JSON.stringify({ email, ts: Date.now() }));
+    enterDashboard();
+    showToast('登入成功！');
+}
+
+function handleLogout() {
+    localStorage.removeItem('exomuse_auth');
+    currentUser = null;
+    partnerData = null;
+    location.reload();
+}
+
+function checkAuth() {
+    const saved = localStorage.getItem('exomuse_auth');
+    if (!saved) return false;
+    try {
+        const { email, ts } = JSON.parse(saved);
+        // 24hr expiry
+        if (Date.now() - ts > 86400000) { localStorage.removeItem('exomuse_auth'); return false; }
+        const account = ADMIN_ACCOUNTS.find(a => a.email === email);
+        if (!account) return false;
+        currentUser = { uid: email, email };
+        partnerData = { name: account.name, split: account.split, lineToken: '', email: account.email };
+        return true;
+    } catch { return false; }
+}
+
+function enterDashboard() {
+    document.getElementById('loginScreen').classList.add('hidden');
+    document.getElementById('registerScreen').classList.add('hidden');
+    document.getElementById('dashboard').classList.remove('hidden');
+    document.getElementById('partnerName').textContent = partnerData.name;
+    document.getElementById('partnerInitial').textContent = partnerData.name.charAt(0);
+    document.getElementById('currentSplit').textContent = Math.round(partnerData.split * 100) + '%';
+    lineToken = localStorage.getItem('exomuse_lineToken') || '';
+    if (lineToken) document.getElementById('lineTokenInput').value = lineToken;
+    loadProducts();
+    loadOrders();
+    loadPromotions();
+    loadMedia();
+    
+    // 定期檢查新訂單（簡易輪詢模式）
+    setInterval(() => {
+        if (currentUser) loadOrders();
+    }, 30000);
+}
+
 // ── Toast 通知 ──
 function showToast(message, type = 'success') {
     const toast = document.createElement('div');
@@ -24,97 +88,17 @@ function showSection(name) {
     document.querySelectorAll('.sidebar-link').forEach(el => {
         el.classList.toggle('active', el.dataset.section === name);
     });
-    // Close mobile sidebar
     document.getElementById('sidebar').classList.add('hidden');
 }
 
-// ── 認證 ──
-function showLogin() {
-    document.getElementById('loginScreen').classList.remove('hidden');
-    document.getElementById('registerScreen').classList.add('hidden');
-}
+// ── LocalDB as ExomeDB (no Firebase needed) ──
+const ExomeDB = LocalDB;
 
-function showRegister() {
-    document.getElementById('loginScreen').classList.add('hidden');
-    document.getElementById('registerScreen').classList.remove('hidden');
-}
-
-async function handleLogin(e) {
-    e.preventDefault();
-    const email = document.getElementById('loginEmail').value;
-    const password = document.getElementById('loginPassword').value;
-    try {
-        await ExomeDB.loginPartner(email, password);
-        showToast('登入成功！');
-    } catch (err) {
-        showToast('登入失敗：' + err.message, 'error');
+// ── Auto auth check on load ──
+document.addEventListener('DOMContentLoaded', () => {
+    if (checkAuth()) {
+        enterDashboard();
     }
-}
-
-async function handleRegister(e) {
-    e.preventDefault();
-    const email = document.getElementById('regEmail').value;
-    const password = document.getElementById('regPassword').value;
-    const name = document.getElementById('regName').value;
-    const phone = document.getElementById('regPhone').value;
-    const split = parseFloat(document.getElementById('regSplit').value);
-    const token = document.getElementById('regLineToken').value;
-    
-    try {
-        const uid = await ExomeDB.registerPartner(email, password, {
-            name, phone, split, lineToken: token
-        });
-        showToast('註冊成功！請登入。');
-        showLogin();
-    } catch (err) {
-        showToast('註冊失敗：' + err.message, 'error');
-    }
-}
-
-async function handleLogout() {
-    await ExomeDB.logout();
-    location.reload();
-}
-
-// ── 初始化 ──
-ExomeDB.onAuthChange(async (user) => {
-    if (!user) {
-        document.getElementById('loginScreen').classList.remove('hidden');
-        document.getElementById('dashboard').classList.add('hidden');
-        return;
-    }
-    
-    currentUser = user;
-    partnerData = await ExomeDB.getPartner(user.uid);
-    
-    if (!partnerData) {
-        showToast('找不到合作夥伴資料', 'error');
-        return;
-    }
-    
-    document.getElementById('loginScreen').classList.add('hidden');
-    document.getElementById('registerScreen').classList.add('hidden');
-    document.getElementById('dashboard').classList.remove('hidden');
-    document.getElementById('partnerName').textContent = partnerData.name;
-    document.getElementById('partnerInitial').textContent = partnerData.name.charAt(0);
-    document.getElementById('currentSplit').textContent = Math.round(partnerData.split * 100) + '%';
-    
-    lineToken = partnerData.lineToken || '';
-    if (lineToken) document.getElementById('lineTokenInput').value = lineToken;
-    
-    loadProducts();
-    loadOrders();
-    loadPromotions();
-    loadMedia();
-    
-    // 監聽新訂單
-    ExomeDB.onNewOrders(user.uid, (newOrders) => {
-        const badge = document.getElementById('pendingOrdersBadge');
-        badge.textContent = newOrders.length;
-        badge.classList.toggle('hidden', newOrders.length === 0);
-        document.getElementById('notifBadge').textContent = newOrders.length;
-        document.getElementById('notifBadge').classList.toggle('hidden', newOrders.length === 0);
-    });
 });
 
 // ═══════════════════════════════════════

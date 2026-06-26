@@ -173,8 +173,6 @@
                 <a href="#about" class="nav-link hover:text-charcoal transition-colors">品牌故事</a>
                 <a href="#products" class="nav-link hover:text-charcoal transition-colors">產品系列</a>
                 <a href="#ingredients" class="nav-link hover:text-charcoal transition-colors">核心成分</a>
-                <a href="#partner" class="nav-link hover:text-charcoal transition-colors">合作夥伴</a>
-                <a href="#creator" class="nav-link hover:text-charcoal transition-colors">素材中心</a>
             </div>
             <div class="flex items-center gap-4">
                 <button onclick="toggleCart()" class="relative w-10 h-10 flex items-center justify-center">
@@ -198,8 +196,6 @@
             <a href="#about" onclick="toggleMobileMenu()" class="hover:text-gold transition-colors">品牌故事</a>
             <a href="#products" onclick="toggleMobileMenu()" class="hover:text-gold transition-colors">產品系列</a>
             <a href="#ingredients" onclick="toggleMobileMenu()" class="hover:text-gold transition-colors">核心成分</a>
-            <a href="#partner" onclick="toggleMobileMenu()" class="hover:text-gold transition-colors">合作夥伴</a>
-            <a href="#creator" onclick="toggleMobileMenu()" class="hover:text-gold transition-colors">素材中心</a>
         </div>
     </div>
 
@@ -229,8 +225,8 @@
                 <a href="#products" class="btn-gold px-10 py-4 rounded-full text-sm tracking-widest uppercase font-medium">
                     探索產品
                 </a>
-                <a href="#partner" class="btn-outline px-10 py-4 rounded-full text-sm tracking-widest uppercase font-medium flex items-center justify-center gap-2">
-                    <span>成為合作夥伴</span>
+                <a href="#products" class="btn-outline px-10 py-4 rounded-full text-sm tracking-widest uppercase font-medium flex items-center justify-center gap-2">
+                    <span>立即選購</span>
                 </a>
             </div>
         </div>
@@ -336,100 +332,6 @@
     </section>
 
     <!-- ============================================================
-         PARTNER / 合作夥伴
-    ============================================================ -->
-    <section id="partner" class="py-28 lg:py-36 bg-luxury-dark text-white">
-        <div class="max-w-6xl mx-auto px-6 lg:px-10">
-            <div class="grid lg:grid-cols-2 gap-16 items-center">
-                <div class="fade-up">
-                    <span class="tag mb-6 border-white/20 text-gold">Partner Program</span>
-                    <h2 class="font-serif text-4xl lg:text-5xl font-bold leading-tight mb-6">
-                        成為<span class="text-gold-gradient">合作夥伴</span>
-                    </h2>
-                    <div class="divider-elegant ml-0 mb-6"></div>
-                    <p class="text-white/50 leading-relaxed mb-8">
-                        加入 ExoMuse 合作夥伴計畫，享受人類來源外泌體保養品的市場先機。我們提供完整的教育培訓、行銷素材與分潤機制，讓您輕鬆開啟保養品事業。
-                    </p>
-                    <div class="space-y-4 mb-8">
-                        <div class="flex items-center gap-3">
-                            <div class="w-2 h-2 rounded-full bg-gold"></div>
-                            <span class="text-white/70 text-sm">30% ~ 50% 彈性分潤比例</span>
-                        </div>
-                        <div class="flex items-center gap-3">
-                            <div class="w-2 h-2 rounded-full bg-gold"></div>
-                            <span class="text-white/70 text-sm">完整教育培訓與銷售素材</span>
-                        </div>
-                        <div class="flex items-center gap-3">
-                            <div class="w-2 h-2 rounded-full bg-gold"></div>
-                            <span class="text-white/70 text-sm">後台訂單管理系統</span>
-                        </div>
-                        <div class="flex items-center gap-3">
-                            <div class="w-2 h-2 rounded-full bg-gold"></div>
-                            <span class="text-white/70 text-sm">LINE Notify 即時訂單通知</span>
-                        </div>
-                    </div>
-                    <a href="#creator" class="btn-gold inline-block px-8 py-4 rounded-full text-sm tracking-widest uppercase">
-                        了解詳情
-                    </a>
-                </div>
-                <div class="fade-up" style="transition-delay:.2s;">
-                    <div class="bg-white/5 rounded-3xl p-8 border border-white/10">
-                        <h3 class="font-serif text-xl font-bold mb-6 text-gold">合作夥伴專屬後台</h3>
-                        <div class="space-y-4 text-sm text-white/60">
-                            <div class="flex justify-between items-center pb-3 border-b border-white/10">
-                                <span>訂單管理</span>
-                                <span class="text-gold">✓</span>
-                            </div>
-                            <div class="flex justify-between items-center pb-3 border-b border-white/10">
-                                <span>分潤計算</span>
-                                <span class="text-gold">✓</span>
-                            </div>
-                            <div class="flex justify-between items-center pb-3 border-b border-white/10">
-                                <span>商品管理</span>
-                                <span class="text-gold">✓</span>
-                            </div>
-                            <div class="flex justify-between items-center pb-3 border-b border-white/10">
-                                <span>廣告素材上傳</span>
-                                <span class="text-gold">✓</span>
-                            </div>
-                            <div class="flex justify-between items-center">
-                                <span>LINE 即時通知</span>
-                                <span class="text-gold">✓</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- ============================================================
-         CREATOR / 素材中心
-    ============================================================ -->
-    <section id="creator" class="py-28 lg:py-36 bg-ivory">
-        <div class="max-w-6xl mx-auto px-6 lg:px-10">
-            <div class="text-center mb-16 fade-up">
-                <span class="tag mb-6">For Partners</span>
-                <h2 class="font-serif text-4xl lg:text-5xl font-bold mb-4">
-                    廣告<span class="text-gold-gradient">素材中心</span>
-                </h2>
-                <div class="divider-elegant mt-4"></div>
-                <p class="text-warm-gray mt-6 max-w-2xl mx-auto">
-                    合作夥伴上傳廣告素材的入口。所有圖片、影片皆儲存於雲端，可直接用於 FB/IG/LINE 推廣。
-                </p>
-            </div>
-
-            <div class="fade-up">
-                <h3 class="font-serif text-xl font-bold mb-6">素材庫</h3>
-                <div id="mediaGrid" class="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 gap-3">
-                    <!-- Media rendered by JS -->
-                </div>
-                <p class="text-xs text-warm-gray mt-4 text-center">廣告文案產生器請至後台「數位資產管理」使用</p>
-            </div>
-        </div>
-    </section>
-
-    <!-- ============================================================
          FOOTER
     ============================================================ -->
     <footer class="py-16 bg-luxury-dark text-white/30 text-xs">
@@ -443,8 +345,8 @@
                     <h4 class="text-white/60 text-[.7rem] uppercase tracking-[.2em] mb-4">快速連結</h4>
                     <div class="space-y-2">
                         <a href="#products" class="block hover:text-gold transition-colors">產品系列</a>
-                        <a href="#partner" class="block hover:text-gold transition-colors">合作夥伴</a>
-                        <a href="#creator" class="block hover:text-gold transition-colors">素材中心</a>
+                        <a href="#about" class="block hover:text-gold transition-colors">品牌故事</a>
+                        <a href="#ingredients" class="block hover:text-gold transition-colors">核心成分</a>
                     </div>
                 </div>
                 <div>
@@ -457,8 +359,11 @@
                 </div>
             </div>
             <div class="divider-elegant mb-6"></div>
-            <div class="text-center text-[.65rem] tracking-wide">
-                © 2026 ExoMuse. All rights reserved.
+            <div class="flex flex-col items-center gap-2">
+                <a href="https://line.me/ti/p/@your-line-id" target="_blank" class="text-gold-muted hover:text-gold transition-colors text-[.7rem] tracking-widest">
+                    創．虹橋 — 專業電商架站服務
+                </a>
+                <p class="text-[.6rem] tracking-wide">© 2026 ExoMuse. All rights reserved.</p>
             </div>
         </div>
     </footer>
@@ -500,32 +405,6 @@
         { id: 'promo',    name: '節日促銷包',       price: 9980, originalPrice: 12800, img: 'images/brand.jpg',  description: '限量節日特惠組合，內含面膜+精華液+安瓶，送禮自用兩相宜。' }
     ];
 
-    // ── Media Library ──
-    const mediaLibrary = [
-        { name: 'brand', url: 'images/brand.jpg', type: 'image' },
-        { name: 'mask', url: 'images/mask.jpg', type: 'image' },
-        { name: 'essence', url: 'images/essence.jpg', type: 'image' },
-        { name: 'ampoule', url: 'images/ampoule.jpg', type: 'image' },
-        { name: 'hair', url: 'images/hair.jpg', type: 'image' },
-        { name: 'dm_01', url: 'images/dm_1.jpg', type: 'image' },
-        { name: 'dm_02', url: 'images/dm_2.jpg', type: 'image' },
-        { name: 'dm_03', url: 'images/dm_3.jpg', type: 'image' },
-        { name: 'dm_04', url: 'images/dm_4.jpg', type: 'image' },
-        { name: 'dm_05', url: 'images/dm_5.jpg', type: 'image' },
-        { name: 'dm_06', url: 'images/dm_6.jpg', type: 'image' },
-        { name: 'dm_07', url: 'images/dm_7.jpg', type: 'image' },
-        { name: 'dm_08', url: 'images/dm_8.jpg', type: 'image' },
-        { name: 'dm_09', url: 'images/dm_9.jpg', type: 'image' },
-        { name: 'dm_10', url: 'images/dm_10.jpg', type: 'image' },
-        { name: 'dm_11', url: 'images/dm_11.jpg', type: 'image' },
-        { name: 'dm_12', url: 'images/dm_12.jpg', type: 'image' },
-        { name: 'dm_13', url: 'images/dm_13.jpg', type: 'image' },
-        { name: 'dm_14', url: 'images/dm_14.jpg', type: 'image' },
-        { name: 'dm_15', url: 'images/dm_15.jpg', type: 'image' },
-        { name: 'dm_16', url: 'images/dm_16.jpg', type: 'image' },
-        { name: 'dm_17', url: 'images/dm_17.jpg', type: 'image' }
-    ];
-
     let cart = [];
 
     // ── Render Products ──
@@ -546,19 +425,6 @@
                         </div>
                         <button onclick="addToCart('${p.id}')" class="btn-gold px-4 py-2 rounded-full text-xs">加入購物車</button>
                     </div>
-                </div>
-            </div>
-        `).join('');
-    }
-
-    // ── Render Media ──
-    function renderMedia() {
-        const grid = document.getElementById('mediaGrid');
-        grid.innerHTML = mediaLibrary.map(m => `
-            <div class="relative group rounded-xl overflow-hidden bg-gray-100 aspect-square">
-                <img src="${m.url}" alt="${m.name}" class="w-full h-full object-cover" loading="eager" onerror="this.style.display='none'">
-                <div class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                    <button onclick="copyMediaUrl('${m.url}')" class="px-3 py-1.5 rounded-lg bg-white text-xs">複製路徑</button>
                 </div>
             </div>
         `).join('');
@@ -637,7 +503,28 @@
 
     function checkout() {
         if (cart.length === 0) return;
-        showToast('感謝您的訂購！我們將盡快與您聯繫。', 'success');
+        const subtotal = cart.reduce((s, i) => s + i.price, 0);
+        const discount = cart.length >= 3 ? 0.8 : 1;
+        const total = Math.round(subtotal * discount);
+        
+        // 建立訂單資料
+        const order = {
+            id: Date.now().toString(36) + Math.random().toString(36).slice(2, 8),
+            items: cart.map(i => ({ name: i.name, price: i.price, qty: 1 })),
+            subtotal,
+            discount: discount < 1 ? `${Math.round((1 - discount) * 100)}%` : '無',
+            total,
+            status: 'pending',
+            createdAt: new Date().toISOString()
+        };
+        
+        // 存入 localStorage（後台可讀取）
+        const orders = JSON.parse(localStorage.getItem('exomuse_orders') || '[]');
+        orders.push(order);
+        localStorage.setItem('exomuse_orders', JSON.stringify(orders));
+        
+        // LINE Pay 需要後端伺服器 + 商家認證，目前先用「貨到付款/聯繫確認」模式
+        showToast('訂單已建立！我們將透過 LINE 與您確認付款方式。');
         cart = [];
         updateCartUI();
         toggleCart();
@@ -654,12 +541,6 @@
             navigator.clipboard.writeText(el.textContent);
             showToast('已複製');
         }
-    }
-
-    function copyMediaUrl(url) {
-        const fullUrl = window.location.origin + '/' + url;
-        navigator.clipboard.writeText(fullUrl);
-        showToast('路徑已複製');
     }
 
     function showToast(msg) {
@@ -685,7 +566,6 @@
     // ── Init ──
     document.addEventListener('DOMContentLoaded', () => {
         renderProducts();
-        renderMedia();
         initScrollAnimation();
     });
     </script>
