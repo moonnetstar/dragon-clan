@@ -1,0 +1,23 @@
+{
+  "firebase": {
+    "projectId": "exomuse-shop",
+    "apiKey": "YOUR_API_KEY",
+    "authDomain": "exomuse-shop.firebaseapp.com",
+    "storageBucket": "exomuse-shop.appspot.com",
+    "messagingSenderId": "YOUR_SENDER_ID",
+    "appId": "YOUR_APP_ID"
+  },
+  "line": {
+    "notifyToken": "e66f82f67e651339a25f7d07fe441a9e",
+    "channelAccessToken": "YOUR_CHANNEL_ACCESS_TOKEN"
+  },
+  "db": {
+    "collections": {
+      "products": "商品資料",
+      "orders": "訂單資料",
+      "partners": "合作夥伴",
+      "promotions": "促銷活動",
+      "media": "數位資產管理"
+    }
+  }
+}

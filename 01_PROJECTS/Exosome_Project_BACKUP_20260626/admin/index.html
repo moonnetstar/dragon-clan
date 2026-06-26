@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ExoMuse 合作夥伴後台</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;700&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        gold: { DEFAULT: '#C9A96E', light: '#E8D5A8', dark: '#A68B4B' },
+                        ivory: '#FDFBF7',
+                        charcoal: '#1C1C1C',
+                        'warm-gray': '#6B6560',
+                    },
+                    fontFamily: { serif: ['Noto Serif TC','serif'], sans: ['Noto Sans TC','sans-serif'] }
+                }
+            }
+        }
+    </script>
+    <style>
+        .font-serif { font-family: 'Noto Serif TC', serif; }
+        .text-gold-gradient {
+            background: linear-gradient(135deg, #A68B4B, #E8D5A8, #C9A96E);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .btn-gold {
+            background: linear-gradient(135deg, #C9A96E, #A68B4B);
+            color: #fff; transition: all .3s;
+        }
+        .btn-gold:hover { box-shadow: 0 8px 32px rgba(201,169,110,.3); transform: translateY(-1px); }
+        .btn-danger { background: #DC2626; color: #fff; }
+        .btn-danger:hover { background: #B91C1C; }
+        .btn-outline { border: 1px solid rgba(201,169,110,.4); color: #A68B4B; transition: all .3s; }
+        .btn-outline:hover { background: rgba(201,169,110,.06); }
+        .sidebar-link { transition: all .2s; border-left: 3px solid transparent; }
+        .sidebar-link:hover, .sidebar-link.active { background: rgba(201,169,110,.06); border-left-color: #C9A96E; }
+        .upload-zone { border: 2px dashed rgba(201,169,110,.3); transition: all .3s; }
+        .upload-zone:hover, .upload-zone.drag-over { border-color: #C9A96E; background: rgba(201,169,110,.04); }
+        .status-pending { background: #FEF3C7; color: #92400E; }
+        .status-confirmed { background: #D1FAE5; color: #065F46; }
+        .status-shipped { background: #DBEAFE; color: #1E40AF; }
+        .status-completed { background: #E5E7EB; color: #374151; }
+        .status-cancelled { background: #FEE2E2; color: #991B1B; }
+        .fade-in { animation: fadeIn .3s ease-out; }
+        @keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+        /* Toast notification */
+        .toast {
+            position: fixed; top: 20px; right: 20px; z-index: 9999;
+            padding: 16px 24px; border-radius: 12px; color: #fff;
+            font-size: .9rem; box-shadow: 0 8px 32px rgba(0,0,0,.15);
+            animation: slideIn .3s ease-out;
+        }
+        .toast-success { background: #059669; }
+        .toast-error { background: #DC2626; }
+        .toast-info { background: #2563EB; }
+        @keyframes slideIn { from { opacity:0; transform:translateX(100px); } to { opacity:1; transform:translateX(0); } }
+    </style>
+</head>
+<body class="bg-ivory font-sans text-charcoal">
+
+    <!-- Login Screen -->
+    <div id="loginScreen" class="min-h-screen flex items-center justify-center bg-luxury-dark">
+        <div class="w-full max-w-md mx-6">
+            <div class="text-center mb-10">
+                <h1 class="font-serif text-3xl font-bold text-gold-gradient mb-2">ExoMuse</h1>
+                <p class="text-white/40 text-sm">合作夥伴後台</p>
+            </div>
+            <div class="bg-white rounded-2xl p-8 shadow-xl">
+                <h2 class="font-serif text-xl font-bold mb-6 text-center">登入後台</h2>
+                <form id="loginForm" onsubmit="handleLogin(event)">
+                    <div class="mb-4">
+                        <label class="text-xs text-warm-gray uppercase tracking-wider mb-2 block">電子郵件</label>
+                        <input type="email" id="loginEmail" required class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-gold">
+                    </div>
+                    <div class="mb-6">
+                        <label class="text-xs text-warm-gray uppercase tracking-wider mb-2 block">密碼</label>
+                        <input type="password" id="loginPassword" required class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-gold">
+                    </div>
+                    <button type="submit" class="btn-gold w-full py-3 rounded-xl text-sm tracking-wider uppercase">登入</button>
+                </form>
+                <p class="text-center text-xs text-warm-gray mt-4">還沒有帳號？<a href="#" onclick="showRegister()" class="text-gold">註冊合作夥伴</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Register Screen -->
+    <div id="registerScreen" class="min-h-screen flex items-center justify-center bg-luxury-dark hidden">
+        <div class="w-full max-w-md mx-6">
+            <div class="text-center mb-10">
+                <h1 class="font-serif text-3xl font-bold text-gold-gradient mb-2">ExoMuse</h1>
+                <p class="text-white/40 text-sm">合作夥伴註冊</p>
+            </div>
+            <div class="bg-white rounded-2xl p-8 shadow-xl">
+                <h2 class="font-serif text-xl font-bold mb-6 text-center">註冊新帳號</h2>
+                <form id="registerForm" onsubmit="handleRegister(event)">
+                    <div class="grid grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <label class="text-xs text-warm-gray uppercase tracking-wider mb-2 block">姓名</label>
+                            <input type="text" id="regName" required class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-gold">
+                        </div>
+                        <div>
+                            <label class="text-xs text-warm-gray uppercase tracking-wider mb-2 block">電話</label>
+                            <input type="tel" id="regPhone" required class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-gold">
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <label class="text-xs text-warm-gray uppercase tracking-wider mb-2 block">電子郵件</label>
+                        <input type="email" id="regEmail" required class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-gold">
+                    </div>
+                    <div class="mb-4">
+                        <label class="text-xs text-warm-gray uppercase tracking-wider mb-2 block">密碼</label>
+                        <input type="password" id="regPassword" required minlength="6" class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-gold">
+                    </div>
+                    <div class="mb-4">
+                        <label class="text-xs text-warm-gray uppercase tracking-wider mb-2 block">LINE Notify Token <span class="text-warm-gray/50">(選填，用於接收訂單通知)</span></label>
+                        <input type="text" id="regLineToken" placeholder="選填" class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-gold">
+                    </div>
+                    <div class="mb-6">
+                        <label class="text-xs text-warm-gray uppercase tracking-wider mb-2 block">分潤比例</label>
+                        <select id="regSplit" class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-gold">
+                            <option value="0.3">30% — 標準夥伴</option>
+                            <option value="0.4">40% — 進階夥伴</option>
+                            <option value="0.5">50% — VIP夥伴</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn-gold w-full py-3 rounded-xl text-sm tracking-wider uppercase">註冊</button>
+                </form>
+                <p class="text-center text-xs text-warm-gray mt-4">已有帳號？<a href="#" onclick="showLogin()" class="text-gold">返回登入</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Dashboard -->
+    <div id="dashboard" class="hidden">
+        <!-- Top bar -->
+        <header class="fixed top-0 left-0 right-0 z-40 bg-white/90 backdrop-blur-md border-b border-gray-100">
+            <div class="flex items-center justify-between px-6 py-3">
+                <div class="flex items-center gap-4">
+                    <button onclick="toggleSidebar()" class="lg:hidden w-10 h-10 flex items-center justify-center">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 6h16M4 12h16M4 18h16"/></svg>
+                    </button>
+                    <h1 class="font-serif text-xl font-bold text-gold-gradient">ExoMuse 後台</h1>
+                </div>
+                <div class="flex items-center gap-4">
+                    <div class="relative">
+                        <button onclick="toggleNotif()" class="w-10 h-10 flex items-center justify-center relative">
+                            <svg class="w-5 h-5 text-warm-gray" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+                            <span id="notifBadge" class="absolute top-1 right-1 w-4 h-4 rounded-full bg-red-500 text-white text-[9px] flex items-center justify-center hidden">0</span>
+                        </button>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-full bg-gold/10 flex items-center justify-center">
+                            <span id="partnerInitial" class="text-gold text-sm font-bold">P</span>
+                        </div>
+                        <span id="partnerName" class="text-sm font-medium hidden sm:block">合作夥伴</span>
+                    </div>
+                    <button onclick="handleLogout()" class="text-xs text-warm-gray hover:text-red-500 transition-colors">登出</button>
+                </div>
+            </div>
+        </header>
+
+        <div class="flex pt-14">
+            <!-- Sidebar -->
+            <aside id="sidebar" class="fixed left-0 top-14 bottom-0 w-64 bg-white border-r border-gray-100 z-30 overflow-y-auto hidden lg:block">
+                <nav class="py-6">
+                    <div class="px-4 mb-3">
+                        <span class="text-[.65rem] text-warm-gray/50 uppercase tracking-[.2em]">主要功能</span>
+                    </div>
+                    <a href="#" onclick="showSection('products')" class="sidebar-link active flex items-center gap-3 px-6 py-3 text-sm" data-section="products">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+                        商品管理
+                    </a>
+                    <a href="#" onclick="showSection('orders')" class="sidebar-link flex items-center gap-3 px-6 py-3 text-sm" data-section="orders">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+                        訂單管理
+                        <span id="pendingOrdersBadge" class="ml-auto px-2 py-0.5 rounded-full bg-red-500 text-white text-[10px] hidden">0</span>
+                    </a>
+                    <a href="#" onclick="showSection('promotions')" class="sidebar-link flex items-center gap-3 px-6 py-3 text-sm" data-section="promotions">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/></svg>
+                        促銷活動
+                    </a>
+                    <a href="#" onclick="showSection('media')" class="sidebar-link flex items-center gap-3 px-6 py-3 text-sm" data-section="media">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                        數位資產管理
+                    </a>
+                    <a href="#" onclick="showSection('settings')" class="sidebar-link flex items-center gap-3 px-6 py-3 text-sm" data-section="settings">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                        設定
+                    </a>
+                </nav>
+            </aside>
+
+            <!-- Main content -->
+            <main class="flex-1 lg:ml-64 p-6 lg:p-8">
+                
+                <!-- ═══════════════════════════════════════ -->
+                <!-- 商品管理 -->
+                <!-- ═══════════════════════════════════════ -->
+                <section id="sec-products" class="fade-in">
+                    <div class="flex items-center justify-between mb-8">
+                        <div>
+                            <h2 class="font-serif text-2xl font-bold">商品管理</h2>
+                            <p class="text-sm text-warm-gray mt-1">新增、編輯、刪除商品</p>
+                        </div>
+                        <button onclick="openProductModal()" class="btn-gold text-white px-6 py-2.5 rounded-xl text-sm flex items-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                            新增商品
+                        </button>
+                    </div>
+
+                    <!-- Product list -->
+                    <div id="productList" class="grid gap-4">
+                        <div class="text-center py-16 text-warm-gray">載入中...</div>
+                    </div>
+                </section>
+
+                <!-- ═══════════════════════════════════════ -->
+                <!-- 訂單管理 -->
+                <!-- ═══════════════════════════════════════ -->
+                <section id="sec-orders" class="hidden fade-in">
+                    <div class="flex items-center justify-between mb-8">
+                        <div>
+                            <h2 class="font-serif text-2xl font-bold">訂單管理</h2>
+                            <p class="text-sm text-warm-gray mt-1">查看與處理客戶訂單</p>
+                        </div>
+                        <div class="flex gap-2">
+                            <select id="orderFilter" onchange="filterOrders()" class="px-4 py-2 rounded-xl border border-gray-200 text-sm">
+                                <option value="all">全部訂單</option>
+                                <option value="pending">待處理</option>
+                                <option value="confirmed">已確認</option>
+                                <option value="shipped">已出貨</option>
+                                <option value="completed">已完成</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div id="orderList" class="space-y-4">
+                        <div class="text-center py-16 text-warm-gray">載入中...</div>
+                    </div>
+                </section>
+
+                <!-- ═══════════════════════════════════════ -->
+                <!-- 促銷活動 -->
+                <!-- ═══════════════════════════════════════ -->
+                <section id="sec-promotions" class="hidden fade-in">
+                    <div class="flex items-center justify-between mb-8">
+                        <div>
+                            <h2 class="font-serif text-2xl font-bold">促銷活動</h2>
+                            <p class="text-sm text-warm-gray mt-1">管理限時優惠與折扣碼</p>
+                        </div>
+                        <button onclick="openPromoModal()" class="btn-gold text-white px-6 py-2.5 rounded-xl text-sm flex items-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                            新增促銷
+                        </button>
+                    </div>
+
+                    <div id="promoList" class="grid gap-4">
+                        <div class="text-center py-16 text-warm-gray">載入中...</div>
+                    </div>
+                </section>
+
+                <!-- ═══════════════════════════════════════ -->
+                <!-- 數位資產管理 -->
+                <!-- ═══════════════════════════════════════ -->
+                <section id="sec-media" class="hidden fade-in">
+                    <div class="flex items-center justify-between mb-8">
+                        <div>
+                            <h2 class="font-serif text-2xl font-bold">數位資產管理</h2>
+                            <p class="text-sm text-warm-gray mt-1">上傳素材、廣告文案產生器</p>
+                        </div>
+                    </div>
+
+                    <div class="grid lg:grid-cols-2 gap-8">
+                        <!-- 左：素材上傳 + 素材庫 -->
+                        <div>
+                            <h3 class="font-medium mb-4">素材庫</h3>
+                            <!-- Upload zone -->
+                            <div id="mediaUploadZone" class="upload-zone rounded-2xl p-8 text-center mb-6 cursor-pointer" onclick="document.getElementById('mediaFileInput').click()">
+                                <div class="w-12 h-12 mx-auto mb-3 rounded-full bg-gold/5 flex items-center justify-center">
+                                    <svg class="w-6 h-6 text-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
+                                </div>
+                                <p class="text-sm text-warm-gray mb-1">點擊或拖曳上傳圖片 / 影片</p>
+                                <p class="text-xs text-warm-gray/50">支援 JPG、PNG、MP4、MOV，最大 100MB</p>
+                                <input type="file" id="mediaFileInput" class="hidden" accept="image/*,video/*" multiple onchange="handleMediaUpload(event)">
+                            </div>
+                            <!-- Media grid -->
+                            <div id="mediaGrid" class="grid grid-cols-3 gap-3">
+                                <div class="text-center py-10 text-warm-gray col-span-3 text-sm">尚無素材</div>
+                            </div>
+                        </div>
+
+                        <!-- 右：廣告文案產生器 -->
+                        <div>
+                            <h3 class="font-medium mb-4">廣告文案產生器</h3>
+                            <div class="bg-white rounded-2xl p-5 border border-gray-100">
+                                <div class="space-y-4">
+                                    <div>
+                                        <label class="text-xs text-warm-gray tracking-wide uppercase mb-2 block">選擇產品</label>
+                                        <select id="adProduct" class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm" onchange="generateAdCopy()">
+                                            <option value="mask">人類外泌體面膜</option>
+                                            <option value="essence">人類外泌體精華液</option>
+                                            <option value="ampoule">人類外泌體安瓶</option>
+                                            <option value="hair">人類外泌體養髮液</option>
+                                            <option value="promo">節日促銷包</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="text-xs text-warm-gray tracking-wide uppercase mb-2 block">文案風格</label>
+                                        <div class="grid grid-cols-3 gap-2">
+                                            <button onclick="setAdStyle('luxury')" class="ad-style-btn active px-3 py-2.5 rounded-xl text-xs border border-gold/30 bg-gold/5 text-gold" data-style="luxury">奢華</button>
+                                            <button onclick="setAdStyle('urgency')" class="ad-style-btn px-3 py-2.5 rounded-xl text-xs border border-gray-200 text-warm-gray" data-style="urgency">限時</button>
+                                            <button onclick="setAdStyle('educate')" class="ad-style-btn px-3 py-2.5 rounded-xl text-xs border border-gray-200 text-warm-gray" data-style="educate">知識</button>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="text-xs text-warm-gray tracking-wide uppercase mb-2 block">目標受眾</label>
+                                        <select id="adAudience" class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm" onchange="generateAdCopy()">
+                                            <option value="25-45女性">25-45歲女性</option>
+                                            <option value="35-55女性">35-55歲女性</option>
+                                            <option value="醫美族群">醫美保養族群</option>
+                                            <option value="新手媽媽">新手媽媽</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="space-y-3 mt-5">
+                                    <div class="bg-ivory rounded-xl p-4">
+                                        <div class="flex items-center justify-between mb-1">
+                                            <span class="text-[.65rem] text-warm-gray uppercase tracking-widest">主文案</span>
+                                            <button onclick="copyText('adCopy')" class="text-xs text-gold">複製</button>
+                                        </div>
+                                        <p id="adCopy" class="text-sm leading-relaxed">[選擇產品後自動生成]</p>
+                                    </div>
+                                    <div class="bg-ivory rounded-xl p-4">
+                                        <div class="flex items-center justify-between mb-1">
+                                            <span class="text-[.65rem] text-warm-gray uppercase tracking-widest">標題</span>
+                                            <button onclick="copyText('adTitle')" class="text-xs text-gold">複製</button>
+                                        </div>
+                                        <p id="adTitle" class="text-sm font-semibold"></p>
+                                    </div>
+                                    <div class="bg-ivory rounded-xl p-4">
+                                        <span class="text-[.65rem] text-warm-gray uppercase tracking-widest mb-1 block">建議 HASHTAG</span>
+                                        <p id="adHashtags" class="text-sm text-warm-gray"></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ═══════════════════════════════════════ -->
+                <!-- 設定 -->
+                <!-- ═══════════════════════════════════════ -->
+                <section id="sec-settings" class="hidden fade-in">
+                    <h2 class="font-serif text-2xl font-bold mb-8">設定</h2>
+                    
+                    <div class="max-w-lg space-y-6">
+                        <div class="bg-white rounded-2xl p-6">
+                            <h3 class="font-medium mb-4">LINE Notify 設定</h3>
+                            <p class="text-xs text-warm-gray mb-4">設定 LINE Notify Token 後，新訂單會自動通知您的 LINE</p>
+                            <div class="flex gap-3">
+                                <input type="text" id="lineTokenInput" placeholder="輸入 LINE Notify Token" class="flex-1 px-4 py-3 rounded-xl border border-gray-200 text-sm">
+                                <button onclick="saveLineToken()" class="btn-gold text-white px-6 py-3 rounded-xl text-sm">儲存</button>
+                            </div>
+                            <p class="text-xs text-warm-gray/50 mt-2">如何取得 Token？前往 <a href="https://notify-bot.line.me/" target="_blank" class="text-gold">LINE Notify</a> 註冊並產生 Token</p>
+                        </div>
+
+                        <div class="bg-white rounded-2xl p-6">
+                            <h3 class="font-medium mb-4">分潤設定</h3>
+                            <div class="flex items-center gap-4">
+                                <div class="flex-1">
+                                    <p class="text-sm text-warm-gray">目前分潤比例</p>
+                                    <p id="currentSplit" class="font-serif text-2xl font-bold text-gold">30%</p>
+                                </div>
+                                <div class="flex-1">
+                                    <p class="text-sm text-warm-gray">本月預估分潤</p>
+                                    <p id="monthProfit" class="font-serif text-2xl font-bold text-charcoal">NT$ 0</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-2xl p-6">
+                            <h3 class="font-medium mb-4">通知測試</h3>
+                            <button onclick="testLineNotify()" class="btn-outline px-6 py-3 rounded-xl text-sm">發送測試通知</button>
+                        </div>
+                    </div>
+                </section>
+
+            </main>
+        </div>
+    </div>
+
+    <!-- Product Modal -->
+    <div id="productModal" class="fixed inset-0 z-50 hidden">
+        <div class="absolute inset-0 bg-black/40" onclick="closeProductModal()"></div>
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-white rounded-2xl shadow-2xl">
+            <div class="p-6 border-b flex items-center justify-between">
+                <h3 id="productModalTitle" class="font-serif text-xl font-bold">新增商品</h3>
+                <button onclick="closeProductModal()" class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center">✕</button>
+            </div>
+            <form id="productForm" onsubmit="saveProduct(event)" class="p-6 space-y-5">
+                <input type="hidden" id="editProductId">
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="text-xs text-warm-gray uppercase tracking-wider mb-2 block">商品名稱 *</label>
+                        <input type="text" id="prodName" required class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm">
+                    </div>
+                    <div>
+                        <label class="text-xs text-warm-gray uppercase tracking-wider mb-2 block">商品類型</label>
+                        <select id="prodType" class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm">
+                            <option value="product">實體商品</option>
+                            <option value="video">影片介紹</option>
+                            <option value="promo">促銷影片</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="text-xs text-warm-gray uppercase tracking-wider mb-2 block">售價 (NT$) *</label>
+                        <input type="number" id="prodPrice" required min="0" class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm">
+                    </div>
+                    <div>
+                        <label class="text-xs text-warm-gray uppercase tracking-wider mb-2 block">原價 (選填)</label>
+                        <input type="number" id="prodOriginalPrice" min="0" class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="text-xs text-warm-gray uppercase tracking-wider mb-2 block">商品描述</label>
+                    <textarea id="prodDesc" rows="3" class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm"></textarea>
+                </div>
+
+                <div>
+                    <label class="text-xs text-warm-gray uppercase tracking-wider mb-2 block">商品圖片</label>
+                    <div id="prodImageZone" class="upload-zone rounded-xl p-6 text-center cursor-pointer" onclick="document.getElementById('prodImageInput').click()">
+                        <p class="text-sm text-warm-gray">點擊上傳圖片</p>
+                        <input type="file" id="prodImageInput" class="hidden" accept="image/*" onchange="previewProductImage(event)">
+                    </div>
+                    <div id="prodImagePreview" class="mt-3 hidden">
+                        <img src="" alt="" class="w-32 h-32 rounded-xl object-cover">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="text-xs text-warm-gray uppercase tracking-wider mb-2 block">介紹影片 (選填)</label>
+                    <div id="prodVideoZone" class="upload-zone rounded-xl p-6 text-center cursor-pointer" onclick="document.getElementById('prodVideoInput').click()">
+                        <p class="text-sm text-warm-gray">點擊上傳影片 (MP4, MOV)</p>
+                        <input type="file" id="prodVideoInput" class="hidden" accept="video/*">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="text-xs text-warm-gray uppercase tracking-wider mb-2 block">排序</label>
+                        <input type="number" id="prodSort" value="0" class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm">
+                    </div>
+                    <div class="flex items-end">
+                        <label class="flex items-center gap-3 cursor-pointer">
+                            <input type="checkbox" id="prodActive" checked class="w-5 h-5 rounded border-gray-300 text-gold">
+                            <span class="text-sm">立即上架</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="flex gap-3 pt-4">
+                    <button type="button" onclick="closeProductModal()" class="flex-1 py-3 rounded-xl border border-gray-200 text-sm">取消</button>
+                    <button type="submit" class="btn-gold flex-1 py-3 rounded-xl text-sm">儲存</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Promo Modal -->
+    <div id="promoModal" class="fixed inset-0 z-50 hidden">
+        <div class="absolute inset-0 bg-black/40" onclick="closePromoModal()"></div>
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-lg bg-white rounded-2xl shadow-2xl">
+            <div class="p-6 border-b flex items-center justify-between">
+                <h3 class="font-serif text-xl font-bold">新增促銷活動</h3>
+                <button onclick="closePromoModal()" class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center">✕</button>
+            </div>
+            <form id="promoForm" onsubmit="savePromo(event)" class="p-6 space-y-5">
+                <div>
+                    <label class="text-xs text-warm-gray uppercase tracking-wider mb-2 block">促銷名稱 *</label>
+                    <input type="text" id="promoName" required class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm">
+                </div>
+                <div>
+                    <label class="text-xs text-warm-gray uppercase tracking-wider mb-2 block">促銷類型</label>
+                    <select id="promoType" class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm">
+                        <option value="discount">折扣 (例: 8折)</option>
+                        <option value="amount">金額折抵 (例: 折$500)</option>
+                        <option value="bogo">買一送一</option>
+                        <option value="gift">滿額贈品</option>
+                    </select>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="text-xs text-warm-gray uppercase tracking-wider mb-2 block">折扣值</label>
+                        <input type="number" id="promoValue" required class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm">
+                    </div>
+                    <div>
+                        <label class="text-xs text-warm-gray uppercase tracking-wider mb-2 block">最低消費</label>
+                        <input type="number" id="promoMinSpend" value="0" class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm">
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="text-xs text-warm-gray uppercase tracking-wider mb-2 block">開始日期</label>
+                        <input type="datetime-local" id="promoStart" required class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm">
+                    </div>
+                    <div>
+                        <label class="text-xs text-warm-gray uppercase tracking-wider mb-2 block">結束日期</label>
+                        <input type="datetime-local" id="promoEnd" required class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm">
+                    </div>
+                </div>
+                <div>
+                    <label class="text-xs text-warm-gray uppercase tracking-wider mb-2 block">折扣碼 (選填)</label>
+                    <input type="text" id="promoCode" placeholder="例: SUMMER2026" class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm">
+                </div>
+                <div class="flex gap-3 pt-4">
+                    <button type="button" onclick="closePromoModal()" class="flex-1 py-3 rounded-xl border border-gray-200 text-sm">取消</button>
+                    <button type="submit" class="btn-gold flex-1 py-3 rounded-xl text-sm">儲存</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Order Detail Modal -->
+    <div id="orderModal" class="fixed inset-0 z-50 hidden">
+        <div class="absolute inset-0 bg-black/40" onclick="closeOrderModal()"></div>
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-lg max-h-[90vh] overflow-y-auto bg-white rounded-2xl shadow-2xl">
+            <div class="p-6 border-b flex items-center justify-between">
+                <h3 class="font-serif text-xl font-bold">訂單詳情</h3>
+                <button onclick="closeOrderModal()" class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center">✕</button>
+            </div>
+            <div id="orderDetail" class="p-6"></div>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+    <script src="../config/firebase.js"></script>
+    <script src="admin.js"></script>
+</body>
+</html>
