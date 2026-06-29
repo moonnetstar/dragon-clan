@@ -6,366 +6,132 @@
     <title>ExoMuse 合作夥伴後台</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;700&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <script>
+        tailwind.config = { theme: { extend: { colors: { gold: { DEFAULT: '#C9A96E', light: '#E8D5A8', dark: '#A68B4B' }, ivory: '#FDFBF7', charcoal: '#1C1C1C', 'warm-gray': '#6B6560' }, fontFamily: { serif: ['Noto Serif TC','serif'], sans: ['Noto Sans TC','sans-serif'] } } } }
+    </script>
     <style>
-        body { font-family: 'Noto Sans TC', sans-serif; }
         .font-serif { font-family: 'Noto Serif TC', serif; }
         .text-gold-gradient { background: linear-gradient(135deg, #A68B4B, #E8D5A8, #C9A96E); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .bg-gold-gradient { background: linear-gradient(135deg, #C9A96E, #E8D5A8, #C9A96E); }
-        .bg-luxury-dark { background: linear-gradient(180deg, #0F0F0F, #1C1C1C, #0F0F0F); }
         .btn-gold { background: linear-gradient(135deg, #C9A96E, #A68B4B); color: #fff; transition: all .3s; }
         .btn-gold:hover { box-shadow: 0 8px 32px rgba(201,169,110,.3); transform: translateY(-1px); }
         .btn-danger { background: #DC2626; color: #fff; } .btn-danger:hover { background: #B91C1C; }
         .btn-outline { border: 1px solid rgba(201,169,110,.4); color: #A68B4B; transition: all .3s; } .btn-outline:hover { background: rgba(201,169,110,.06); }
-        .tag { display: inline-block; padding: 4px 14px; border-radius: 100px; font-size: .75rem; background: rgba(201,169,110,.07); border: 1px solid rgba(201,169,110,.15); color: #A68B4B; }
-        .nav-glass { backdrop-filter: blur(24px) saturate(180%); -webkit-backdrop-filter: blur(24px) saturate(180%); }
         .sidebar-link { transition: all .2s; border-left: 3px solid transparent; }
         .sidebar-link:hover, .sidebar-link.active { background: rgba(201,169,110,.06); border-left-color: #C9A96E; }
         .upload-zone { border: 2px dashed rgba(201,169,110,.3); transition: all .3s; } .upload-zone:hover { border-color: #C9A96E; background: rgba(201,169,110,.04); }
-        .cart-drawer { position: fixed; top: 0; right: 0; bottom: 0; width: 420px; max-width: 100vw; background: #fff; z-index: 60; transform: translateX(100%); transition: transform .4s; overflow-y: auto; }
-        .cart-drawer.open { transform: translateX(0); }
-        .toast { position: fixed; top: 20px; right: 20px; z-index: 9999; padding: 16px 24px; border-radius: 12px; color: #fff; font-size: .9rem; box-shadow: 0 8px 32px rgba(0,0,0,.15); animation: slideIn .3s; }
+        .status-pending { background: #FEF3C7; color: #92400E; } .status-confirmed { background: #D1FAE5; color: #065F46; }
+        .status-shipped { background: #DBEAFE; color: #1E40AF; } .status-completed { background: #E5E7EB; color: #374151; }
+        .status-cancelled { background: #FEE2E2; color: #991B1B; }
+        .fade-in { animation: fadeIn .3s ease-out; } @keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+        .toast { position: fixed; top: 20px; right: 20px; z-index: 9999; padding: 16px 24px; border-radius: 12px; color: #fff; font-size: .9rem; box-shadow: 0 8px 32px rgba(0,0,0,.15); animation: slideIn .3s ease-out; }
         .toast-success { background: #059669; } .toast-error { background: #DC2626; }
         @keyframes slideIn { from { opacity:0; transform:translateX(100px); } to { opacity:1; transform:translateX(0); } }
-        .status-pending { background: #FEF3C7; color: #92400E; }
-        .status-confirmed { background: #D1FAE5; color: #065F46; }
-        .status-shipped { background: #DBEAFE; color: #1E40AF; }
-        .status-completed { background: #E5E7EB; color: #374151; }
-        .status-cancelled { background: #FEE2E2; color: #991B1B; }
-        .fb-preview { background: #fff; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,.12); overflow: hidden; }
-        .fb-preview-header { padding: 12px 16px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid #E4E6EB; }
-        .fb-avatar { width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #C9A96E, #A68B4B); display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700; }
-        [x-cloak] { display: none !important; }
     </style>
 </head>
-<body class="bg-ivory text-charcoal" x-data="adminApp()">
-
-<!-- Login Screen -->
-<div x-show="!currentUser" x-cloak class="min-h-screen flex items-center justify-center bg-luxury-dark">
+<body class="bg-ivory font-sans text-charcoal">
+<div id="loginScreen" class="min-h-screen flex items-center justify-center bg-luxury-dark">
     <div class="w-full max-w-md mx-6">
         <div class="text-center mb-10"><h1 class="font-serif text-3xl font-bold text-gold-gradient mb-2">ExoMuse</h1><p class="text-white/40 text-sm">合作夥伴後台</p></div>
         <div class="bg-white rounded-2xl p-8 shadow-xl">
-            <div class="flex gap-2 mb-6">
-                <button @click="loginMode = 'login'" :class="loginMode === 'login' ? 'bg-gold text-white' : 'bg-gray-100 text-gray-600'" class="flex-1 py-2.5 rounded-xl text-sm font-medium transition-colors">登入</button>
-                <button @click="loginMode = 'register'" :class="loginMode === 'register' ? 'bg-gold text-white' : 'bg-gray-100 text-gray-600'" class="flex-1 py-2.5 rounded-xl text-sm font-medium transition-colors">註冊</button>
-            </div>
-            <!-- Login Form -->
-            <form x-show="loginMode === 'login'" @submit.prevent="handleLogin()">
-                <div class="space-y-4">
-                    <div><label class="text-xs text-warm-gray uppercase tracking-wider mb-1 block">電子郵件</label><input type="email" x-model="loginForm.email" required class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-gold"></div>
-                    <div><label class="text-xs text-warm-gray uppercase tracking-wider mb-1 block">密碼</label><input type="password" x-model="loginForm.password" required class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-gold"></div>
-                    <button type="submit" class="btn-gold w-full py-3 rounded-xl text-sm tracking-wider uppercase">登入</button>
-                </div>
+            <h2 class="font-serif text-xl font-bold mb-6 text-center">登入後台</h2>
+            <form onsubmit="handleLogin(event)">
+                <div class="mb-4"><label class="text-xs text-warm-gray uppercase tracking-wider mb-2 block">電子郵件</label><input type="email" id="loginEmail" required class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-gold"></div>
+                <div class="mb-6"><label class="text-xs text-warm-gray uppercase tracking-wider mb-2 block">密碼</label><input type="password" id="loginPassword" required class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-gold"></div>
+                <button type="submit" class="btn-gold w-full py-3 rounded-xl text-sm tracking-wider uppercase">登入</button>
             </form>
-            <!-- Register Form -->
-            <form x-show="loginMode === 'register'" @submit.prevent="handleRegister()">
-                <div class="space-y-4">
-                    <div><label class="text-xs text-warm-gray uppercase tracking-wider mb-1 block">姓名</label><input type="text" x-model="regForm.name" required class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm"></div>
-                    <div><label class="text-xs text-warm-gray uppercase tracking-wider mb-1 block">電話</label><input type="tel" x-model="regForm.phone" required class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm"></div>
-                    <div><label class="text-xs text-warm-gray uppercase tracking-wider mb-1 block">電子郵件</label><input type="email" x-model="regForm.email" required class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm"></div>
-                    <div><label class="text-xs text-warm-gray uppercase tracking-wider mb-1 block">密碼</label><input type="password" x-model="regForm.password" required minlength="6" class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm"></div>
-                    <div><label class="text-xs text-warm-gray uppercase tracking-wider mb-1 block">LINE Notify Token（選填）</label><input type="text" x-model="regForm.lineToken" placeholder="選填，用於接收訂單通知" class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm"></div>
-                    <div><label class="text-xs text-warm-gray uppercase tracking-wider mb-1 block">分潤比例</label><select x-model="regForm.split" class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm"><option value="0.3">30% 標準</option><option value="0.4">40% 進階</option><option value="0.5">50% VIP</option></select></div>
-                    <button type="submit" class="btn-gold w-full py-3 rounded-xl text-sm tracking-wider uppercase">註冊</button>
-                </div>
-            </form>
-            <p class="text-center text-xs text-warm-gray mt-4">測試帳號：test@exomuse.com / 123456</p>
+            <p class="text-center text-xs text-warm-gray mt-4">測試帳號：test@exomuse.com / test1234</p>
         </div>
     </div>
 </div>
-
-<!-- Main Dashboard -->
-<div x-show="currentUser" x-cloak class="min-h-screen">
-    <!-- Top Bar -->
+<div id="registerScreen" class="min-h-screen flex items-center justify-center bg-luxury-dark hidden">
+    <div class="w-full max-w-md mx-6">
+        <div class="text-center mb-10"><h1 class="font-serif text-3xl font-bold text-gold-gradient mb-2">ExoMuse</h1><p class="text-white/40 text-sm">合作夥伴註冊</p></div>
+        <div class="bg-white rounded-2xl p-8 shadow-xl">
+            <h2 class="font-serif text-xl font-bold mb-6 text-center">註冊新帳號</h2>
+            <form onsubmit="handleRegister(event)">
+                <div class="grid grid-cols-2 gap-4 mb-4">
+                    <div><label class="text-xs text-warm-gray uppercase tracking-wider mb-2 block">姓名</label><input type="text" id="regName" required class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm"></div>
+                    <div><label class="text-xs text-warm-gray uppercase tracking-wider mb-2 block">電話</label><input type="tel" id="regPhone" required class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm"></div>
+                </div>
+                <div class="mb-4"><label class="text-xs text-warm-gray uppercase tracking-wider mb-2 block">電子郵件</label><input type="email" id="regEmail" required class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm"></div>
+                <div class="mb-4"><label class="text-xs text-warm-gray uppercase tracking-wider mb-2 block">密碼</label><input type="password" id="regPassword" required minlength="6" class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm"></div>
+                <div class="mb-4"><label class="text-xs text-warm-gray uppercase tracking-wider mb-2 block">LINE Notify Token <span class="text-warm-gray/50">(選填)</span></label><input type="text" id="regLineToken" placeholder="選填" class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm"></div>
+                <div class="mb-6"><label class="text-xs text-warm-gray uppercase tracking-wider mb-2 block">分潤比例 (%)</label><input type="number" id="regSplit" min="1" max="90" value="30" class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm"><p class="text-xs text-warm-gray mt-1">輸入 1-90 之間的數字（例如：30 表示 30%）</p></div>
+                <button type="submit" class="btn-gold w-full py-3 rounded-xl text-sm tracking-wider uppercase">註冊</button>
+            </form>
+            <p class="text-center text-xs text-warm-gray mt-4">已有帳號？<a href="#" onclick="showLogin()" class="text-gold">返回登入</a></p>
+        </div>
+    </div>
+</div>
+<div id="dashboard" class="hidden">
     <header class="fixed top-0 left-0 right-0 z-40 bg-white/90 backdrop-blur-md border-b border-gray-100">
         <div class="flex items-center justify-between px-6 py-3">
+            <div class="flex items-center gap-4"><h1 class="font-serif text-xl font-bold text-gold-gradient">ExoMuse 後台</h1></div>
             <div class="flex items-center gap-4">
-                <button @click="sidebarOpen = !sidebarOpen" class="lg:hidden w-10 h-10 flex items-center justify-center"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 6h16M4 12h16M4 18h16"/></svg></button>
-                <h1 class="font-serif text-xl font-bold text-gold-gradient">ExoMuse 後台</h1>
-            </div>
-            <div class="flex items-center gap-4">
-                <div class="relative"><button @click="showNotif = !showNotif" class="w-10 h-10 flex items-center justify-center relative"><svg class="w-5 h-5 text-warm-gray" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg><span x-show="pendingOrders > 0" x-text="pendingOrders" class="absolute top-1 right-1 w-4 h-4 rounded-full bg-red-500 text-white text-[9px] flex items-center justify-center"></span></button></div>
-                <div class="flex items-center gap-3"><div class="w-8 h-8 rounded-full bg-gold/10 flex items-center justify-center"><span class="text-gold text-sm font-bold" x-text="partnerInitial"></span></div><span class="text-sm font-medium hidden sm:block" x-text="currentUser?.name"></span></div>
-                <button @click="handleLogout()" class="text-xs text-warm-gray hover:text-red-500">登出</button>
+                <div class="flex items-center gap-3"><div class="w-8 h-8 rounded-full bg-gold/10 flex items-center justify-center"><span id="partnerInitial" class="text-gold text-sm font-bold">P</span></div><span id="partnerName" class="text-sm font-medium hidden sm:block">合作夥伴</span></div>
+                <button onclick="handleLogout()" class="text-xs text-warm-gray hover:text-red-500">登出</button>
             </div>
         </div>
     </header>
-
     <div class="flex pt-14">
-        <!-- Sidebar -->
-        <aside :class="sidebarOpen ? 'block' : 'hidden lg:block'" class="fixed left-0 top-14 bottom-0 w-64 bg-white border-r border-gray-100 z-30 overflow-y-auto">
+        <aside class="fixed left-0 top-14 bottom-0 w-64 bg-white border-r border-gray-100 z-30 overflow-y-auto hidden lg:block">
             <nav class="py-6">
-                <div class="px-4 mb-3"><span class="text-[.65rem] text-warm-gray/50 uppercase tracking-[.2em]">主要功能</span></div>
-                <button @click="showSection('products')" :class="section === 'products' ? 'active' : ''" class="sidebar-link flex items-center gap-3 px-6 py-3 text-sm w-full text-left"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>商品管理</button>
-                <button @click="showSection('orders')" :class="section === 'orders' ? 'active' : ''" class="sidebar-link flex items-center gap-3 px-6 py-3 text-sm w-full text-left"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>訂單管理<span x-show="pendingOrders > 0" x-text="pendingOrders" class="ml-auto px-2 py-0.5 rounded-full bg-red-500 text-white text-[10px]"></span></button>
-                <button @click="showSection('promotions')" :class="section === 'promotions' ? 'active' : ''" class="sidebar-link flex items-center gap-3 px-6 py-3 text-sm w-full text-left"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/></svg>促銷活動</button>
-                <button @click="showSection('media')" :class="section === 'media' ? 'active' : ''" class="sidebar-link flex items-center gap-3 px-6 py-3 text-sm w-full text-left"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>媒體素材</button>
-                <button @click="showSection('settings')" :class="section === 'settings' ? 'active' : ''" class="sidebar-link flex items-center gap-3 px-6 py-3 text-sm w-full text-left"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>設定</button>
+                <a href="#" onclick="showSection('products')" class="sidebar-link active flex items-center gap-3 px-6 py-3 text-sm" data-section="products">📦 商品管理</a>
+                <a href="#" onclick="showSection('orders')" class="sidebar-link flex items-center gap-3 px-6 py-3 text-sm" data-section="orders">📋 訂單管理</a>
+                <a href="#" onclick="showSection('promotions')" class="sidebar-link flex items-center gap-3 px-6 py-3 text-sm" data-section="promotions">🏷️ 促銷活動</a>
+                <a href="#" onclick="showSection('media')" class="sidebar-link flex items-center gap-3 px-6 py-3 text-sm" data-section="media">📷 數位資產</a>
+                <a href="#" onclick="showSection('settings')" class="sidebar-link flex items-center gap-3 px-6 py-3 text-sm" data-section="settings">⚙️ 設定</a>
             </nav>
         </aside>
-
-        <!-- Main Content -->
         <main class="flex-1 lg:ml-64 p-6 lg:p-8">
-            <!-- Products -->
-            <section x-show="section === 'products'" x-transition>
-                <div class="flex items-center justify-between mb-8"><div><h2 class="font-serif text-2xl font-bold">商品管理</h2><p class="text-sm text-warm-gray mt-1">新增、編輯、刪除商品</p></div><button @click="openProductModal()" class="btn-gold text-white px-6 py-2.5 rounded-xl text-sm">+ 新增商品</button></div>
-                <div class="grid gap-4">
-                    <template x-for="p in products" :key="p.id">
-                        <div class="bg-white rounded-xl p-4 flex items-center gap-4"><div class="w-16 h-16 rounded-lg overflow-hidden flex-shrink-0 bg-gray-100"><img :src="p.imageUrl || 'images/' + p.n + '.png'" class="w-full h-full object-cover"></div><div class="flex-1 min-w-0"><div class="flex items-center gap-2 mb-1"><h4 class="font-medium truncate" x-text="p.name"></h4><span x-show="p.type === 'video'" class="px-2 py-0.5 rounded-full text-[10px] bg-purple-100 text-purple-700">影片</span><span x-show="!p.active" class="px-2 py-0.5 rounded-full text-[10px] bg-red-100 text-red-600">已下架</span></div><p class="text-sm text-gold font-bold">NT$ <span x-text="p.price?.toLocaleString()"></span></p></div><div class="flex gap-2"><button @click="editProduct(p)" class="btn-outline px-4 py-2 rounded-lg text-xs">編輯</button><button @click="deleteProduct(p.id)" class="btn-danger px-4 py-2 rounded-lg text-xs">刪除</button></div></div>
-                    </template>
-                    <div x-show="!products.length" class="text-center py-16 text-warm-gray">尚無商品</div>
-                </div>
+            <section id="sec-products" class="fade-in">
+                <div class="flex items-center justify-between mb-8"><div><h2 class="font-serif text-2xl font-bold">商品管理</h2><p class="text-sm text-warm-gray mt-1">新增、編輯、刪除商品</p></div><button onclick="openProductModal()" class="btn-gold text-white px-6 py-2.5 rounded-xl text-sm">+ 新增商品</button></div>
+                <div id="productList" class="grid gap-4"><div class="text-center py-16 text-warm-gray">載入中...</div></div>
             </section>
-
-            <!-- Orders -->
-            <section x-show="section === 'orders'" x-transition>
-                <div class="flex items-center justify-between mb-8"><div><h2 class="font-serif text-2xl font-bold">訂單管理</h2><p class="text-sm text-warm-gray mt-1">查看與處理客戶訂單</p></div><select x-model="orderFilter" @change="filterOrders()" class="px-4 py-2 rounded-xl border border-gray-200 text-sm"><option value="all">全部</option><option value="pending">待處理</option><option value="confirmed">已確認</option><option value="shipped">已出貨</option><option value="completed">已完成</option></select></div>
-                <div class="space-y-4">
-                    <template x-for="o in filteredOrders" :key="o.id">
-                        <div class="bg-white rounded-xl p-5 cursor-pointer hover:shadow-md transition-shadow" @click="viewOrder(o)"><div class="flex items-center justify-between mb-3"><div><span class="text-xs text-warm-gray">訂單編號</span><p class="font-mono text-sm font-medium" x-text="o.id.slice(0,12)"></p></div><span class="px-3 py-1 rounded-full text-xs font-medium" :class="'status-' + o.status" x-text="statusText(o.status)"></span></div><div class="flex items-center justify-between"><div><p class="text-sm font-medium" x-text="o.customer?.name || '未知'"></p><p class="text-xs text-warm-gray" x-text="(o.items?.length || 0) + ' 件商品'"></p></div><p class="font-serif text-lg font-bold text-gold">NT$ <span x-text="o.finalTotal?.toLocaleString()"></span></p></div></div>
-                    </template>
-                    <div x-show="!filteredOrders.length" class="text-center py-16 text-warm-gray">尚無訂單</div>
-                </div>
+            <section id="sec-orders" class="hidden fade-in">
+                <div class="flex items-center justify-between mb-8"><div><h2 class="font-serif text-2xl font-bold">訂單管理</h2><p class="text-sm text-warm-gray mt-1">查看與處理客戶訂單</p></div></div>
+                <div id="orderList" class="space-y-4"><div class="text-center py-16 text-warm-gray">載入中...</div></div>
             </section>
-
-            <!-- Promotions -->
-            <section x-show="section === 'promotions'" x-transition>
-                <div class="flex items-center justify-between mb-8"><div><h2 class="font-serif text-2xl font-bold">促銷活動</h2><p class="text-sm text-warm-gray mt-1">管理限時優惠與折扣碼</p></div><button @click="openPromoModal()" class="btn-gold text-white px-6 py-2.5 rounded-xl text-sm">+ 新增促銷</button></div>
-                <div class="grid gap-4">
-                    <template x-for="p in promotions" :key="p.id">
-                        <div class="bg-white rounded-xl p-5"><div class="flex items-center justify-between mb-3"><h4 class="font-medium" x-text="p.name"></h4><span class="px-3 py-1 rounded-full text-xs bg-green-100 text-green-700">進行中</span></div><div class="text-sm text-warm-gray space-y-1"><p>類型：<span x-text="promoTypeText(p.type)"></span></p><p>折扣：<span x-text="p.value + (p.type === 'discount' ? '折' : p.type === 'amount' ? '元' : '')"></span></p><p>期間：<span x-text="formatDate(p.startDate)"></span> ~ <span x-text="formatDate(p.endDate)"></span></p><p x-show="p.code">折扣碼：<span class="font-mono text-gold" x-text="p.code"></span></p></div><div class="flex gap-2 mt-4"><button @click="deletePromotion(p.id)" class="btn-danger px-4 py-2 rounded-lg text-xs">刪除</button></div></div>
-                    </template>
-                    <div x-show="!promotions.length" class="text-center py-16 text-warm-gray">尚無促銷活動</div>
-                </div>
+            <section id="sec-promotions" class="hidden fade-in">
+                <div class="flex items-center justify-between mb-8"><div><h2 class="font-serif text-2xl font-bold">促銷活動</h2><p class="text-sm text-warm-gray mt-1">管理限時優惠</p></div><button onclick="openPromoModal()" class="btn-gold text-white px-6 py-2.5 rounded-xl text-sm">+ 新增促銷</button></div>
+                <div id="promoList" class="grid gap-4"><div class="text-center py-16 text-warm-gray">載入中...</div></div>
             </section>
-
-            <!-- Media -->
-            <section x-show="section === 'media'" x-transition>
-                <h2 class="font-serif text-2xl font-bold mb-8">媒體素材</h2>
-                <div class="upload-zone rounded-2xl p-12 text-center mb-8 cursor-pointer" @click="$refs.mediaInput.click()"><div class="w-16 h-16 mx-auto mb-4 rounded-full bg-gold/5 flex items-center justify-center"><svg class="w-7 h-7 text-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg></div><p class="text-sm text-warm-gray mb-1">點擊或拖曳上傳圖片 / 影片</p><p class="text-xs text-warm-gray/50">支援 JPG、PNG、MP4，最大 50MB</p><input type="file" x-ref="mediaInput" class="hidden" accept="image/*,video/*" multiple @change="handleMediaUpload($event)"></div>
-                <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-                    <template x-for="m in media" :key="m.id">
-                        <div class="relative group rounded-xl overflow-hidden bg-gray-100 aspect-square"><img :src="m.dataUrl" class="w-full h-full object-cover"><div class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2"><button @click="deleteMedia(m.id)" class="px-3 py-1.5 rounded-lg bg-red-500 text-white text-xs">刪除</button></div></div>
-                    </template>
-                    <div x-show="!media.length" class="col-span-full text-center py-16 text-warm-gray">尚無素材</div>
-                </div>
+            <section id="sec-media" class="hidden fade-in">
+                <h2 class="font-serif text-2xl font-bold mb-8">數位資產管理</h2>
+                <div class="upload-zone rounded-2xl p-12 text-center mb-8 cursor-pointer" onclick="document.getElementById('mediaFileInput').click()"><p class="text-sm text-warm-gray mb-1">點擊或拖曳上傳圖片 / 影片</p><input type="file" id="mediaFileInput" class="hidden" accept="image/*,video/*" multiple onchange="handleMediaUpload(event)"></div>
+                <div id="mediaGrid" class="grid grid-cols-3 gap-3"><div class="text-center py-10 text-warm-gray col-span-3 text-sm">尚無素材</div></div>
             </section>
-
-            <!-- Settings -->
-            <section x-show="section === 'settings'" x-transition>
+            <section id="sec-settings" class="hidden fade-in">
                 <h2 class="font-serif text-2xl font-bold mb-8">設定</h2>
                 <div class="max-w-lg space-y-6">
-                    <div class="bg-white rounded-2xl p-6"><h3 class="font-medium mb-4">LINE Notify</h3><p class="text-xs text-warm-gray mb-4">設定 Token 後，新訂單會自動通知您的 LINE</p><div class="flex gap-3"><input type="text" x-model="lineTokenInput" placeholder="輸入 LINE Notify Token" class="flex-1 px-4 py-3 rounded-xl border border-gray-200 text-sm"><button @click="saveLineToken()" class="btn-gold text-white px-6 py-3 rounded-xl text-sm">儲存</button></div><p class="text-xs text-warm-gray/50 mt-2">前往 <a href="https://notify-bot.line.me/" target="_blank" class="text-gold">LINE Notify</a> 取得 Token</p></div>
-                    <div class="bg-white rounded-2xl p-6"><h3 class="font-medium mb-4">通知測試</h3><button @click="testLineNotify()" class="btn-outline px-6 py-3 rounded-xl text-sm">發送測試通知</button></div>
+                    <div class="bg-white rounded-2xl p-6"><h3 class="font-medium mb-4">LINE Notify 設定</h3><div class="flex gap-3"><input type="text" id="lineTokenInput" placeholder="輸入 Token" class="flex-1 px-4 py-3 rounded-xl border border-gray-200 text-sm"><button onclick="saveLineToken()" class="btn-gold text-white px-6 py-3 rounded-xl text-sm">儲存</button></div></div>
+                    <div class="bg-white rounded-2xl p-6"><h3 class="font-medium mb-4">分潤設定</h3><p class="text-sm text-warm-gray">目前分潤比例</p><p id="currentSplit" class="font-serif text-2xl font-bold text-gold">30%</p></div>
                 </div>
             </section>
         </main>
     </div>
-
-    <!-- Product Modal -->
-    <div x-show="showProductModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4"><div class="absolute inset-0 bg-black/40" @click="showProductModal = false"></div><div class="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-white rounded-2xl shadow-2xl p-6"><h3 class="font-serif text-xl font-bold mb-6" x-text="editProductId ? '編輯商品' : '新增商品'"></h3><form @submit.prevent="saveProduct()" class="space-y-5"><input type="hidden" x-model="editProductId"><div class="grid grid-cols-2 gap-4"><div><label class="text-xs text-warm-gray uppercase tracking-wider mb-2 block">商品名稱 *</label><input type="text" x-model="prodForm.name" required class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm"></div><div><label class="text-xs text-warm-gray uppercase tracking-wider mb-2 block">類型</label><select x-model="prodForm.type" class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm"><option value="product">實體商品</option><option value="video">影片介紹</option></select></div></div><div class="grid grid-cols-2 gap-4"><div><label class="text-xs text-warm-gray uppercase tracking-wider mb-2 block">售價 *</label><input type="number" x-model="prodForm.price" required min="0" class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm"></div><div><label class="text-xs text-warm-gray uppercase tracking-wider mb-2 block">原價</label><input type="number" x-model="prodForm.originalPrice" min="0" class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm"></div></div><div><label class="text-xs text-warm-gray uppercase tracking-wider mb-2 block">描述</label><textarea x-model="prodForm.description" rows="3" class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm"></textarea></div><div><label class="text-xs text-warm-gray uppercase tracking-wider mb-2 block">圖片（選填）</label><input type="file" accept="image/*" @change="handleProdImage($event)" class="w-full text-sm"></div><div class="flex items-center gap-3"><input type="checkbox" x-model="prodForm.active" id="prodActive" class="w-4 h-4"><label for="prodActive" class="text-sm">立即上架</label></div><div class="flex gap-3 pt-4"><button type="button" @click="showProductModal = false" class="flex-1 py-3 rounded-xl border border-gray-200 text-sm">取消</button><button type="submit" class="btn-gold flex-1 py-3 rounded-xl text-sm">儲存</button></div></form></div></div>
-
-    <!-- Order Detail Modal -->
-    <div x-show="showOrderModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4"><div class="absolute inset-0 bg-black/40" @click="showOrderModal = false"></div><div class="relative w-full max-w-lg max-h-[90vh] overflow-y-auto bg-white rounded-2xl shadow-2xl p-6"><h3 class="font-serif text-xl font-bold mb-6">訂單詳情</h3><div class="space-y-4" x-show="selectedOrder"><div class="flex justify-between"><span class="text-xs text-warm-gray">訂單編號</span><span class="font-mono text-sm" x-text="selectedOrder?.id"></span></div><div class="flex justify-between"><span class="text-xs text-warm-gray">狀態</span><span class="px-3 py-1 rounded-full text-xs font-medium" :class="'status-' + selectedOrder?.status" x-text="statusText(selectedOrder?.status)"></span></div><hr><div><p class="text-xs text-warm-gray mb-1">客戶資料</p><p class="text-sm font-medium" x-text="selectedOrder?.customer?.name"></p><p class="text-sm text-warm-gray" x-text="selectedOrder?.customer?.phone"></p><p class="text-sm text-warm-gray" x-text="selectedOrder?.customer?.address"></p></div><hr><div><p class="text-xs text-warm-gray mb-2">商品明細</p><template x-for="item in selectedOrder?.items || []"><div class="flex justify-between text-sm py-1"><span x-text="item.name + ' x' + item.qty"></span><span>NT$ <span x-text="(item.price * item.qty).toLocaleString()"></span></span></div></template></div><hr><div class="flex justify-between"><span class="text-sm">總金額</span><span class="font-serif text-lg font-bold text-gold">NT$ <span x-text="selectedOrder?.finalTotal?.toLocaleString()"></span></span></div><hr><div class="flex gap-2" x-show="selectedOrder?.status === 'pending'"><button @click="updateOrderStatus(selectedOrder.id, 'confirmed')" class="btn-gold flex-1 py-2.5 rounded-xl text-sm">確認</button><button @click="updateOrderStatus(selectedOrder.id, 'cancelled')" class="btn-danger flex-1 py-2.5 rounded-xl text-sm">取消</button></div><div class="flex gap-2" x-show="selectedOrder?.status === 'confirmed'"><button @click="updateOrderStatus(selectedOrder.id, 'shipped')" class="btn-gold flex-1 py-2.5 rounded-xl text-sm">已出貨</button></div><div class="flex gap-2" x-show="selectedOrder?.status === 'shipped'"><button @click="updateOrderStatus(selectedOrder.id, 'completed')" class="btn-gold flex-1 py-2.5 rounded-xl text-sm">已完成</button></div></div></div></div>
-
-    <!-- Toast -->
-    <div x-show="toast.show" x-transition class="toast" :class="'toast-' + toast.type" x-text="toast.msg"></div>
-
+</div>
+<div id="toast" class="toast toast-success hidden"></div>
 <script>
-function adminApp() {
-    return {
-        currentUser: null,
-        partnerInitial: 'P',
-        loginMode: 'login',
-        loginForm: { email: '', password: '' },
-        regForm: { name: '', phone: '', email: '', password: '', lineToken: '', split: 0.3 },
-        section: 'products',
-        sidebarOpen: false,
-        showNotif: false,
-        products: [],
-        orders: [],
-        filteredOrders: [],
-        promotions: [],
-        media: [],
-        orderFilter: 'all',
-        pendingOrders: 0,
-        showProductModal: false,
-        editProductId: null,
-        prodForm: { name: '', type: 'product', price: 0, originalPrice: 0, description: '', active: true },
-        showOrderModal: false,
-        selectedOrder: null,
-        lineTokenInput: '',
-        toast: { show: false, msg: '', type: 'success' },
-
-        init() {
-            const savedId = localStorage.getItem('exomuse_currentPartner');
-            if (savedId) {
-                const p = this.getPartner(savedId);
-                if (p) { this.currentUser = p; this.partnerInitial = p.name.charAt(0); this.loadData(); }
-            }
-            // 建立測試帳號
-            if (!this.getAllPartners().length) {
-                this.addPartner({ name: '測試合作夥伴', email: 'test@exomuse.com', password: '123456', phone: '0912345678', split: 0.3, lineToken: '' });
-            }
-        },
-
-        // ── Auth ──
-        handleLogin() {
-            const p = this.getAllPartners().find(x => x.email === this.loginForm.email && x.password === this.loginForm.password);
-            if (!p) { this.showToast('帳號或密碼錯誤', 'error'); return; }
-            this.currentUser = p; this.partnerInitial = p.name.charAt(0);
-            localStorage.setItem('exomuse_currentPartner', p.id);
-            this.lineTokenInput = p.lineToken || '';
-            this.loadData();
-            this.showToast('登入成功！');
-        },
-        handleRegister() {
-            if (this.getAllPartners().find(x => x.email === this.regForm.email)) { this.showToast('此Email已註冊', 'error'); return; }
-            this.addPartner({ ...this.regForm });
-            this.showToast('註冊成功！請登入。');
-            this.loginMode = 'login';
-        },
-        handleLogout() { this.currentUser = null; localStorage.removeItem('exomuse_currentPartner'); location.reload(); },
-
-        // ── Data ──
-        loadData() {
-            this.products = this.getAllProducts();
-            this.orders = this.getAllOrders();
-            this.filterOrders();
-            this.pendingOrders = this.orders.filter(o => o.status === 'pending').length;
-            this.promotions = this.getAllPromotions();
-            this.media = this.getAllMedia();
-        },
-        getAllProducts() { try { return JSON.parse(localStorage.getItem('exomuse_products') || '[]'); } catch { return []; } },
-        getAllOrders() { try { return JSON.parse(localStorage.getItem('exomuse_orders') || '[]'); } catch { return []; } },
-        getAllPromotions() { try { return JSON.parse(localStorage.getItem('exomuse_promotions') || '[]'); } catch { return []; } },
-        getAllMedia() { try { return JSON.parse(localStorage.getItem('exomuse_media') || '[]'); } catch { return []; } },
-        getAllPartners() { try { return JSON.parse(localStorage.getItem('exomuse_partners') || '[]'); } catch { return []; } },
-        saveProducts(data) { localStorage.setItem('exomuse_products', JSON.stringify(data)); },
-        saveOrders(data) { localStorage.setItem('exomuse_orders', JSON.stringify(data)); },
-        savePromotions(data) { localStorage.setItem('exomuse_promotions', JSON.stringify(data)); },
-        saveMedia(data) { localStorage.setItem('exomuse_media', JSON.stringify(data)); },
-        savePartners(data) { localStorage.setItem('exomuse_partners', JSON.stringify(data)); },
-        addPartner(p) { const all = this.getAllPartners(); p.id = Date.now().toString(36) + Math.random().toString(36).slice(2,8); all.push(p); this.savePartners(all); return p.id; },
-        getPartner(id) { return this.getAllPartners().find(p => p.id === id); },
-
-        // ── Products ──
-        openProductModal(id = null) {
-            this.editProductId = id;
-            if (id) {
-                const p = this.products.find(x => x.id === id);
-                this.prodForm = { name: p.name, type: p.type || 'product', price: p.price, originalPrice: p.originalPrice || 0, description: p.description || '', active: p.active !== false };
-            } else {
-                this.prodForm = { name: '', type: 'product', price: 0, originalPrice: 0, description: '', active: true };
-            }
-            this.showProductModal = true;
-        },
-        editProduct(p) { this.openProductModal(p.id); },
-        saveProduct() {
-            const all = this.getAllProducts();
-            if (this.editProductId) {
-                const i = all.findIndex(x => x.id === this.editProductId);
-                if (i >= 0) all[i] = { ...all[i], ...this.prodForm };
-            } else {
-                all.push({ ...this.prodForm, id: Date.now().toString(36) + Math.random().toString(36).slice(2,8), active: true, createdAt: new Date().toISOString() });
-            }
-            this.saveProducts(all);
-            this.products = all;
-            this.showProductModal = false;
-            this.showToast('商品已儲存');
-        },
-        deleteProduct(id) {
-            if (!confirm('確定刪除？')) return;
-            this.saveProducts(this.getAllProducts().map(p => p.id === id ? { ...p, active: false } : p));
-            this.products = this.getAllProducts();
-            this.showToast('商品已刪除');
-        },
-        handleProdImage(e) {
-            const file = e.target.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = (ev) => { this.prodForm.imageUrl = ev.target.result; };
-            reader.readAsDataURL(file);
-        },
-
-        // ── Orders ──
-        filterOrders() {
-            this.filteredOrders = this.orderFilter === 'all' ? this.orders : this.orders.filter(o => o.status === this.orderFilter);
-        },
-        viewOrder(o) { this.selectedOrder = o; this.showOrderModal = true; },
-        updateOrderStatus(id, status) {
-            const all = this.getAllOrders();
-            const i = all.findIndex(o => o.id === id);
-            if (i >= 0) { all[i].status = status; this.saveOrders(all); this.orders = all; this.filterOrders(); }
-            this.showOrderModal = false;
-            this.selectedOrder = null;
-            this.showToast('訂單狀態已更新');
-        },
-        statusText(s) { return { pending: '待處理', confirmed: '已確認', shipped: '已出貨', completed: '已完成', cancelled: '已取消' }[s] || s; },
-
-        // ── Promotions ──
-        openPromoModal() {
-            const name = prompt('促銷名稱？');
-            if (!name) return;
-            const all = this.getAllPromotions();
-            all.push({ id: Date.now().toString(36), name, type: 'discount', value: 0.8, minSpend: 0, startDate: new Date().toISOString(), endDate: new Date(Date.now() + 30*24*60*60*1000).toISOString(), code: '' });
-            this.savePromotions(all);
-            this.promotions = all;
-            this.showToast('促銷已新增');
-        },
-        deletePromotion(id) {
-            if (!confirm('確定刪除？')) return;
-            this.savePromotions(this.getAllPromotions().filter(p => p.id !== id));
-            this.promotions = this.getAllPromotions();
-            this.showToast('促銷已刪除');
-        },
-        promoTypeText(t) { return { discount: '折扣', amount: '金額折抵', bogo: '買一送一', gift: '滿額贈品' }[t] || t; },
-        formatDate(d) { try { return new Date(d).toLocaleDateString('zh-TW'); } catch { return d; } },
-
-        // ── Media ──
-        handleMediaUpload(e) {
-            Array.from(e.target.files).forEach(f => {
-                const reader = new FileReader();
-                reader.onload = (ev) => {
-                    const all = this.getAllMedia();
-                    all.push({ id: Date.now().toString(36), name: f.name, type: f.type, size: f.size, dataUrl: ev.target.result });
-                    this.saveMedia(all);
-                    this.media = all;
-                    this.showToast(f.name + ' 上傳成功');
-                };
-                reader.readAsDataURL(f);
-            });
-        },
-        deleteMedia(id) {
-            this.saveMedia(this.getAllMedia().filter(m => m.id !== id));
-            this.media = this.getAllMedia();
-            this.showToast('已刪除');
-        },
-
-        // ── Settings ──
-        saveLineToken() {
-            const all = this.getAllPartners();
-            const i = all.findIndex(p => p.id === this.currentUser.id);
-            if (i >= 0) { all[i].lineToken = this.lineTokenInput; this.savePartners(all); this.currentUser.lineToken = this.lineTokenInput; this.showToast('已儲存'); }
-        },
-        testLineNotify() {
-            const token = this.lineTokenInput;
-            if (!token) { this.showToast('請先設定 Token', 'error'); return; }
-            fetch('https://notify-api.line.me/api/notify', { method: 'POST', headers: { 'Authorization': 'Bearer ' + token }, body: 'message=🔔 ExoMuse 測試通知' })
-                .then(r => this.showToast(r.ok ? '測試通知已發送' : '發送失敗', r.ok ? 'success' : 'error'))
-                .catch(() => this.showToast('網路錯誤', 'error'));
-        },
-
-        // ── Toast ──
-        showToast(msg, type = 'success') {
-            this.toast = { show: true, msg, type };
-            setTimeout(() => { this.toast.show = false; }, 3000);
-        },
-
-        // ── Navigation ──
-        showSection(s) { this.section = s; this.sidebarOpen = false; }
-    };
-}
+const DB={};['products','orders','partners','media','promotions'].forEach(k=>{DB[k]={getAll(){try{return JSON.parse(localStorage.getItem('exomuse_'+k)||'[]')}catch{return[]}},save(d){localStorage.setItem('exomuse_'+k,JSON.stringify(d))},add(d){const a=DB[k].getAll();d.id=Date.now().toString(36)+Math.random().toString(36).slice(2,8);a.push(d);DB[k].save(a);return d},update(id,up){const a=DB[k].getAll();const i=a.findIndex(x=>x.id===id);if(i>=0){Object.assign(a[i],up);DB[k].save(a)}},del(id){DB[k].save(DB[k].getAll().filter(x=>x.id!==id))}}});
+let currentUser=null;
+function showToast(msg,type='success'){const t=document.getElementById('toast');t.textContent=msg;t.className='toast toast-'+type;t.classList.remove('hidden');setTimeout(()=>t.classList.add('hidden'),3000);}
+function showLogin(){document.getElementById('loginScreen').classList.remove('hidden');document.getElementById('registerScreen').classList.add('hidden');}
+function showRegister(){document.getElementById('loginScreen').classList.add('hidden');document.getElementById('registerScreen').classList.remove('hidden');}
+function handleLogin(e){e.preventDefault();const email=document.getElementById('loginEmail').value;const pw=document.getElementById('loginPassword').value;const p=DB.partners.getAll().find(x=>x.email===email&&x.password===pw);if(!p){showToast('帳號或密碼錯誤','error');return;}currentUser=p;document.getElementById('loginScreen').classList.add('hidden');document.getElementById('registerScreen').classList.add('hidden');document.getElementById('dashboard').classList.remove('hidden');document.getElementById('partnerName').textContent=p.name;document.getElementById('partnerInitial').textContent=p.name.charAt(0);loadAll();showToast('登入成功！');}
+function handleRegister(e){e.preventDefault();const name=document.getElementById('regName').value;const phone=document.getElementById('regPhone').value;const email=document.getElementById('regEmail').value;const password=document.getElementById('regPassword').value;const lineToken=document.getElementById('regLineToken').value;const split=parseInt(document.getElementById('regSplit').value)||30;if(DB.partners.getAll().find(x=>x.email===email)){showToast('此Email已註冊','error');return;}DB.partners.add({name,phone,email,password,lineToken,split});showToast('註冊成功！請登入');showLogin();}
+function handleLogout(){currentUser=null;document.getElementById('dashboard').classList.add('hidden');document.getElementById('loginScreen').classList.remove('hidden');}
+function showSection(s){['products','orders','promotions','media','settings'].forEach(x=>{document.getElementById('sec-'+x).classList.toggle('hidden',x!==s);});document.querySelectorAll('.sidebar-link').forEach(a=>a.classList.toggle('active',a.dataset.section===s));}
+function loadAll(){loadProducts();loadOrders();loadPromotions();loadMedia();if(currentUser){document.getElementById('currentSplit').textContent=currentUser.split+'%';}}
+function loadProducts(){const p=DB.products.getAll();document.getElementById('productList').innerHTML=p.length?p.map(x=>`<div class="bg-white rounded-xl p-4 flex items-center gap-4"><div class="flex-1"><h4 class="font-medium">${x.name}</h4><p class="text-sm text-gold font-bold">NT$ ${x.price?.toLocaleString()}</p></div><button onclick="DB.products.del('${x.id}');loadProducts()" class="btn-danger px-4 py-2 rounded-lg text-xs">刪除</button></div>`).join(''):'<div class="text-center py-16 text-warm-gray">尚無商品</div>';}
+function loadOrders(){document.getElementById('orderList').innerHTML='<div class="text-center py-16 text-warm-gray">尚無訂單</div>';}
+function loadPromotions(){document.getElementById('promoList').innerHTML='<div class="text-center py-16 text-warm-gray">尚無促銷</div>';}
+function loadMedia(){document.getElementById('mediaGrid').innerHTML='<div class="text-center py-10 text-warm-gray col-span-3 text-sm">尚無素材</div>';}
+function openProductModal(){const n=prompt('商品名稱？');if(!n)return;const p=prompt('售價？');if(!p)return;DB.products.add({name:n,price:parseInt(p)});loadProducts();showToast('商品已新增');}
+function openPromoModal(){const n=prompt('促銷名稱？');if(!n)return;DB.promotions.add({name:n});loadPromotions();showToast('促銷已新增');}
+function saveLineToken(){const t=document.getElementById('lineTokenInput').value;if(currentUser){DB.partners.update(currentUser.id,{lineToken:t});currentUser.lineToken=t;showToast('已儲存');}}
+function handleMediaUpload(e){Array.from(e.target.files).forEach(f=>{const r=new FileReader();r.onload=ev=>{DB.media.add({name:f.name,dataUrl:ev.target.result});loadMedia();showToast(f.name+' 上傳成功');};r.readAsDataURL(f);});}
+if(!DB.partners.getAll().length){DB.partners.add({name:'測試合作夥伴',email:'test@exomuse.com',password:'test1234',split:30});}
 </script>
 </body>
 </html>

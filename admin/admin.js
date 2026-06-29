@@ -1,4 +1,4 @@
-// ExoMuse 合作夥伴後台 — 本地測試版本
+// ExoMuse 合作夥伴後台 — 主要邏輯
 
 // ── 全域變數 ──
 let currentUser = null;
@@ -7,6 +7,70 @@ let products = [];
 let orders = [];
 let promotions = [];
 let lineToken = '';
+
+// ── 簡易認證（LocalDB 模式，不依賴 Firebase Auth） ──
+const ADMIN_ACCOUNTS = [
+    { email: 'admin@exomuse.com', password: 'ExoMuse2026!', name: '系統管理員', split: 0.5 },
+    { email: 'test@exomuse.com', password: 'test1234', name: '測試帳號', split: 0.3 }
+];
+
+function handleLogin(e) {
+    e.preventDefault();
+    const email = document.getElementById('loginEmail').value.trim();
+    const password = document.getElementById('loginPassword').value;
+    const account = ADMIN_ACCOUNTS.find(a => a.email === email && a.password === password);
+    if (!account) {
+        showToast('帳號或密碼錯誤', 'error');
+        return;
+    }
+    currentUser = { uid: email, email };
+    partnerData = { name: account.name, split: account.split, lineToken: '', email: account.email };
+    localStorage.setItem('exomuse_auth', JSON.stringify({ email, ts: Date.now() }));
+    enterDashboard();
+    showToast('登入成功！');
+}
+
+function handleLogout() {
+    localStorage.removeItem('exomuse_auth');
+    currentUser = null;
+    partnerData = null;
+    location.reload();
+}
+
+function checkAuth() {
+    const saved = localStorage.getItem('exomuse_auth');
+    if (!saved) return false;
+    try {
+        const { email, ts } = JSON.parse(saved);
+        // 24hr expiry
+        if (Date.now() - ts > 86400000) { localStorage.removeItem('exomuse_auth'); return false; }
+        const account = ADMIN_ACCOUNTS.find(a => a.email === email);
+        if (!account) return false;
+        currentUser = { uid: email, email };
+        partnerData = { name: account.name, split: account.split, lineToken: '', email: account.email };
+        return true;
+    } catch { return false; }
+}
+
+function enterDashboard() {
+    document.getElementById('loginScreen').classList.add('hidden');
+    document.getElementById('registerScreen').classList.add('hidden');
+    document.getElementById('dashboard').classList.remove('hidden');
+    document.getElementById('partnerName').textContent = partnerData.name;
+    document.getElementById('partnerInitial').textContent = partnerData.name.charAt(0);
+    document.getElementById('currentSplit').textContent = Math.round(partnerData.split * 100) + '%';
+    lineToken = localStorage.getItem('exomuse_lineToken') || '';
+    if (lineToken) document.getElementById('lineTokenInput').value = lineToken;
+    loadProducts();
+    loadOrders();
+    loadPromotions();
+    loadMedia();
+    
+    // 定期檢查新訂單（簡易輪詢模式）
+    setInterval(() => {
+        if (currentUser) loadOrders();
+    }, 30000);
+}
 
 // ── Toast 通知 ──
 function showToast(message, type = 'success') {
@@ -27,99 +91,25 @@ function showSection(name) {
     document.getElementById('sidebar').classList.add('hidden');
 }
 
-// ── 認證 ──
-function showLogin() {
-    document.getElementById('loginScreen').classList.remove('hidden');
-}
+// ── LocalDB as ExomeDB (no Firebase needed) ──
+const ExomeDB = LocalDB;
 
-async function handleLogin(e) {
-    e.preventDefault();
-    const email = document.getElementById('loginEmail').value;
-    const password = document.getElementById('loginPassword').value;
-    
-    // 本地驗證
-    const partner = LocalDB.partners.getByEmail(email);
-    if (!partner || partner.password !== password) {
-        showToast('登入失敗：帳號或密碼錯誤', 'error');
-        return;
+// ── Auto auth check on load ──
+document.addEventListener('DOMContentLoaded', () => {
+    if (checkAuth()) {
+        enterDashboard();
     }
-    
-    currentUser = { uid: partner.id };
-    partnerData = partner;
-    lineToken = partner.lineToken || '';
-    
-    document.getElementById('loginScreen').classList.add('hidden');
-    document.getElementById('dashboard').classList.remove('hidden');
-    document.getElementById('partnerName').textContent = partner.name;
-    document.getElementById('partnerInitial').textContent = partner.name.charAt(0);
-    document.getElementById('currentSplit').textContent = Math.round(partner.split * 100) + '%';
-    // 讀取已儲存的分潤比例
-    const savedSplit = LocalDB.settings.get('splitRatio');
-    if (savedSplit) {
-        partner.split = savedSplit;
-        document.getElementById('currentSplit').textContent = Math.round(savedSplit * 100) + '%';
-    }
-    if (lineToken) document.getElementById('lineTokenInput').value = lineToken;
-    
-    loadProducts();
-    loadOrders();
-    loadPromotions();
-    loadMedia();
-    showToast('登入成功！');
-}
-
-async function handleLogout() {
-    currentUser = null;
-    partnerData = null;
-    location.reload();
-}
-
-// ── 初始化 ──
-// 檢查是否已登入（localStorage）
-const savedPartnerId = localStorage.getItem('exomuse_currentPartner');
-if (savedPartnerId) {
-    const partner = LocalDB.partners.getById(savedPartnerId);
-    if (partner) {
-        currentUser = { uid: partner.id };
-        partnerData = partner;
-        lineToken = partner.lineToken || '';
-        
-        document.getElementById('loginScreen').classList.add('hidden');
-        document.getElementById('dashboard').classList.remove('hidden');
-        document.getElementById('partnerName').textContent = partner.name;
-        document.getElementById('partnerInitial').textContent = partner.name.charAt(0);
-        document.getElementById('currentSplit').textContent = Math.round(partner.split * 100) + '%';
-    // 讀取已儲存的分潤比例
-    const savedSplit = LocalDB.settings.get('splitRatio');
-    if (savedSplit) {
-        partner.split = savedSplit;
-        document.getElementById('currentSplit').textContent = Math.round(savedSplit * 100) + '%';
-    }
-        if (lineToken) document.getElementById('lineTokenInput').value = lineToken;
-        
-        loadProducts();
-        loadOrders();
-        loadPromotions();
-        loadMedia();
-    }
-}
-
-// 登入時記住
-const originalHandleLogin = handleLogin;
-handleLogin = async function(e) {
-    await originalHandleLogin(e);
-    if (currentUser) {
-        localStorage.setItem('exomuse_currentPartner', currentUser.uid);
-    }
-};
+});
 
 // ═══════════════════════════════════════
 // 商品管理
 // ═══════════════════════════════════════
 
 function loadProducts() {
-    products = LocalDB.products.getActive();
-    renderProducts();
+    ExomeDB.onProductsChange((data) => {
+        products = data;
+        renderProducts();
+    });
 }
 
 function renderProducts() {
@@ -185,12 +175,9 @@ function closeProductModal() {
 function previewProductImage(e) {
     const file = e.target.files[0];
     if (file) {
-        const reader = new FileReader();
-        reader.onload = (event) => {
-            document.getElementById('prodImagePreview').classList.remove('hidden');
-            document.getElementById('prodImagePreview img').src = event.target.result;
-        };
-        reader.readAsDataURL(file);
+        const url = URL.createObjectURL(file);
+        document.getElementById('prodImagePreview').classList.remove('hidden');
+        document.getElementById('prodImagePreview img').src = url;
     }
 }
 
@@ -198,6 +185,7 @@ async function saveProduct(e) {
     e.preventDefault();
     const id = document.getElementById('editProductId').value;
     const imageFile = document.getElementById('prodImageInput').files[0];
+    const videoFile = document.getElementById('prodVideoInput').files[0];
     
     const data = {
         name: document.getElementById('prodName').value,
@@ -207,36 +195,32 @@ async function saveProduct(e) {
         description: document.getElementById('prodDesc').value,
         sortOrder: parseInt(document.getElementById('prodSort').value) || 0,
         active: document.getElementById('prodActive').checked,
-        partnerId: currentUser?.uid || 'local'
+        partnerId: currentUser.uid
     };
     
     try {
+        // 上傳圖片
         if (imageFile) {
-            const reader = new FileReader();
-            reader.onload = (event) => {
-                data.imageUrl = event.target.result;
-                if (id) {
-                    LocalDB.products.update(id, data);
-                    showToast('商品已更新');
-                } else {
-                    LocalDB.products.add(data);
-                    showToast('商品已新增');
-                }
-                closeProductModal();
-                loadProducts();
-            };
-            reader.readAsDataURL(imageFile);
-        } else {
-            if (id) {
-                LocalDB.products.update(id, data);
-                showToast('商品已更新');
-            } else {
-                LocalDB.products.add(data);
-                showToast('商品已新增');
-            }
-            closeProductModal();
-            loadProducts();
+            const result = await ExomeDB.uploadImage(imageFile, `products/${currentUser.uid}`);
+            data.imageUrl = result.url;
+            data.imagePath = result.path;
         }
+        
+        // 上傳影片
+        if (videoFile) {
+            const result = await ExomeDB.uploadVideo(videoFile, `videos/${currentUser.uid}`);
+            data.videoUrl = result.url;
+            data.videoPath = result.path;
+        }
+        
+        if (id) {
+            await ExomeDB.updateProduct(id, data);
+            showToast('商品已更新');
+        } else {
+            await ExomeDB.addProduct(data);
+            showToast('商品已新增');
+        }
+        closeProductModal();
     } catch (err) {
         showToast('儲存失敗：' + err.message, 'error');
     }
@@ -248,9 +232,12 @@ function editProduct(id) {
 
 async function deleteProduct(id) {
     if (!confirm('確定要刪除這個商品嗎？')) return;
-    LocalDB.products.delete(id);
-    showToast('商品已刪除');
-    loadProducts();
+    try {
+        await ExomeDB.deleteProduct(id);
+        showToast('商品已刪除');
+    } catch (err) {
+        showToast('刪除失敗：' + err.message, 'error');
+    }
 }
 
 // ═══════════════════════════════════════
@@ -258,8 +245,10 @@ async function deleteProduct(id) {
 // ═══════════════════════════════════════
 
 function loadOrders() {
-    orders = LocalDB.orders.getAll();
-    renderOrders();
+    ExomeDB.getPartnerOrders(currentUser.uid).then(data => {
+        orders = data;
+        renderOrders();
+    });
 }
 
 function renderOrders(filter = 'all') {
@@ -276,7 +265,7 @@ function renderOrders(filter = 'all') {
             <div class="flex items-center justify-between mb-3">
                 <div>
                     <span class="text-xs text-warm-gray">訂單編號</span>
-                    <p class="font-mono text-sm font-medium">${o.id.slice(0, 12)}</p>
+                    <p class="font-mono text-sm font-medium">${o.id.slice(0, 12)}...</p>
                 </div>
                 <span class="px-3 py-1 rounded-full text-xs font-medium status-${o.status}">
                     ${getStatusText(o.status)}
@@ -320,9 +309,9 @@ function viewOrder(id) {
             <hr>
             <div>
                 <p class="text-xs text-warm-gray mb-1">客戶資料</p>
-                <p class="text-sm"><strong>${order.customer?.name || '未知'}</strong></p>
-                <p class="text-sm text-warm-gray">${order.customer?.phone || ''}</p>
-                <p class="text-sm text-warm-gray">${order.customer?.address || ''}</p>
+                <p class="text-sm"><strong>${order.customer?.name}</strong></p>
+                <p class="text-sm text-warm-gray">${order.customer?.phone}</p>
+                <p class="text-sm text-warm-gray">${order.customer?.address}</p>
             </div>
             <hr>
             <div>
@@ -337,7 +326,7 @@ function viewOrder(id) {
             <hr>
             <div class="flex justify-between">
                 <span class="text-sm">總金額</span>
-                <span class="font-serif text-lg font-bold text-gold">NT$ ${order.finalTotal?.toLocaleString() || 0}</span>
+                <span class="font-serif text-lg font-bold text-gold">NT$ ${order.finalTotal?.toLocaleString()}</span>
             </div>
             <hr>
             <div class="flex gap-2">
@@ -361,10 +350,14 @@ function closeOrderModal() {
 }
 
 async function updateOrderStatus(orderId, status) {
-    LocalDB.orders.updateStatus(orderId, status);
-    showToast('訂單狀態已更新');
-    closeOrderModal();
-    loadOrders();
+    try {
+        await ExomeDB.updateOrderStatus(orderId, status);
+        showToast('訂單狀態已更新');
+        closeOrderModal();
+        loadOrders();
+    } catch (err) {
+        showToast('更新失敗：' + err.message, 'error');
+    }
 }
 
 // ═══════════════════════════════════════
@@ -372,8 +365,10 @@ async function updateOrderStatus(orderId, status) {
 // ═══════════════════════════════════════
 
 function loadPromotions() {
-    promotions = LocalDB.promotions.getActive();
-    renderPromotions();
+    ExomeDB.getActivePromotions().then(data => {
+        promotions = data;
+        renderPromotions();
+    });
 }
 
 function renderPromotions() {
@@ -409,9 +404,8 @@ function getPromoTypeText(type) {
 
 function formatDate(date) {
     if (!date) return '';
-    try {
-        return new Date(date).toLocaleDateString('zh-TW');
-    } catch { return date; }
+    const d = date.toDate ? date.toDate() : new Date(date);
+    return d.toLocaleDateString('zh-TW');
 }
 
 function openPromoModal() {
@@ -430,30 +424,43 @@ async function savePromo(e) {
         type: document.getElementById('promoType').value,
         value: parseFloat(document.getElementById('promoValue').value),
         minSpend: parseInt(document.getElementById('promoMinSpend').value) || 0,
-        startDate: document.getElementById('promoStart').value,
-        endDate: document.getElementById('promoEnd').value,
+        startDate: new Date(document.getElementById('promoStart').value),
+        endDate: new Date(document.getElementById('promoEnd').value),
         code: document.getElementById('promoCode').value || null
     };
     
-    LocalDB.promotions.add(data);
-    showToast('促銷活動已新增');
-    closePromoModal();
-    loadPromotions();
+    try {
+        await ExomeDB.addPromotion(data);
+        showToast('促銷活動已新增');
+        closePromoModal();
+        loadPromotions();
+    } catch (err) {
+        showToast('新增失敗：' + err.message, 'error');
+    }
 }
 
 async function deletePromotion(id) {
     if (!confirm('確定要刪除這個促銷活動嗎？')) return;
-    LocalDB.promotions.delete(id);
-    showToast('促銷活動已刪除');
-    loadPromotions();
+    try {
+        await ExomeDB.deletePromotion(id);
+        showToast('促銷活動已刪除');
+        loadPromotions();
+    } catch (err) {
+        showToast('刪除失敗：' + err.message, 'error');
+    }
 }
 
 // ═══════════════════════════════════════
 // 媒體素材
 // ═══════════════════════════════════════
 
-function loadMedia() {
-    renderMedia(LocalDB.media.getAll());
+async function loadMedia() {
+    try {
+        const files = await ExomeDB.listFiles(`media/${currentUser.uid}`);
+        renderMedia(files);
+    } catch (err) {
+        // 資料夾可能不存在，忽略
+    }
 }
 
 function renderMedia(files) {
@@ -465,13 +472,13 @@ function renderMedia(files) {
     
     container.innerHTML = files.map(f => `
         <div class="relative group rounded-xl overflow-hidden bg-gray-100 aspect-square">
-            ${f.type && f.type.startsWith('video/') 
-                ? '<div class="w-full h-full flex items-center justify-center text-4xl">🎬</div>'
-                : `<img src="${f.dataUrl}" class="w-full h-full object-cover">`
+            ${f.name.match(/\.(mp4|mov|avi)$/i) 
+                ? `<div class="w-full h-full flex items-center justify-center text-4xl">🎬</div>`
+                : `<img src="${f.url}" class="w-full h-full object-cover">`
             }
             <div class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-                <button onclick="copyMediaUrl('${f.dataUrl}')" class="px-3 py-1.5 rounded-lg bg-white text-xs">複製連結</button>
-                <button onclick="deleteMedia('${f.id}')" class="px-3 py-1.5 rounded-lg bg-red-500 text-white text-xs">刪除</button>
+                <button onclick="copyMediaUrl('${f.url}')" class="px-3 py-1.5 rounded-lg bg-white text-xs">複製連結</button>
+                <button onclick="deleteMedia('${f.path}')" class="px-3 py-1.5 rounded-lg bg-red-500 text-white text-xs">刪除</button>
             </div>
         </div>
     `).join('');
@@ -480,14 +487,17 @@ function renderMedia(files) {
 async function handleMediaUpload(e) {
     const files = Array.from(e.target.files);
     for (const file of files) {
-        const reader = new FileReader();
-        reader.onload = (event) => {
-            LocalDB.media.add({ name: file.name, type: file.type, size: file.size, dataUrl: event.target.result });
+        try {
+            const isVideo = file.type.startsWith('video/');
+            const result = isVideo 
+                ? await ExomeDB.uploadVideo(file, `media/${currentUser.uid}`)
+                : await ExomeDB.uploadImage(file, `media/${currentUser.uid}`);
             showToast(`${file.name} 上傳成功`);
-            loadMedia();
-        };
-        reader.readAsDataURL(file);
+        } catch (err) {
+            showToast(`${file.name} 上傳失敗`, 'error');
+        }
     }
+    loadMedia();
 }
 
 function copyMediaUrl(url) {
@@ -495,11 +505,15 @@ function copyMediaUrl(url) {
     showToast('連結已複製');
 }
 
-async function deleteMedia(id) {
+async function deleteMedia(path) {
     if (!confirm('確定要刪除這個檔案嗎？')) return;
-    LocalDB.media.delete(id);
-    showToast('檔案已刪除');
-    loadMedia();
+    try {
+        await ExomeDB.deleteFile(path);
+        showToast('檔案已刪除');
+        loadMedia();
+    } catch (err) {
+        showToast('刪除失敗', 'error');
+    }
 }
 
 // ═══════════════════════════════════════
@@ -512,22 +526,13 @@ async function saveLineToken() {
         showToast('請輸入 Token', 'error');
         return;
     }
-    LocalDB.settings.update({ lineToken: token });
-    lineToken = token;
-    showToast('LINE Token 已儲存');
-}
-
-async function saveSplit() {
-    const input = document.getElementById('splitInput');
-    const value = parseFloat(input.value);
-    if (isNaN(value) || value < 0 || value > 100) {
-        showToast('請輸入 0~100 的數字', 'error');
-        return;
+    try {
+        await ExomeDB.updatePartner(currentUser.uid, { lineToken: token });
+        lineToken = token;
+        showToast('LINE Token 已儲存');
+    } catch (err) {
+        showToast('儲存失敗', 'error');
     }
-    LocalDB.settings.update({ splitRatio: value / 100 });
-    document.getElementById('currentSplit').textContent = value + '%';
-    showToast('分潤比例已設定為 ' + value + '%');
-    input.value = '';
 }
 
 async function testLineNotify() {
@@ -539,6 +544,64 @@ async function testLineNotify() {
     showToast(ok ? '測試通知已發送' : '發送失敗，請確認 Token 是否正確', ok ? 'success' : 'error');
 }
 
+// ═══════════════════════════════════════
+// 廣告文案產生器
+// ═══════════════════════════════════════
+
+const adProducts = {
+    mask:    { name: '人類外泌體面膜',   price: 1580, originalPrice: 1980 },
+    essence: { name: '人類外泌體精華液', price: 3580, originalPrice: 4280 },
+    ampoule: { name: '人類外泌體安瓶',   price: 3980, originalPrice: 4680 },
+    hair:    { name: '人類外泌體養髮液', price: 4580, originalPrice: 5280 },
+    promo:   { name: '節日促銷包',       price: 9980, originalPrice: 12800 }
+};
+
+let adStyle = 'luxury';
+
+function setAdStyle(style) {
+    adStyle = style;
+    document.querySelectorAll('.ad-style-btn').forEach(btn => {
+        if (btn.dataset.style === style) {
+            btn.classList.add('active', 'border-gold/30', 'bg-gold/5', 'text-gold');
+            btn.classList.remove('border-gray-200', 'text-warm-gray');
+        } else {
+            btn.classList.remove('active', 'border-gold/30', 'bg-gold/5', 'text-gold');
+            btn.classList.add('border-gray-200', 'text-warm-gray');
+        }
+    });
+    generateAdCopy();
+}
+
+function generateAdCopy() {
+    const productId = document.getElementById('adProduct').value;
+    const audience = document.getElementById('adAudience').value;
+    const p = adProducts[productId];
+    if (!p) return;
+
+    const styleMap = {
+        luxury: {
+            title: `✨ ${p.name} — 極致奢華肌膚體驗`,
+            body: `【${p.name}】${audience}的首選。\n\n採用人類來源外泌體，深層修護肌底。\n\n🌟 人類來源外泌體 × 富勒烯強效抗氧化\n🌟 臺灣唯一合法認證\n\n💝 限時優惠 NT$ ${p.price.toLocaleString()}（原价 NT$ ${p.originalPrice?.toLocaleString() || p.price.toLocaleString()}）\n\n立即體驗 →`,
+            hashtags: '#ExoMuse #外泌體 #人類來源 #奢華保養 #護膚新革命 #ISEV認證'
+        },
+        urgency: {
+            title: `🔥 最後機會！${p.name} 限時特惠`,
+            body: `⚡ ${audience} 注意！\n\n${p.name} 限時優惠中！\n\n💰 特惠價：NT$ ${p.price.toLocaleString()}（省 NT$ ${(p.originalPrice - p.price).toLocaleString()}！）\n📦 買3件再享8折\n\n數量有限，售完即止！`,
+            hashtags: '#ExoMuse #限時優惠 #外泌體保養 #最後機會 #買3件8折'
+        },
+        educate: {
+            title: `📚 為什麼${audience}都在討論${p.name}？`,
+            body: `【外泌體科學小教室】\n\n你知道什麼是「人類來源外泌體」嗎？\n\n${p.name}採用：\n✅ 人類臍帶間質幹細胞外泌體\n✅ 多重玻尿酸深層補水\n✅ 富勒烯強效抗氧化\n✅ 多重胜肽煥活\n\n符合 ISEV 國際標準，臺灣唯一合法。\n\n特惠價 NT$ ${p.price.toLocaleString()}`,
+            hashtags: '#外泌體知識 #ExoMuse #科學護膚 #人類來源 #ISEV #保養新知'
+        }
+    };
+
+    const copy = styleMap[adStyle];
+    document.getElementById('adCopy').textContent = copy.body;
+    document.getElementById('adTitle').textContent = copy.title;
+    document.getElementById('adHashtags').textContent = copy.hashtags;
+}
+
 // ── 側邊欄 ──
 function toggleSidebar() {
     document.getElementById('sidebar').classList.toggle('hidden');
@@ -546,18 +609,4 @@ function toggleSidebar() {
 
 function toggleNotif() {
     showSection('orders');
-}
-
-// ── 初始化 ──
-// 如果沒有合作夥伴，建立一個預設的
-if (LocalDB.partners.getAll().length === 0) {
-    LocalDB.partners.add({
-        name: '測試合作夥伴',
-        email: 'test@exomuse.com',
-        password: '123456',
-        phone: '0912345678',
-        split: 0.3,
-        lineToken: ''
-    });
-    showToast('已建立測試帳號：test@exomuse.com / 123456');
 }
