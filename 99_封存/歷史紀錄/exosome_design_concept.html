@@ -1,0 +1,73 @@
+
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EXOSOME | 極致面泌體美學</title>
+    <style>
+        :root {
+            --primary: #0a2e36; /* 深邃青 */
+            --accent: #c5a059;  /* 高貴金 */
+．       --bg: #f8fcfc;     /* 輕盈白 */
+            --text: #2c3e50;
+        }
+        body {
+            font-family: 'PingFang TC', 'Noto Sans TC', sans-serif;
+            margin: 0; padding: 0; background: var(--bg); color: var(--text);
+            line-height: 1.6;
+        }
+        header {
+            height: 100vh;
+            background: linear-gradient(rgba(10,46,54,0.7), rgba(10,46,54,0.7)), 
+                        url('https://images.unsplash.com/photo-1576086213369-97a306d36557?auto=format&fit=crop&w=1920');
+            background-size: cover; background-position: center;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            color: white; text-align: center; padding: 0 20px;
+        }
+        h1 { font-size: 4rem; margin: 0; letter-spacing: 8px; color: var(--accent); }
+        p.subtitle { font-size: 1.5rem; opacity: 0.8; margin-bottom: 30px; }
+        .cta-button {
+            padding: 15px 40px; border: 2px solid var(--accent);
+            color: var(--accent); text-decoration: none; font-weight: bold;
+            transition: all 0.3s ease; letter-spacing: 2px;
+        }
+        .cta-button:hover { background: var(--accent); color: white; }
+        section { padding: 80px 10%; text-align: center; }
+        .feature-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px; margin-top: 50px;
+        }
+        .feature-card {
+            background: white; padding: 40px; border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            border-top: 4px solid var(--accent);
+        }
+        h2 { font-size: 2.5rem; color: var(--primary); margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>EXOSOME</h1>
+        <p class="subtitle">細胞層級的極致修復力 • 重塑生命光采</p>
+        <a href="#explore" class="cta-pattern cta-button">探索科學之美</a>
+    </header>
+    <section id="explore">
+        <h2>核心科技指標</h2>
+        <div class="feature-grid">
+            <div class="feature-card">
+                <h3>高濃度包封技術</h3>
+                <p>提升關鍵成分滲透率，直達肌底深層。</p>
+            </div>
+            <div class="feature-card">
+                <h3>穩定性傳導系統</h3>
+                <p>精密結構設計，確保活性在極端環境下依然強韌。</p>
+            </div>
+            <div class="feature-card">
+                <h3>純淨生物來源</h3>
+                <p>嚴選天然萃取成分，結合尖端人工合成技術。</p>
+            </div>
+        </div>
+    </section>
+</body>
+</html>

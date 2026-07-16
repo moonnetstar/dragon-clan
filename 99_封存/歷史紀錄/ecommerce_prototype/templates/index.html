@@ -1,0 +1,27 @@
+
+<!DOCTYPE html>
+<html>
+<head><title>TwoTone Shop Prototype</title></head>
+<body>
+    <h1>🛒 二Tone Shop 前台展示</h1>
+    <div id="product-list">
+        <p>商品：轉經輪吊飾 | 價格：$1280 <button onclick="addToCart(1)">加入購物車</button></p>
+        <p>商品：佛珠 | 價格：$980 <button onclick="addToCart(2)">加入購物車</button></p>
+    </div>
+    <div id="cart-status">您的購物車目前有: 0 件商品</div>
+
+    <script>
+        let cart = [];
+        function addToCart(id) {
+            cart.push(id);
+            document.getElementById('cart-status').innerText = '您的購物．カート目前有: ' + cart.length + ' 件商品';
+            // This calls the Backend API!
+            fetch('/api/add_to_cart', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({product_id: id})
+            }).then(res => res.json()).then(data => console.log('Backend says:', data));
+        }
+    </script>
+</body>
+</html>

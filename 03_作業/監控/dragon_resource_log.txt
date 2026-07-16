@@ -1,0 +1,43 @@
+  ============================================================
+  Dragon Clan Resource Monitor — 2026-07-10 05:55:26 CST
+  ============================================================
+  
+  System:   arm64 on macOS
+  CPU Usage (all cores avg):  14.7%
+  Physical RAM:               90.7% used (27.9 GB / 32.0 GB)
+  Swap:                       83.7% used (6.7 GB / 8.0 GB)
+  Disk (/):                   0.8% used (11.7 GB / 1858.2 GB)
+  
+  Ollama Models (ollama list):
+     NAME ~ MODIFIED
+     Qwen27B:latest ~ ago
+     dragon_walter:latest ~ ago
+     dragon_dorothy:latest ~ ago
+     dragon_edith:latest ~ ago
+     dragon_bruce:latest ~ ago
+     Sornith-1.0-35b-Q4:latest ~ ago
+     Qwen3.6-35B-A3B:latest ~ ago
+     qwen3:8b ~ ago
+     gemma4-hauhau:26b ~ ago
+     qwen3.6-hauhau:27b ~ ago
+     phi3:mini ~ ago
+     qwen2.5:1.5b ~ ago
+     llama3.2:3b ~ ago
+     llama3.2:1b ~ ago
+  
+✅ Dragon Resource Monitor complete.
+
+
+--- 2026-07-11 23:23:02 CST ---
+記憶體: 18.0/32GB (56.2%) | CPU: 3.2/2.7/2.5
+Ollama: Qwen3.6-35B-A3B (1模型, ~26.4GB)
+Hermes Sessions: 4活躍 / 10792總計
+⚠️ 模型佔記憶體 82%，可用 -26.3GB (Oversubscribed)
+--- END ---
+
+--- 2026-07-11 23:23:02 CST ---
+記憶體: 18.0/32GB (56.2%) | CPU: 3.2/2.7/2.5
+Ollama: Qwen3.6-35B-A3B (1模型, ~26.4GB)
+Hermes Sessions: 4活躍 / 10792總計
+WARN: 模型佔記憶體 82%，可用 -26.3GB (Oversubscribed)
+--- END ---

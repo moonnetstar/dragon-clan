@@ -1,0 +1,55 @@
+# 龍族資源告警規則
+
+groups:
+  - name: dragon_memory_alerts
+    rules:
+      # 記憶體使用率 > 85%
+      - alert: HighMemoryUsage
+        expr: (1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) > 0.85
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "🐉 記憶體使用率超過 85%"
+          description: "目前使用率 {{ $value | humanizePercentage }}，建議卸載閒置模型"
+
+      # Swap 使用 > 2GB
+      - alert: HighSwapUsage
+        expr: node_memory_SwapTotal_bytes - node_memory_SwapFree_bytes > 2e9
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "🐉 Swap 使用過高"
+          description: "系統開始使用 Swap，性能將大幅下降"
+
+      # 容器記憶體接近上限
+      - alert: ContainerMemoryNearLimit
+        expr: (container_memory_usage_bytes / container_spec_memory_limit_bytes) > 0.9
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "容器 {{ $labels.name }} 記憶體接近上限"
+          description: "使用率 {{ $value | humanizePercentage }}"
+
+  - name: dragon_agent_alerts
+    rules:
+      # Agent 等待時間過長
+      - alert: AgentQueueTooLong
+        expr: dragon_queue_length > 5
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "🐉 Agent 任務佇列過長"
+          description: "目前有 {{ $value }} 任務等待中"
+
+      # 模型載入時間過長
+      - alert: ModelLoadSlow
+        expr: dragon_model_load_seconds > 60
+        for: 0m
+        labels:
+          severity: warning
+        annotations:
+          summary: "模型載入超過 60 秒"

@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF_8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exosome Store - 極簡原型</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .promo-badge { animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans text-gray-900">
+
+    <!-- Header -->
+    <header class="bg-white shadow-sm sticky top-0 z-10">
+        <div class="max-w-md mx-auto px-4 py-4 flex justify-between items-center">
+            <h1 class="text-xl font-bold text-indigo-600">Exosome Store</h1>
+            <div id="cart-count" class="bg-indigo-100 text-indigo-700 px-3 py-1 rounded-full text-sm font-bold">🛒 0</div>
+        </div>
+    </header>
+
+    <!-- Promo Banner -->
+    <div class="max-w-md mx-auto px-4 mt-4">
+        <div class="bg-indigo-600 text-white p-3 rounded-2xl shadow-lg promo-badge flex justify-between items-center">
+            <span class="font-bold text-sm">🔥 限時優惠：買三件享 8 折，再送低價品一件！</span>
+        </div>
+    </div>
+
+    <!-- Product List -->
+    <main class="max-w-md mx-auto px-4 py-6 space-y-4" id="product-list">
+        <!-- Products will be injected here by JS -->
+    </sing>
+
+    <!-- Shopping Cart Summary (Sticky) -->
+    <div class="fixed bottom-0 left-0 right-0 bg-white border-t p-4 max-w-md mx-auto shadow-[0_-5px_15px_rgba(0,0,0,0.05)]">
+        <div class="flex justify-between items-center mb-2">
+            <span class="text-gray-500">預算統計 (結帳前)</span>
+            <span id="total-price" class="text-2xl font-black text-indigo-600">$ 0</span>
+        </div>
+        <button onclick="processCheckout()" class="w-full bg-indigo-600 text-white py-3 rounded-xl font-bold text-lg active:scale-95 transition-transform">
+            前往結帳 (模擬下單)
+        </sing>
+    </div>
+
+    <script>
+        // 來自 PDF 的產品數據
+        const products = [
+            { id: 1, name: "人類外泌體謬斯安瓶", price: 3980, type: "standard" },
+            { id: 2, name: "人類外泌體謬斯精華液", price: 3580, type: "standard" },
+            { id: 3, name: "人類外泌體謬斯面膜", price: 1580, type: "low-price" }, // 低價品用於贈送
+            { id: 4, name: "人類外泌體謬斯養髮液", price: 4580, type: "standard" },
+            { id: 5, name: "泌曦光潤水(化妝水)", price: 1980, type: "standard" },
+            { id: 6, name: "女神安瓶", price: 8800, type: "premium" }
+        ];
+
+        let cart = [];
+
+        function renderProducts() {
+            const container = document.getElementById('product-list');
+            container.innerHTML = products.map(p => `
+                <div class="bg-white p-4 rounded-2xl shadow-sm flex items-center justify-between border border-gray-100">
+                    <div>
+                        <h3 class="font-bold text-gray-800">${p.name}</h3>
+                        <p class="text-indigo-500 font-semibold">$ ${p.price}</p>
+                    </div>
+                    <button onclick="addToCart(${p.id})" class="bg-gray-100 p-2 rounded-full hover:bg-indigo-100 active:bg-indigo-200 transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function addToCart(id) {
+            const product = products.find(p => p.id === id);
+            cart.push({...product});
+            updateUI();
+        }
+
+        function updateUI() {
+            document.getElementById('cart-count').innerText = `🛒 ${cart.length}`;
+            calculateTotal();
+        }
+
+        function calculateTotal() {
+            let total = cart.reduce((sum, item) => sum(item.price), 0);
+            let discount = 0;
+            let promoApplied = false;
+
+            // --- 【核心促銷邏輯開始】 ---
+            if (cart.length >= 3) {
+
+const originalTotal = cart.reduce((sum, item) => sum + item.price, 0);
+                const discountedTotal = original．originalTotal * 0.8; // 全案打八折
+                // 注意：JavaScript 本身計算邏輯... 用簡單的方式寫法如下
+            }
+            // --- 【核心促銷邏輯結束】 ---
+
+            // 為了展示方便，我直接在這裡手寫邏輯
+            let rawTotal = cart.reduce((sum, item) => sum + item.price, 0);
+            let displayTotal = rawTotal;
+            let promoMessage = "";
+
+            if (cart.length >= 3) {
+                displayTotal = rawTotal * 0.8; // 打八折
+                promoMessage = " (已享 8 折！)";
+                // 選取最便宜的一個作為贈品（邏輯上是該件不再計價，或直接扣除其價格）
+                const lowestPriceItem = Math.min(...cart.map(i => i.price));
+                displayTotal -= lowestPriceItem; // 減掉低價品金額 (即送)
+                promoMessage += " + 已贈送最便宜單品";
+            }
+
+            document.getElementById('total-price').innerText = `$ ${Math.round(displayTotal).toLocaleString()}${promoMessage}`;
+        }
+
+        function processCheckout() {
+            if(cart.length === 0) return alert("購物車是空的！");
+            alert(`✨ 下單成功！\n您的訂單共有 ${cart.length} 件商品。\n後台已記錄，準備等待主人拆帳！`);
+            cart = [];
+            updateUI();
+        }
+
+        renderProducts();
+    </t>
+    </script>
+</body>
+</html>

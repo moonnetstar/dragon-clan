@@ -1,0 +1,288 @@
+# 🐉 龍族多 Agent 資源管理方案 (Docker Compose)
+# 
+# 使用時機：
+#   1. 未來遷移到 Linux 伺服器或 NAS 時
+#   2. 需要嚴格隔離各 Agent 資源時
+#   3. 需要同時運行多個 Ollama 實例時
+#
+# 前置需求：Docker Desktop (Mac) 或 Docker Engine (Linux)
+# 啟動：docker compose up -d
+# 監控：docker compose logs -f resource-monitor
+
+version: "3.9"
+
+# ═══════════════════════════════════════════════
+# 共享網路
+# ═══════════════════════════════════════════════
+networks:
+  dragon-net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/24
+
+# ═══════════════════════════════════════════════
+#  volumes
+# ═══════════════════════════════════════════════
+volumes:
+  ollama-models:
+  hermes-data:
+  prometheus-data:
+  grafana-data:
+
+# ═══════════════════════════════════════════════
+#  服務定義
+# ═══════════════════════════════════════════════
+services:
+
+  # ─────────────────────────────────────────────
+  # 1. Ollama Model Server (模型服務化)
+  #    所有 Agent 透過此服務存取模型，避免重複載入
+  # ─────────────────────────────────────────────
+  ollama-server:
+    image: ollama/ollama:latest
+    container_name: dragon-ollama
+    networks:
+      dragon-net:
+        ipv4_address: 172.20.0.10
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama-models:/root/.ollama
+    deploy:
+      resources:
+        limits:
+          memory: 20G          # 模型服務上限 20GB
+          cpus: "8.0"
+        reservations:
+          memory: 4G
+    environment:
+      - OLLAMA_MAX_MEMORY=20G
+      - OLLAMA_NUM_PARALLEL=2  # 同時處理 2 個請求
+      - OLLAMA_KEEP_ALIVE=30m  # 模型保留 30 分鐘
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:11434/api/tags"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # ─────────────────────────────────────────────
+  # 2. Agent Router (任務調度器)
+  #    根據優先級和資源可用度分配任務
+  # ─────────────────────────────────────────────
+  agent-router:
+    build:
+      context: ./agent-router
+    container_name: dragon-router
+    networks:
+      dragon-net:
+        ipv4_address: 172.20.0.20
+    ports:
+      - "8080:8080"
+    environment:
+      - OLLAMA_URL=http://dragon-ollama:11434
+      - MAX_CONCURRENT_TASKS=3
+      - PRIORITY_HIGH_WEIGHT=3
+      - PRIORITY_MEDIUM_WEIGHT=2
+      - PRIORITY_LOW_WEIGHT=1
+    depends_on:
+      ollama-server:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: "1.0"
+    restart: unless-stopped
+
+  # ─────────────────────────────────────────────
+  # 3. 桃樂絲主控 Agent (owl-alpha-1)
+  #    高優先級，資源配額最大
+  # ─────────────────────────────────────────────
+  agent-dorothy:
+    build:
+      context: ./hermes-agent
+      args:
+        PROFILE: owl-alpha-1
+    container_name: dragon-dorothy
+    networks:
+      dragon-net:
+        ipv4_address: 172.20.0.31
+    environment:
+      - HERMES_PROFILE=owl-alpha-1
+      - OLLAMA_URL=http://dragon-ollama:11434
+      - ROUTER_URL=http://dragon-router:8080
+      - PRIORITY=high
+      - MAX_MEMORY_GB=12
+    depends_on:
+      - ollama-server
+      - agent-router
+    deploy:
+      resources:
+        limits:
+          memory: 12G          # 桃樂絲配額最高
+          cpus: "4.0"
+        reservations:
+          memory: 2G
+    restart: unless-stopped
+
+  # ─────────────────────────────────────────────
+  # 4. 布魯斯工程 Agent (owl-alpha-2)
+  #    中優先級
+  # ─────────────────────────────────────────────
+  agent-bruce:
+    build:
+      context: ./hermes-agent
+      args:
+        PROFILE: owl-alpha-2
+    container_name: dragon-bruce
+    networks:
+      dragon-net:
+        ipv4_address: 172.20.0.32
+    environment:
+      - HERMES_PROFILE=owl-alpha-2
+      - OLLAMA_URL=http://dragon-ollama:11434
+      - ROUTER_URL=http://dragon-router:8080
+      - PRIORITY=medium
+      - MAX_MEMORY_GB=8
+    depends_on:
+      - ollama-server
+      - agent-router
+    deploy:
+      resources:
+        limits:
+          memory: 8G
+          cpus: "3.0"
+        reservations:
+          memory: 1G
+    restart: unless-stopped
+
+  # ─────────────────────────────────────────────
+  # 5. 華爾特財經 Agent (owl-alpha-3)
+  #    中優先級
+  # ─────────────────────────────────────────────
+  agent-walter:
+    build:
+      context: ./hermes-agent
+      args:
+        PROFILE: owl-alpha-3
+    container_name: dragon-walter
+    networks:
+      dragon-net:
+        ipv4_address: 172.20.0.33
+    environment:
+      - HERMES_PROFILE=owl-alpha-3
+      - OLLAMA_URL=http://dragon-ollama:11434
+      - ROUTER_URL=http://dragon-router:8080
+      - PRIORITY=medium
+      - MAX_MEMORY_GB=8
+    depends_on:
+      - ollama-server
+      - agent-router
+    deploy:
+      resources:
+        limits:
+          memory: 8G
+          cpus: "3.0"
+        reservations:
+          memory: 1G
+    restart: unless-stopped
+
+  # ─────────────────────────────────────────────
+  # 6. 資源監控 (Prometheus)
+  # ─────────────────────────────────────────────
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: dragon-prometheus
+    networks:
+      dragon-net:
+        ipv4_address: 172.20.0.50
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus-data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.retention.time=30d'
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+          cpus: "1.0"
+    restart: unless-stopped
+
+  # ─────────────────────────────────────────────
+  # 7. 可視化 Dashboard (Grafana)
+  # ─────────────────────────────────────────────
+  grafana:
+    image: grafana/grafana:latest
+    container_name: dragon-grafana
+    networks:
+      dragon-net:
+        ipv4_address: 172.20.0.51
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=dragon2026
+    depends_on:
+      - prometheus
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: "0.5"
+    restart: unless-stopped
+
+  # ─────────────────────────────────────────────
+  # 8. Node Exporter (系統指標)
+  # ─────────────────────────────────────────────
+  node-exporter:
+    image: prom/node-exporter:latest
+    container_name: dragon-node-exporter
+    networks:
+      dragon-net:
+        ipv4_address: 172.20.0.52
+    ports:
+      - "9100:9100"
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.sysfs=/host/sys'
+      - '--path.rootfs=/rootfs'
+    deploy:
+      resources:
+        limits:
+          memory: 128M
+          cpus: "0.25"
+    restart: unless-stopped
+
+  # ─────────────────────────────────────────────
+  # 9. cAdvisor (容器資源監控)
+  # ─────────────────────────────────────────────
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:latest
+    container_name: dragon-cadvisor
+    networks:
+      dragon-net:
+        ipv4_address: 172.20.0.53
+    ports:
+      - "8081:8080"
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+          cpus: "0.5"
+    restart: unless-stopped

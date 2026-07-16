@@ -1,0 +1,18 @@
+{
+  "symbol": "4938.TW",
+  "name": "和碩 (Pegatron)",
+  "price_history": [
+    {
+      "date": "2026-07-13",
+      "time_utc": "2026-07-13T00:28Z",
+      "regular_market_price_yahoo": 82.7,
+      "previous_close_yahoo": 83.8,
+      "note": "Monday CST 08:28 — non-trading time (before 09:00 open). Yahoo v8 API returned stale data: regularMarketPrice=82.7, previousClose=83.8."
+    },
+    {
+      "date": "2026-07-13",
+      "time_utc": "2026-07-13T01:52Z",
+      "note": "Monday CST 08:14 — pre-market skip. No trading until 09:00."
+    }
+  ]
+}

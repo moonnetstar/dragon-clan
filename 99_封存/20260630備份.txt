@@ -1,0 +1,23 @@
+備份位置：
+
+程式碼
+~/Desktop/龍族報告/03_OPERATIONS/Backups/hermes_config_backup_20260630_170359/
+包含：
+
+config.yaml — 所有設定（模型、approvals、terminal 等）
+.env — API keys
+skills/ — 已安裝技能
+cron/ — 排程任務
+profiles/ — 多 profile 配置
+SOUL.md — 身份設定
+auth.json — 認證資訊
+scripts/ — 自訂腳本
+memories/ — 記憶
+排除（太大型）：
+
+sessions/ — 對話歷史
+logs/ — 日誌
+state.db — 狀態資料庫
+需要時可以用 rsync 還原回 ~/.hermes/ 👍
+
+桃樂絲 🌹

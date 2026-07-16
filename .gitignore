@@ -1,0 +1,17 @@
+# 系統
+.DS_Store
+*.log
+__pycache__/
+*.pyc
+node_modules/
+venv/
+.venv/
+
+# LLM 模型檔（極大，不進 git）
+*.gguf
+
+# 備份目錄（含嵌套 git repo/venv/node_modules，不進主倉庫）
+03_作業/備份/
+
+# 暫存/日誌
+*.tmp

@@ -1,0 +1,14 @@
+{
+  "type": "price_check",
+  "ticker": "4938.TW",
+  "symbol": "和碩(PEGATRON)",
+  "current_time_utc": "2026-07-10T00:12 UTC",
+  "timezone": "Asia/Taipei (UTC+8)",
+  "trading_segment_utc_range": "01:00-05:30 UTC / 09:00-13:30 Taiwan time",
+  "market_status": "非交易時段 (Non-trading hours)",
+  "data_source_note": "yfinance failed on TW stock; price is last cached close from prior check (~23h ago)",
+  "price_usd_warning": "yfinance returned $82.7 but actual 和碩 TWD price ≈ NT$70-85 (yfinance may return wrong currency for TW tickers — treat as stale cached value only)",
+  "current_price_note": "沿用昨收",
+  "report_timestamp_utc_offset": "2026-07-10T08:12 UTC+8",
+  "action_recommended": "非交易時段，僅作記錄備查。勿以此數據作為交易依據。待下週一開盤後確認最新價格。"
+}

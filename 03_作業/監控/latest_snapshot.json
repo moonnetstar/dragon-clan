@@ -1,0 +1,44 @@
+{
+  "timestamp": "2026-07-12 13:10:12",
+  "system": {
+    "chip": "Apple M4",
+    "memory_total_gb": 32.0,
+    "memory_used_gb": 17.64,
+    "memory_free_gb": 0.29,
+    "memory_used_pct": 55.1,
+    "swap_used_gb": 0.0,
+    "cpu_load_1m": 2.47,
+    "cpu_load_5m": 2.77,
+    "cpu_load_15m": 2.76,
+    "memory_free_pct": 17.0
+  },
+  "ollama": {
+    "ollama_models": [
+      {
+        "name": "Qwen3.6-35B-A3B:latest",
+        "model_size_gb": 22.0,
+        "estimated_mem_gb": 26.4
+      }
+    ],
+    "ollama_total_model_gb": 26.4,
+    "model_count": 1
+  },
+  "hermes_sessions": {
+    "total_sessions": 10840,
+    "active_sessions": 4
+  },
+  "analysis": {
+    "risk_level": "🔴",
+    "risks": [
+      "📦 Ollama 模型佔用 82% 系統記憶體 (26.4GB)",
+      "💀 可用記憶體僅 -26.1GB（扣除模型後）"
+    ],
+    "mem_available_after_models_gb": -26.11,
+    "agent_quotas": [
+      "owl-alpha-1 (桃樂絲主控): 建議配額 12GB, 優先級 high",
+      "owl-alpha-2 (布魯斯工程): 建議配額 8GB, 優先級 medium",
+      "owl-alpha-3 (華爾特財經): 建議配額 8GB, 優先級 medium",
+      "default (通用): 建議配額 4GB, 優先級 low"
+    ]
+  }
+}

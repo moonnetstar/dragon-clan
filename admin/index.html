@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ExoMuse 合作夥伴後台</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;700&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = { theme: { extend: { colors: { gold: { DEFAULT: '#C9A96E', light: '#E8D5A8', dark: '#A68B4B' }, ivory: '#FDFBF7', charcoal: '#1C1C1C', 'warm-gray': '#6B6560' }, fontFamily: { serif: ['Noto Serif TC','serif'], sans: ['Noto Sans TC','sans-serif'] } } } }
+    </script>
+    <style>
+        .font-serif { font-family: 'Noto Serif TC', serif; }
+        .text-gold-gradient { background: linear-gradient(135deg, #A68B4B, #E8D5A8, #C9A96E); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .btn-gold { background: linear-gradient(135deg, #C9A96E, #A68B4B); color: #fff; transition: all .3s; }
+        .btn-gold:hover { box-shadow: 0 8px 32px rgba(201,169,110,.3); transform: translateY(-1px); }
+        .btn-danger { background: #DC2626; color: #fff; } .btn-danger:hover { background: #B91C1C; }
+        .btn-outline { border: 1px solid rgba(201,169,110,.4); color: #A68B4B; transition: all .3s; } .btn-outline:hover { background: rgba(201,169,110,.06); }
+        .sidebar-link { transition: all .2s; border-left: 3px solid transparent; }
+        .sidebar-link:hover, .sidebar-link.active { background: rgba(201,169,110,.06); border-left-color: #C9A96E; }
+        .upload-zone { border: 2px dashed rgba(201,169,110,.3); transition: all .3s; } .upload-zone:hover { border-color: #C9A96E; background: rgba(201,169,110,.04); }
+        .status-pending { background: #FEF3C7; color: #92400E; } .status-confirmed { background: #D1FAE5; color: #065F46; }
+        .status-shipped { background: #DBEAFE; color: #1E40AF; } .status-completed { background: #E5E7EB; color: #374151; }
+        .status-cancelled { background: #FEE2E2; color: #991B1B; }
+        .fade-in { animation: fadeIn .3s ease-out; } @keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+        .toast { position: fixed; top: 20px; right: 20px; z-index: 9999; padding: 16px 24px; border-radius: 12px; color: #fff; font-size: .9rem; box-shadow: 0 8px 32px rgba(0,0,0,.15); animation: slideIn .3s ease-out; }
+        .toast-success { background: #059669; } .toast-error { background: #DC2626; }
+        @keyframes slideIn { from { opacity:0; transform:translateX(100px); } to { opacity:1; transform:translateX(0); } }
+    </style>
+</head>
+<body class="bg-ivory font-sans text-charcoal">
+<div id="loginScreen" class="min-h-screen flex items-center justify-center bg-luxury-dark">
+    <div class="w-full max-w-md mx-6">
+        <div class="text-center mb-10"><h1 class="font-serif text-3xl font-bold text-gold-gradient mb-2">ExoMuse</h1><p class="text-white/40 text-sm">合作夥伴後台</p></div>
+        <div class="bg-white rounded-2xl p-8 shadow-xl">
+            <h2 class="font-serif text-xl font-bold mb-6 text-center">登入後台</h2>
+            <form onsubmit="handleLogin(event)">
+                <div class="mb-4"><label class="text-xs text-warm-gray uppercase tracking-wider mb-2 block">電子郵件</label><input type="email" id="loginEmail" required class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-gold"></div>
+                <div class="mb-6"><label class="text-xs text-warm-gray uppercase tracking-wider mb-2 block">密碼</label><input type="password" id="loginPassword" required class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-gold"></div>
+                <button type="submit" class="btn-gold w-full py-3 rounded-xl text-sm tracking-wider uppercase">登入</button>
+            </form>
+            <p class="text-center text-xs text-warm-gray mt-4">測試帳號：test@exomuse.com / test1234</p>
+        </div>
+    </div>
+</div>
+<div id="registerScreen" class="min-h-screen flex items-center justify-center bg-luxury-dark hidden">
+    <div class="w-full max-w-md mx-6">
+        <div class="text-center mb-10"><h1 class="font-serif text-3xl font-bold text-gold-gradient mb-2">ExoMuse</h1><p class="text-white/40 text-sm">合作夥伴註冊</p></div>
+        <div class="bg-white rounded-2xl p-8 shadow-xl">
+            <h2 class="font-serif text-xl font-bold mb-6 text-center">註冊新帳號</h2>
+            <form onsubmit="handleRegister(event)">
+                <div class="grid grid-cols-2 gap-4 mb-4">
+                    <div><label class="text-xs text-warm-gray uppercase tracking-wider mb-2 block">姓名</label><input type="text" id="regName" required class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm"></div>
+                    <div><label class="text-xs text-warm-gray uppercase tracking-wider mb-2 block">電話</label><input type="tel" id="regPhone" required class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm"></div>
+                </div>
+                <div class="mb-4"><label class="text-xs text-warm-gray uppercase tracking-wider mb-2 block">電子郵件</label><input type="email" id="regEmail" required class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm"></div>
+                <div class="mb-4"><label class="text-xs text-warm-gray uppercase tracking-wider mb-2 block">密碼</label><input type="password" id="regPassword" required minlength="6" class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm"></div>
+                <div class="mb-4"><label class="text-xs text-warm-gray uppercase tracking-wider mb-2 block">LINE Notify Token <span class="text-warm-gray/50">(選填)</span></label><input type="text" id="regLineToken" placeholder="選填" class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm"></div>
+                <div class="mb-6"><label class="text-xs text-warm-gray uppercase tracking-wider mb-2 block">分潤比例 (%)</label><input type="number" id="regSplit" min="1" max="90" value="30" class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm"><p class="text-xs text-warm-gray mt-1">輸入 1-90 之間的數字（例如：30 表示 30%）</p></div>
+                <button type="submit" class="btn-gold w-full py-3 rounded-xl text-sm tracking-wider uppercase">註冊</button>
+            </form>
+            <p class="text-center text-xs text-warm-gray mt-4">已有帳號？<a href="#" onclick="showLogin()" class="text-gold">返回登入</a></p>
+        </div>
+    </div>
+</div>
+<div id="dashboard" class="hidden">
+    <header class="fixed top-0 left-0 right-0 z-40 bg-white/90 backdrop-blur-md border-b border-gray-100">
+        <div class="flex items-center justify-between px-6 py-3">
+            <div class="flex items-center gap-4"><h1 class="font-serif text-xl font-bold text-gold-gradient">ExoMuse 後台</h1></div>
+            <div class="flex items-center gap-4">
+                <div class="flex items-center gap-3"><div class="w-8 h-8 rounded-full bg-gold/10 flex items-center justify-center"><span id="partnerInitial" class="text-gold text-sm font-bold">P</span></div><span id="partnerName" class="text-sm font-medium hidden sm:block">合作夥伴</span></div>
+                <button onclick="handleLogout()" class="text-xs text-warm-gray hover:text-red-500">登出</button>
+            </div>
+        </div>
+    </header>
+    <div class="flex pt-14">
+        <aside class="fixed left-0 top-14 bottom-0 w-64 bg-white border-r border-gray-100 z-30 overflow-y-auto hidden lg:block">
+            <nav class="py-6">
+                <a href="#" onclick="showSection('products')" class="sidebar-link active flex items-center gap-3 px-6 py-3 text-sm" data-section="products">📦 商品管理</a>
+                <a href="#" onclick="showSection('orders')" class="sidebar-link flex items-center gap-3 px-6 py-3 text-sm" data-section="orders">📋 訂單管理</a>
+                <a href="#" onclick="showSection('promotions')" class="sidebar-link flex items-center gap-3 px-6 py-3 text-sm" data-section="promotions">🏷️ 促銷活動</a>
+                <a href="#" onclick="showSection('media')" class="sidebar-link flex items-center gap-3 px-6 py-3 text-sm" data-section="media">📷 數位資產</a>
+                <a href="#" onclick="showSection('settings')" class="sidebar-link flex items-center gap-3 px-6 py-3 text-sm" data-section="settings">⚙️ 設定</a>
+            </nav>
+        </aside>
+        <main class="flex-1 lg:ml-64 p-6 lg:p-8">
+            <section id="sec-products" class="fade-in">
+                <div class="flex items-center justify-between mb-8"><div><h2 class="font-serif text-2xl font-bold">商品管理</h2><p class="text-sm text-warm-gray mt-1">新增、編輯、刪除商品</p></div><button onclick="openProductModal()" class="btn-gold text-white px-6 py-2.5 rounded-xl text-sm">+ 新增商品</button></div>
+                <div id="productList" class="grid gap-4"><div class="text-center py-16 text-warm-gray">載入中...</div></div>
+            </section>
+            <section id="sec-orders" class="hidden fade-in">
+                <div class="flex items-center justify-between mb-8"><div><h2 class="font-serif text-2xl font-bold">訂單管理</h2><p class="text-sm text-warm-gray mt-1">查看與處理客戶訂單</p></div></div>
+                <div id="orderList" class="space-y-4"><div class="text-center py-16 text-warm-gray">載入中...</div></div>
+            </section>
+            <section id="sec-promotions" class="hidden fade-in">
+                <div class="flex items-center justify-between mb-8"><div><h2 class="font-serif text-2xl font-bold">促銷活動</h2><p class="text-sm text-warm-gray mt-1">管理限時優惠</p></div><button onclick="openPromoModal()" class="btn-gold text-white px-6 py-2.5 rounded-xl text-sm">+ 新增促銷</button></div>
+                <div id="promoList" class="grid gap-4"><div class="text-center py-16 text-warm-gray">載入中...</div></div>
+            </section>
+            <section id="sec-media" class="hidden fade-in">
+                <h2 class="font-serif text-2xl font-bold mb-8">數位資產管理</h2>
+                <div class="upload-zone rounded-2xl p-12 text-center mb-8 cursor-pointer" onclick="document.getElementById('mediaFileInput').click()"><p class="text-sm text-warm-gray mb-1">點擊或拖曳上傳圖片 / 影片</p><input type="file" id="mediaFileInput" class="hidden" accept="image/*,video/*" multiple onchange="handleMediaUpload(event)"></div>
+                <div id="mediaGrid" class="grid grid-cols-3 gap-3"><div class="text-center py-10 text-warm-gray col-span-3 text-sm">尚無素材</div></div>
+            </section>
+            <section id="sec-settings" class="hidden fade-in">
+                <h2 class="font-serif text-2xl font-bold mb-8">設定</h2>
+                <div class="max-w-lg space-y-6">
+                    <div class="bg-white rounded-2xl p-6"><h3 class="font-medium mb-4">LINE Notify 設定</h3><div class="flex gap-3"><input type="text" id="lineTokenInput" placeholder="輸入 Token" class="flex-1 px-4 py-3 rounded-xl border border-gray-200 text-sm"><button onclick="saveLineToken()" class="btn-gold text-white px-6 py-3 rounded-xl text-sm">儲存</button></div></div>
+                    <div class="bg-white rounded-2xl p-6"><h3 class="font-medium mb-4">分潤設定</h3><p class="text-sm text-warm-gray">目前分潤比例</p><p id="currentSplit" class="font-serif text-2xl font-bold text-gold">30%</p></div>
+                </div>
+            </section>
+        </main>
+    </div>
+</div>
+<div id="toast" class="toast toast-success hidden"></div>
+<script>
+const DB={};['products','orders','partners','media','promotions'].forEach(k=>{DB[k]={getAll(){try{return JSON.parse(localStorage.getItem('exomuse_'+k)||'[]')}catch{return[]}},save(d){localStorage.setItem('exomuse_'+k,JSON.stringify(d))},add(d){const a=DB[k].getAll();d.id=Date.now().toString(36)+Math.random().toString(36).slice(2,8);a.push(d);DB[k].save(a);return d},update(id,up){const a=DB[k].getAll();const i=a.findIndex(x=>x.id===id);if(i>=0){Object.assign(a[i],up);DB[k].save(a)}},del(id){DB[k].save(DB[k].getAll().filter(x=>x.id!==id))}}});
+let currentUser=null;
+function showToast(msg,type='success'){const t=document.getElementById('toast');t.textContent=msg;t.className='toast toast-'+type;t.classList.remove('hidden');setTimeout(()=>t.classList.add('hidden'),3000);}
+function showLogin(){document.getElementById('loginScreen').classList.remove('hidden');document.getElementById('registerScreen').classList.add('hidden');}
+function showRegister(){document.getElementById('loginScreen').classList.add('hidden');document.getElementById('registerScreen').classList.remove('hidden');}
+function handleLogin(e){e.preventDefault();const email=document.getElementById('loginEmail').value;const pw=document.getElementById('loginPassword').value;const p=DB.partners.getAll().find(x=>x.email===email&&x.password===pw);if(!p){showToast('帳號或密碼錯誤','error');return;}currentUser=p;document.getElementById('loginScreen').classList.add('hidden');document.getElementById('registerScreen').classList.add('hidden');document.getElementById('dashboard').classList.remove('hidden');document.getElementById('partnerName').textContent=p.name;document.getElementById('partnerInitial').textContent=p.name.charAt(0);loadAll();showToast('登入成功！');}
+function handleRegister(e){e.preventDefault();const name=document.getElementById('regName').value;const phone=document.getElementById('regPhone').value;const email=document.getElementById('regEmail').value;const password=document.getElementById('regPassword').value;const lineToken=document.getElementById('regLineToken').value;const split=parseInt(document.getElementById('regSplit').value)||30;if(DB.partners.getAll().find(x=>x.email===email)){showToast('此Email已註冊','error');return;}DB.partners.add({name,phone,email,password,lineToken,split});showToast('註冊成功！請登入');showLogin();}
+function handleLogout(){currentUser=null;document.getElementById('dashboard').classList.add('hidden');document.getElementById('loginScreen').classList.remove('hidden');}
+function showSection(s){['products','orders','promotions','media','settings'].forEach(x=>{document.getElementById('sec-'+x).classList.toggle('hidden',x!==s);});document.querySelectorAll('.sidebar-link').forEach(a=>a.classList.toggle('active',a.dataset.section===s));}
+function loadAll(){loadProducts();loadOrders();loadPromotions();loadMedia();if(currentUser){document.getElementById('currentSplit').textContent=currentUser.split+'%';}}
+function loadProducts(){const p=DB.products.getAll();document.getElementById('productList').innerHTML=p.length?p.map(x=>`<div class="bg-white rounded-xl p-4 flex items-center gap-4"><div class="flex-1"><h4 class="font-medium">${x.name}</h4><p class="text-sm text-gold font-bold">NT$ ${x.price?.toLocaleString()}</p></div><button onclick="DB.products.del('${x.id}');loadProducts()" class="btn-danger px-4 py-2 rounded-lg text-xs">刪除</button></div>`).join(''):'<div class="text-center py-16 text-warm-gray">尚無商品</div>';}
+function loadOrders(){document.getElementById('orderList').innerHTML='<div class="text-center py-16 text-warm-gray">尚無訂單</div>';}
+function loadPromotions(){document.getElementById('promoList').innerHTML='<div class="text-center py-16 text-warm-gray">尚無促銷</div>';}
+function loadMedia(){document.getElementById('mediaGrid').innerHTML='<div class="text-center py-10 text-warm-gray col-span-3 text-sm">尚無素材</div>';}
+function openProductModal(){const n=prompt('商品名稱？');if(!n)return;const p=prompt('售價？');if(!p)return;DB.products.add({name:n,price:parseInt(p)});loadProducts();showToast('商品已新增');}
+function openPromoModal(){const n=prompt('促銷名稱？');if(!n)return;DB.promotions.add({name:n});loadPromotions();showToast('促銷已新增');}
+function saveLineToken(){const t=document.getElementById('lineTokenInput').value;if(currentUser){DB.partners.update(currentUser.id,{lineToken:t});currentUser.lineToken=t;showToast('已儲存');}}
+function handleMediaUpload(e){Array.from(e.target.files).forEach(f=>{const r=new FileReader();r.onload=ev=>{DB.media.add({name:f.name,dataUrl:ev.target.result});loadMedia();showToast(f.name+' 上傳成功');};r.readAsDataURL(f);});}
+if(!DB.partners.getAll().length){DB.partners.add({name:'測試合作夥伴',email:'test@exomuse.com',password:'test1234',split:30});}
+</script>
+</body>
+</html>
