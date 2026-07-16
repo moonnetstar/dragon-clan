@@ -15,3 +15,8 @@ venv/
 
 # 暫存/日誌
 *.tmp
+
+# 工具環境（不進主倉庫）
+04_資源/MLX_LM/
+04_資源/llama.cpp_repo/
+01_專案/DragonCommerce/
