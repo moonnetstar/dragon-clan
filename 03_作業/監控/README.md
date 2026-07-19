@@ -9,7 +9,7 @@
 ## 📁 檔案結構
 
 ```
-03_OPERATIONS/Monitoring/
+03_作業/監控/
 ├── dragon_resource_monitor.py    # 即時資源監控腳本（已上線）
 ├── agent_scheduler.py            # Agent 任務調度器（API 模式）
 ├── daily_resource_report.py      # 每日資源報告生成器
@@ -39,13 +39,13 @@
 ### 1. 即時監控（手動）
 ```bash
 # 完整報告
-python3 ~/Desktop/龍族報告/03_OPERATIONS/Monitoring/dragon_resource_monitor.py
+python3 ~/Desktop/龍族報告/03_作業/監控/dragon_resource_monitor.py
 
 # 簡短摘要
-python3 ~/Desktop/龍族報告/03_OPERATIONS/Monitoring/dragon_resource_monitor.py --summary
+python3 ~/Desktop/龍族報告/03_作業/監控/dragon_resource_monitor.py --summary
 
 # 持續監控（每 30 秒）
-python3 ~/Desktop/龍族報告/03_OPERATIONS/Monitoring/dragon_resource_monitor.py -i 30
+python3 ~/Desktop/龍族報告/03_作業/監控/dragon_resource_monitor.py -i 30
 ```
 
 ### 2. 自動監控（Cron Job）
@@ -81,7 +81,7 @@ curl -X POST http://localhost:8080/schedule \
 當需要遷移到 Linux 伺服器時：
 
 ```bash
-cd ~/Desktop/龍族報告/03_OPERATIONS/Monitoring
+cd ~/Desktop/龍族報告/03_作業/監控
 docker compose up -d
 
 # 監控 Dashboard

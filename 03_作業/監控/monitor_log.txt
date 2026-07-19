@@ -1,0 +1,43 @@
+==================================================================
+Dragon Clan Resource Monitor Log
+==================================================================
+2026-07-19 15:31 CST
+Source: vm_stat, top, memory_pressure (手工收集 — dragon_resource_monitor.py 無輸出)
+
+--- CPU ---
+Model:        Apple M4 (10 核心物理中繼器)
+Load Avg:     0.95 / 1.10 / 1.15 (低負載)
+CPU Usage:    2.3% user, 10.6% sys, 87.1% idle (閒置率佳)
+
+--- MEMORY ---
+PhysMem:     31 GB used (23 GB wired, 4.1 GB compressor), 75 MB unused
+Used:        ~31 GB / ~32 GB (~99.7%) ⚠️ CRITICAL
+Active:      1.9 GB
+Wired Down:  23.3 GB
+Compressed:  4.2 GB (大量記憶體壓縮)
+Free:        0.066 GB (幾乎倒閉)
+🔴 ALERT: 記憶體使用率 99.7%，压缩机消耗 4.1GB — 系統高度依賴 swap/壓縮
+
+--- DISK ---
+Total:       1.8 TB
+Used:        13 GB (1%) ✅ OK
+
+--- Ollama ---
+Process:     Running (PID 99456+99457) ✅
+API Port:    NOT REACHABLE (localhost:11435 無回應, JSON decode error) ⚠️
+Models:      N/A (API unreachable)
+
+--- PROCESS TOP ---
+Ollama processes detected but idle (0.0% CPU at sampling time)
+
+=================================================================================
+SUMMARY:
+  [✅] CPU load 低（load avg < cores = 10）
+  [🔴] Memory ALERt — 99.7% used, wired down 23.3 GB compressor 4.1 GB
+       → Ollama 可能已 crash，需要 re-start / restart ollama serve
+  [✅] Disk usage ~1% (plenty of space)
+
+RECOMMENDED ACTION:
+  1. `nohup ollama serve &` (re-launch Ollama)
+  2. Monitor memory after Ollama restart; high wired-down may not recover without reboot
+=================================================================================

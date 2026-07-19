@@ -1,27 +1,80 @@
+====================================================================================================
+Dragon Clan Resource Monitor Report
+Timestamp: 2026-07-19 02:10:32 CST
+====================================================================================================
 
-═══════════════════════════════════════════════════════
-🐉 龍族資源監控報告 | 2026-07-12 03:30:25
-═══════════════════════════════════════════════════════
+--- System Overview ---
+- Memory: 32 GB physical (Apple Silicon M-series)
+- CPU: 10 virtual CPUs
+- Load Average: 1m=0.97, 5m=1.14, 15m=1.20
+- Disk (/): 1.8Ti total (~1.4 TiB available), usage at ~13G of 1.8Ti
 
-📊 系統概觀
-   記憶體: 18.7GB / 32GB (58.3%)
-   Swap:   0.00GB
-   CPU:    2.4 / 2.4 / 2.5 (1m/5m/15m)
+--- Ollama Models ---
+- Total Unique Tags Loaded: 18 (raw API returns duplicates; after deduplication)
+- Estimated RAM Footprint: ~205 GB (sum of all model sizes from /api/tags)
+  
+  NOTE: Many models overlap across "ollama-launch/" and direct tags.
+        After deduplication by tag name, unique models are approximately 8-10 instances,
+        consuming roughly 80-100GB of the system RAM estimate at any single time.
 
-🤖 Ollama 模型 (載入 1 個, 估計佔用 26.4GB)
-   • Qwen3.6-35B-A3B:latest: 模型 22.0GB → 估計 26.4GB
+--- Loaded Ollama Tags (deduplicated by basename:repo; sorted by size desc) ---
 
-📡 Hermes Sessions: 4 活躍 / 10808 總計
+  ollama-launch/Sornith-1.0-35b-Q4:latest   = 20,186 MB
+  Qwen27B:latest                            = 19,407 MB
+  ollama-launch/Qwen3.6-35B-A3B:latest      = 16,909 MB
+  dragon_walter:latest                      = 16,017 MB
+  dragon_dorothy:latest                     = 16,017 MB
+  gemma4-hauhau:26b                         = 16,017 MB
+  qwen3.6-hauhau:27b                        = 14,383 MB
+  ollama-launch/qwen3:8b                    = 4,983 MB
+  ollama-launch/phi3:mini                   = 2,075 MB
+  dragon_bruce:latest                       = 2,075 MB
+  llama3.2:3b                               = 1,925 MB
+  Sornith-1.0-35b-Q4:latest                 = 20,186 MB  (duplicate tag without ollama-launch prefix)
+  Qwen3.6-35B-A3B:latest                    = 16,909 MB  (duplicate of ollama-launch/Qwen3.6-35B-A3B:latest)
+  qwen3:8b                                  = 4,983 MB     (duplicate of ollama-launch/qwen3:8b without prefix)
+  phi3:mini                                 = 2,075 MB     (duplicate)
+  dragon_edith:latest                       = 1,259 MB
+  llama3.2:1b                               = 1,259 MB
+  qwen2.5:1.5b                              = 940 MB
 
-🔴 風險分析
-   📦 Ollama 模型佔用 82% 系統記憶體 (26.4GB)
-   💀 可用記憶體僅 -26.2GB（扣除模型後）
+--- Total Unique Models (after tag-level dedup) ---
 
-📋 Agent 資源配額建議 (總記憶體 32.0GB)
-   owl-alpha-1 (桃樂絲主控): 建議配額 12GB, 優先級 high
-   owl-alpha-2 (布魯斯工程): 建議配額 8GB, 優先級 medium
-   owl-alpha-3 (華爾特財經): 建議配額 8GB, 優先級 medium
-   default (通用): 建議配額 4GB, 優先級 low
-   ➤ 扣除模型後可用: -26.2GB
+  Sornith-1.0-35b-Q4 (from ollama-launch/Sornith-1.0-35b-Q4:latest)          ~20,186 MB (~19.7 GB)
+  Qwen27B                                                                           ~19,407 MB (~18.9 GB)
+  Qwen3.6-35B-A3B             (from ollama-launch/Qwen3.6-35B-A3B:latest)     ~16,909 MB (~16.5 GB)
+  dragon_walter                                                                       ~16,017 MB (~15.6 GB)
+  dragon_dorothy                                                                    ~16,017 MB (~15.6 GB)
+  gemma4-hauhau                                                                         ~16,017 MB (~15.6 GB)
+  qwen3.6-hauhau                                                                 ~14,383 MB (~14.0 GB)
+  qwen3 (from ollama-launch/qwen3:8b                                           ~4,983 MB (4.9 GB)
+  phi3              (from ollama-launch/phi3:mini)                                ~2,075 MB (2.0 GB)
+  dragon_bruce                                                                  ~2,075 MB (2.0 GB)
+  llama3.2:3b                                                                       ~1,925 MB (1.9 GB)
+  dragon_edith                                                                 ~1,259 MB (1.2 GB)
+  llama3.2:1b                                                                        ~1,259 MB (1.2 GB)
 
-═══════════════════════════════════════════════════════
+  SUBTOTAL UNIQUE MODELS                          = ~8,647 MB (~48 GB equivalent across different tag paths if concurrent)
+  
+STATUS: Attention needed — heavy Ollama model load detected. 
+
+NOTE: The /api/tags API returns duplicate entries for models loaded with and without the "ollama-launch/" 
+prefix (same underlying binary cached on disk). However, these may NOT all be simultaneously resident in RAM — 
+they represent different *tags* that reference potentially shared or distinct model slices depending on Ollama's
+internal caching and loading strategy.
+
+=== TOP PROCESSES BY %CPU ===
+  PID     %CPU    RSS      COMMAND        Notes
+  N/A       (N/A)   (N/A)    (ps output captured above during collection window; no dominant consumers observed at snapshot time.)
+  
+  Note: During the data-gathering timestamp, load average was moderate (~1.0-1.2). System performance appears normal with heavy model cache active.
+
+====================================================================================================
+END OF MONITOR REPORT
+====================================================================================================
+===== 2026-07-19 05:13 CST =====
+CPU: Apple M4, 10 cores | Usage: ~4% user+sys, 87% idle | Load Avg: 1.90/1.54/1.37
+RAM: 31G used / 32GB (wired: 23G, compressor: 2.1G)
+Disk: ~1.4Ti free | Processes: 567 | Ollama models loaded: 18
+Ollama models count: 18
+Status: OK (idle morning)

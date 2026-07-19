@@ -1,0 +1,34 @@
+============================================================
+Dragon Clan Resource Monitor — 2026-07-18 23:30:06
+============================================================
+
+Ollama Models in registry (18 total):
+
+  ollama-launch/Sornith-1.0-35b-Q4:latest       34.7B       Q4_K_M 19.7 GB
+  ollama-launch/phi3:mini                       3.8B          Q4_0 2.0 GB
+  ollama-launch/Qwen3.6-35B-A3B:latest          34.7B       IQ4_XS 16.5 GB
+  ollama-launch/qwen3:8b                        8.2B        Q4_K_M 4.9 GB
+  Qwen27B:latest                                27.3B       Q5_K_M 19.0 GB
+  dragon_walter:latest                          25.2B       Q4_K_M 15.6 GB
+  dragon_dorothy:latest                         25.2B       Q4_K_M 15.6 GB
+  dragon_edith:latest                           1.2B          Q8_0 1.2 GB
+  dragon_bruce:latest                           3.8B          Q4_0 2.0 GB
+  Sornith-1.0-35b-Q4:latest                     34.7B       Q4_K_M 19.7 GB
+  Qwen3.6-35B-A3B:latest                        34.7B       IQ4_XS 16.5 GB
+  qwen3:8b                                      8.2B        Q4_K_M 4.9 GB
+  gemma4-hauhau:26b                             25.2B       Q4_K_M 15.6 GB
+  qwen3.6-hauhau:27b                            26.9B       IQ4_XS 14.0 GB
+  phi3:mini                                     3.8B          Q4_0 2.0 GB
+  qwen2.5:1.5b                                  1.5B        Q4_K_M 0.9 GB
+  llama3.2:3b                                   3.2B        Q4_K_M 1.9 GB
+  llama3.2:1b                                   1.2B          Q8_0 1.2 GB
+
+--- Memory ---
+RAM:          32.0 GB (total),    23.3 GB wired down,  1679.5 MB active
+
+--- System Status ---
+23:30  up 5 days,  7:58, 2 users, load averages: 1.21 0.98 1.01
+
+Memory consumers (RSS):
+
+STATUS: OK
